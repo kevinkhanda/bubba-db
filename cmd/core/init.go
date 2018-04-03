@@ -1,4 +1,5 @@
 package core
 
-func init() {
+func init_db(dbTitle string) {
+
 }

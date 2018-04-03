@@ -1,7 +1,10 @@
 package main
 
-import "fmt";
+import (
+	"github.com/kevinkhanda/graph-db/cmd/core"
+)
 
 func main() {
-	fmt.Printf("Go graph db\n")
+	core.InitFileSystem()
+	core.InitDatabaseStructure("test-db")
 }

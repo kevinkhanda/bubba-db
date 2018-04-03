@@ -14,7 +14,7 @@ type Store interface {
 type Node struct {
 	id       int
 	isUsed   bool
-	relation Relationship
+	relation * Relationship
 	property Property
 	label    Label
 }
@@ -37,10 +37,10 @@ type Relationship struct {
 	node1 Node
 	node2 Node
 	title RelationshipTitle
-	previousRelationship1 Relationship
-	previousRelationship2 Relationship
-	nextRelationship1 Relationship
-	nextRelationship2 Relationship
+	previousRelationship1 * Relationship
+	previousRelationship2 * Relationship
+	nextRelationship1 * Relationship
+	nextRelationship2 * Relationship
 	property Property
 	isFirst bool
 }
@@ -53,7 +53,7 @@ type RelationshipTitle struct {
 type Property struct {
 	id int
 	isUsed bool
-	nextProperty Property
+	nextProperty * Property
 	title PropertyTitle
 	valueType int
 	value Value
