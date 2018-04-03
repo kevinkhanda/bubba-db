@@ -14,7 +14,7 @@ type Store interface {
 type Node struct {
 	id       int
 	isUsed   bool
-	relation * Relationship
+	relationship * Relationship
 	property Property
 	label    Label
 }

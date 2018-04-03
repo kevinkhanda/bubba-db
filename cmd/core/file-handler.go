@@ -1,7 +1,12 @@
 package core
 
-import "os"
-import "path/filepath"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	//"io/ioutil"
+	//"strings"
+)
 
 var (
 	// nodes/id
@@ -21,13 +26,13 @@ var (
 
 var rootPath = "databases"
 
-func InitFileSystem() {
+func initFileSystem() {
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
 		os.Mkdir(rootPath, os.ModePerm)
 	}
 }
 
-func InitDatabaseStructure(dbTitle string) {
+func initDatabaseStructure(dbTitle string) {
 	var storagePath = filepath.Join(rootPath, dbTitle, "storage")
 	var nodesPath = filepath.Join(storagePath, "nodes")
 	var nodesIdPath = filepath.Join(nodesPath, "id")
@@ -90,4 +95,24 @@ func InitDatabaseStructure(dbTitle string) {
 	checkError(err)
 	doubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
 	checkError(err)
+
+	nodesId.WriteString(fmt.Sprintf("%d", 0))
+	labelsId.WriteString(fmt.Sprintf("%d", 0))
+	labelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
+
+	relationshipsId.WriteString(fmt.Sprintf("%d", 0))
+	relationshipsTypesId.WriteString(fmt.Sprintf("%d", 0))
+
+	propertiesId.WriteString(fmt.Sprintf("%d", 0))
+	propertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
+	stringId.WriteString(fmt.Sprintf("%d", 0))
+	doubleId.WriteString(fmt.Sprintf("%d", 0))
+
+	//nodesId.WriteString(fmt.Sprintf("%d", 1))
+	//nodesIdFilePath, err := filepath.Abs(nodesId.Name())
+	//checkError(err)
+	//fileData, err := ioutil.ReadFile(nodesIdFilePath)
+	//ids := strings.Split(string(fileData), "\n")
+	//print(ids[0])
+	//print(ids[1])
 }
