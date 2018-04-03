@@ -2,4 +2,4 @@
 Project is developed as an assignment for Advanced Databases course in Innopolis University
 
 ## DB Storage structure
-<img src="docs/storage.png" height="250" width="400">
+<img src="docs/storage.png" height="250" width="500">
