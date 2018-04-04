@@ -44,7 +44,7 @@ func (n Node) toBytes() []byte {
 func (n Node) fromBytes(bs []byte) {
 	//todo
 	if len(bs) != NodesSize {
-		errorMessage := fmt.Sprintf("wrong byte array length. expected array length is 13, actual length is %d", len(bs))
+		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 13, actual length is %d", len(bs))
 		panic(errorMessage)
 	}
 	n.isUsed, err = byteArrayToBool(bs[0:1])
