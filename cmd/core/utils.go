@@ -5,6 +5,7 @@ import "encoding/binary"
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 func checkError(err error)  {
@@ -77,4 +78,17 @@ func stringToByteArray(s string) []byte {
 // Returns string of length equal to array size
 func byteArrayToString(bs []byte) string {
 	return string(bs)
+}
+
+func Float64ToByteArray(number float64) []byte {
+	bits := math.Float64bits(number)
+	bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bytes, bits)
+	return bytes
+}
+
+func ByteArrayToFloat64(bs []byte) float64 {
+	bits := binary.LittleEndian.Uint64(bs)
+	float := math.Float64frombits(bits)
+	return float
 }
