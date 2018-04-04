@@ -66,3 +66,15 @@ func byteArrayToBool(bs []byte) (bool, error)  {
 		return false, errors.New(errorMessage)
 	}
 }
+
+// StringToByteArray transforms string to byte array
+// Returns byte array of size len(string)
+func stringToByteArray(s string) []byte {
+	return []byte(s)
+}
+
+// ByteArrayToString transforms byte array to string
+// Returns string of length equal to array size
+func byteArrayToString(bs []byte) string {
+	return string(bs)
+}
