@@ -29,7 +29,8 @@ func int32ToByteArray(number int32) []byte {
 // Reversed conversion is possible only with int32ToByteArray function
 func byteArrayToInt32(bs []byte) (int32, error) {
 	if len(bs) != 4 {
-		errorMessage := fmt.Sprintf("wrong byte array length. expected array length is 4, actual length is %d", len(bs))
+		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 4, " +
+			"actual length is %d", len(bs))
 		return -1, errors.New(errorMessage)
 	}
 	unsigned := binary.LittleEndian.Uint32(bs)
@@ -55,7 +56,7 @@ func boolToByteArray(flag bool) []byte {
 // Reversed conversion is possible only with boolToByteArray function
 func byteArrayToBool(bs []byte) (bool, error)  {
 	if len(bs) != 1 {
-		errorMessage := fmt.Sprintf("wrong byte array length. expected array length is 1, actual length is %d", len(bs))
+		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 1, actual length is %d", len(bs))
 		return false, errors.New(errorMessage)
 	}
 	if bs[0] == 0x00 {
@@ -63,7 +64,7 @@ func byteArrayToBool(bs []byte) (bool, error)  {
 	} else if bs[0] == 0x01 {
 		return true, nil
 	} else {
-		errorMessage := fmt.Sprintf("byte array contains bad data")
+		errorMessage := fmt.Sprintf("converter: byte array contains bad data")
 		return false, errors.New(errorMessage)
 	}
 }
