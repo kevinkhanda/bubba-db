@@ -1,5 +1,23 @@
 package core
 
+import "os"
+
+var (
+	// nodes/id
+	nodesId, labelsId, labelsTitlesId,
+	// nodes/store
+	nodesStore, labelsStore, labelsTitlesStore,
+	// relationships/id
+	relationshipsId, relationshipsTypesId,
+	// relationships/store
+	relationshipsStore, relationshipsTypesStore,
+	// properties/id
+	propertiesId, propertiesTitlesId, stringId, doubleId,
+	// properties/store
+	propertiesStore, propertiesTitlesStore, stringStore, doubleStore * os.File
+	err error
+)
+
 const (
 	LabelsTitlesSize = 36
 	RelationshipsTitlesSize = 36
