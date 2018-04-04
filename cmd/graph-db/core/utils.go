@@ -1,10 +1,10 @@
 package core
 
-import "log"
-import "encoding/binary"
 import (
+	"encoding/binary"
 	"errors"
 	"fmt"
+	"log"
 	"math"
 )
 
