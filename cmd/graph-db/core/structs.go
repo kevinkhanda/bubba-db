@@ -30,7 +30,7 @@ type Node struct {
 
 func (n Node) toBytes() []byte {
 	//todo
-	bs := []byte{}
+	var bs []byte
 	isUsed := boolToByteArray(n.isUsed)
 	rel := int32ToByteArray(int32(n.getRelationship().id))
 	prop := int32ToByteArray(int32(n.getProperty().id))

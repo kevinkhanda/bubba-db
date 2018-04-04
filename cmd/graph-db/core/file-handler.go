@@ -100,12 +100,20 @@ func initDatabaseStructure(dbTitle string) {
 	//print(ids[1])
 }
 
-func write(file * os.File, offset int, array []byte) (err error) {
-	offset = offset * len(array)
-	bytesWritten, err := file.WriteAt(array, int64(offset))
-	checkError(err)
-	if bytesWritten != len(array) {
+func write(file *os.File, offset int, bs []byte) (err error) {
+	offset = offset * len(bs)
+	bytesWritten, err := file.WriteAt(bs, int64(offset))
+	if bytesWritten != len(bs) {
 		err = errors.New("write: wrote less bytes than expected")
+	}
+	return err
+}
+
+func read(file *os.File, offset int, bs []byte) (err error) {
+	offset = offset * len(bs)
+	bytesRead, err := file.ReadAt(bs, int64(offset))
+	if bytesRead != len(bs) {
+		err = errors.New("read: read less bytes than expected")
 	}
 	return err
 }
