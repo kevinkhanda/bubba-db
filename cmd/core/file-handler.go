@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	//"io/ioutil"
-	//"strings"
+
+	"errors"
 )
 
 var (
@@ -115,4 +115,14 @@ func initDatabaseStructure(dbTitle string) {
 	//ids := strings.Split(string(fileData), "\n")
 	//print(ids[0])
 	//print(ids[1])
+}
+
+func write(file * os.File, offset int, array []byte) (err error) {
+	offset = offset * len(array)
+	bytesWritten, err := file.WriteAt(array, int64(offset))
+	checkError(err)
+	if bytesWritten != len(array) {
+		err = errors.New("write: wrote less bytes than expected")
+	}
+	return err
 }
