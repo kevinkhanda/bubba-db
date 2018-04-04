@@ -81,15 +81,20 @@ func byteArrayToString(bs []byte) string {
 	return string(bs)
 }
 
-func Float64ToByteArray(number float64) []byte {
+func float64ToByteArray(number float64) []byte {
 	bits := math.Float64bits(number)
 	bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bytes, bits)
 	return bytes
 }
 
-func ByteArrayToFloat64(bs []byte) float64 {
+func byteArrayToFloat64(bs []byte) (float64, error) {
+	if len(bs) != 8 {
+		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 4, " +
+			"actual length is %d", len(bs))
+		return -1, errors.New(errorMessage)
+	}
 	bits := binary.LittleEndian.Uint64(bs)
 	float := math.Float64frombits(bits)
-	return float
+	return float, nil
 }
