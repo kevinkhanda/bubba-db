@@ -68,9 +68,8 @@ func TestByteToFloat64(test *testing.T) {
 }
 
 func TestBoolToByteArray(test *testing.T) {
-	boolValue := true
 	expectedBs := []byte{0x01}
-	bs := BoolToByteArray(boolValue)
+	bs := BoolToByteArray(true)
 	if len(bs) != 1 {
 		test.Errorf("Array length mismatch")
 	}
@@ -82,13 +81,12 @@ func TestBoolToByteArray(test *testing.T) {
 
 func TestByteArrayToBool(test *testing.T) {
 	bs := []byte{0x01}
-	expectedBoolValue := true
 	boolValue, err := ByteArrayToBool(bs)
 	if err != nil {
 		test.Errorf("Got error during conversion")
 	}
 
-	if boolValue != expectedBoolValue {
+	if boolValue != true {
 		test.Errorf("Bool value mismatch")
 	}
 }
