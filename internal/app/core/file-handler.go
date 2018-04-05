@@ -6,6 +6,9 @@ import (
 	"path/filepath"
 	"errors"
 	"graph-db/internal/pkg/utils"
+	"io/ioutil"
+	"strings"
+	"strconv"
 )
 
 var (
@@ -107,17 +110,9 @@ func initDatabaseStructure(dbTitle string) {
 	propertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
 	stringId.WriteString(fmt.Sprintf("%d", 0))
 	doubleId.WriteString(fmt.Sprintf("%d", 0))
-
-	//nodesId.WriteString(fmt.Sprintf("%d", 1))
-	//nodesIdFilePath, err := filepath.Abs(nodesId.Name())
-	//checkError(err)
-	//fileData, err := ioutil.ReadFile(nodesIdFilePath)
-	//ids := strings.Split(string(fileData), "\n")
-	//print(ids[0])
-	//print(ids[1])
 }
 
-func Write(file *os.File, offset int, bs []byte) (err error) {
+func write(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesWritten, err := file.WriteAt(bs, int64(offset))
 	if bytesWritten != len(bs) {
@@ -126,11 +121,35 @@ func Write(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func Read(file *os.File, offset int, bs []byte) (err error) {
+func read(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesRead, err := file.ReadAt(bs, int64(offset))
 	if bytesRead != len(bs) {
 		err = errors.New("read: read less bytes than expected")
 	}
 	return err
+}
+
+func readId(file *os.File) (id int, err error) {
+	fileData, err := ioutil.ReadFile(file.Name())
+	if err == nil {
+		ids := strings.Split(string(fileData), "\n")
+		id, err := strconv.Atoi(ids[0])
+		if err == nil {
+			if len(ids) == 1 {
+				str := strconv.Itoa(id + 1)
+				err := ioutil.WriteFile(file.Name(), []byte(str), os.ModePerm)
+				if err == nil {
+					return id, err
+				}
+			} else {
+				str := strings.Join(ids[1:], "\n")
+				err := ioutil.WriteFile(file.Name(), []byte(str), os.ModePerm)
+				if err == nil {
+					return id, err
+				}
+			}
+		}
+	}
+	return 0, err
 }
