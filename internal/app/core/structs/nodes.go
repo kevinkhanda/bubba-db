@@ -29,24 +29,26 @@ func (n Node) toBytes() []byte {
 
 func (n Node) fromBytes(bs []byte) {
 	//todo
+	var (
+		id int32
+		rel Relationship
+		prop Property
+		label Label
+	)
 	if len(bs) != globals.NodesSize {
 		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 13, actual length is %d", len(bs))
 		panic(errorMessage)
 	}
 	n.isUsed, err = utils.ByteArrayToBool(bs[0:1])
 	utils.CheckError(err)
-	var id int32
-	var rel Relationship
 	id, err = utils.ByteArrayToInt32(bs[1:5])
 	utils.CheckError(err)
 	rel.id = int(id)
 	n.relationship = &rel
-	var prop Property
 	id, err = utils.ByteArrayToInt32(bs[5:9])
 	utils.CheckError(err)
 	prop.id = int(id)
 	n.property = prop
-	var label Label
 	id, err = utils.ByteArrayToInt32(bs[9:13])
 	utils.CheckError(err)
 	label.id = int(id)
