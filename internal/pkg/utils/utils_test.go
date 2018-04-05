@@ -16,7 +16,7 @@ func TestInt32ToByte(test *testing.T) {
 }
 
 func TestByteToInt32(test *testing.T) {
-	bs := []byte {53, 64, 71, 59}  // 994525237
+	bs := []byte {0x53, 0x64, 0x71, 0x59}
 	number, err := ByteArrayToInt32(bs)
 	if err != nil {
 		test.Errorf("Got error during conversion")
@@ -52,7 +52,7 @@ func TestFloat64ToByteArray(test *testing.T) {
 }
 
 func TestByteToFloat64(test *testing.T) {
-	bs := []byte {53, 64, 71, 59, 55, 67, 43, 29}
+	bs := []byte {0x53, 0x64, 0x71, 0x59, 0x55, 0x67, 0x43, 0x29}
 	float, err := ByteArrayToFloat64(bs)
 
 	initialBs := Float64ToByteArray(float)

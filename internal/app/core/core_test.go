@@ -5,15 +5,16 @@ import (
 	"os"
 )
 
-var testFile *os.File
-
-func init() {
-	testFile, _ = os.Create("test.txt")
-}
-
 func TestFileReadWrite(test *testing.T) {
+	testFile, err := os.Create("test.txt")
+	if err != nil {
+		test.Errorf("Error creating file")
+	}
+
+	defer testFile.Close()
+	defer os.Remove(testFile.Name())
 	bs := []byte{53, 57, 50, 54}
-	err := Write(testFile, 0, bs)
+	err = Write(testFile, 0, bs)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
