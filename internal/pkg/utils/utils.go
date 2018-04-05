@@ -81,6 +81,8 @@ func ByteArrayToString(bs []byte) string {
 	return string(bs)
 }
 
+// Float64ToByteArray transforms float64 to byte array
+// Returns byte array of size 8
 func Float64ToByteArray(number float64) []byte {
 	bits := math.Float64bits(number)
 	bytes := make([]byte, 8)
@@ -88,9 +90,11 @@ func Float64ToByteArray(number float64) []byte {
 	return bytes
 }
 
+// ByteArrayToFloat64 transforms byte array of size 8 to float64
+// Returns float64 value and error if byte array size is not 8
 func ByteArrayToFloat64(bs []byte) (float64, error) {
 	if len(bs) != 8 {
-		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 4, " +
+		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 8, " +
 			"actual length is %d", len(bs))
 		return -1, errors.New(errorMessage)
 	}
