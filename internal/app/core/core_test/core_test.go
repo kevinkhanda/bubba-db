@@ -2,9 +2,9 @@ package core_test
 
 import (
 	"testing"
-	"github.com/kevinkhanda/graph-db/internal/pkg/utils"
-	"github.com/kevinkhanda/graph-db/internal/app/core"
 	"os"
+	"github.com/kkhanda/graph-db/internal/pkg/utils"
+	"github.com/kkhanda/graph-db/internal/app/core"
 )
 
 var testFile *os.File
