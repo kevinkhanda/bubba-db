@@ -50,7 +50,7 @@ func TestIdReading(test *testing.T) {
 		test.Errorf("Error creating file")
 	}
 
-	testFile.WriteString(fmt.Sprintf("%d", 12))
+	testFile.WriteString(fmt.Sprintf("%d\n%d", 12, 17))
 	id, err := readId(testFile)
 	if err != nil {
 		test.Errorf("Error in reading id")
@@ -60,8 +60,17 @@ func TestIdReading(test *testing.T) {
 		test.Errorf("Id value mismatch")
 	}
 
+	id, err = readId(testFile)
+	if err != nil {
+		test.Errorf("Error in reading id")
+	}
+
+	if id != 17 {
+		test.Errorf("Id value mismatch")
+	}
+
 	newId, err := ioutil.ReadFile(testFile.Name())
-	if string(newId) != "13" {
+	if string(newId) != "18" {
 		test.Errorf("New id was not written")
 	}
 }
