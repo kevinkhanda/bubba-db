@@ -66,3 +66,57 @@ func TestByteToFloat64(test *testing.T) {
 		}
 	}
 }
+
+func TestBoolToByteArray(test *testing.T) {
+	boolValue := true
+	expectedBs := []byte{0x01}
+	bs := BoolToByteArray(boolValue)
+	if len(bs) != 1 {
+		test.Errorf("Array length mismatch")
+	}
+
+	if bs[0] != expectedBs[0] {
+		test.Errorf("Array value mismatch")
+	}
+}
+
+func TestByteArrayToBool(test *testing.T) {
+	bs := []byte{0x01}
+	expectedBoolValue := true
+	boolValue, err := ByteArrayToBool(bs)
+	if err != nil {
+		test.Errorf("Got error during conversion")
+	}
+
+	if boolValue != expectedBoolValue {
+		test.Errorf("Bool value mismatch")
+	}
+}
+
+func TestStringToByteArray(test *testing.T) {
+	str := "test"
+	expectedBs := []byte{0x74, 0x65, 0x73, 0x74}
+	bs := StringToByteArray(str)
+	if len(bs) != len(str) {
+		test.Errorf("Array length mismatch")
+	}
+
+	for i := 0; i < len(bs); i++ {
+		if bs[i]  != expectedBs[i] {
+			test.Errorf("Array values mismatch")
+		}
+	}
+}
+
+func TestByteArrayToString(test *testing.T) {
+	bs := []byte{0x74, 0x65, 0x73, 0x74}
+	expectedStr := "test"
+	str := ByteArrayToString(bs)
+	if len(str) != len(bs) {
+		test.Errorf("String length mismatch")
+	}
+
+	if str != expectedStr {
+		test.Errorf("String value mismatch")
+	}
+}
