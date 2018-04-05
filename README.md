@@ -22,3 +22,8 @@ $ go build ./cmd/graph-db/
 $ ./graph-db
 ```
 
+### Running tests
+```bash
+$ go test ./... -cover
+```
+
