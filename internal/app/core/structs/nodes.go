@@ -1,6 +1,10 @@
 package structs
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/kevinkhanda/graph-db/internal/pkg/utils"
+	"github.com/kevinkhanda/graph-db/internal/app/core/globals"
+)
 
 type Node struct {
 	id       int
@@ -13,10 +17,10 @@ type Node struct {
 func (n Node) toBytes() []byte {
 	//todo
 	var bs []byte
-	isUsed := boolToByteArray(n.isUsed)
-	rel := int32ToByteArray(int32(n.getRelationship().id))
-	prop := int32ToByteArray(int32(n.getProperty().id))
-	label := int32ToByteArray(int32(n.getLabel().id))
+	isUsed := utils.BoolToByteArray(n.isUsed)
+	rel := utils.Int32ToByteArray(int32(n.getRelationship().id))
+	prop := utils.Int32ToByteArray(int32(n.getProperty().id))
+	label := utils.Int32ToByteArray(int32(n.getLabel().id))
 	bs = append(isUsed, rel...)
 	bs = append(bs, prop...)
 	bs = append(bs, label...)
@@ -25,26 +29,26 @@ func (n Node) toBytes() []byte {
 
 func (n Node) fromBytes(bs []byte) {
 	//todo
-	if len(bs) != NodesSize {
+	if len(bs) != globals.NodesSize {
 		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 13, actual length is %d", len(bs))
 		panic(errorMessage)
 	}
-	n.isUsed, err = byteArrayToBool(bs[0:1])
-	checkError(err)
+	n.isUsed, err = utils.ByteArrayToBool(bs[0:1])
+	utils.CheckError(err)
 	var id int32
 	var rel Relationship
-	id, err = byteArrayToInt32(bs[1:5])
-	checkError(err)
+	id, err = utils.ByteArrayToInt32(bs[1:5])
+	utils.CheckError(err)
 	rel.id = int(id)
 	n.relationship = &rel
 	var prop Property
-	id, err = byteArrayToInt32(bs[5:9])
-	checkError(err)
+	id, err = utils.ByteArrayToInt32(bs[5:9])
+	utils.CheckError(err)
 	prop.id = int(id)
 	n.property = prop
 	var label Label
-	id, err = byteArrayToInt32(bs[9:13])
-	checkError(err)
+	id, err = utils.ByteArrayToInt32(bs[9:13])
+	utils.CheckError(err)
 	label.id = int(id)
 	n.label = label
 }
