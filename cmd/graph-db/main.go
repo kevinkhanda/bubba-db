@@ -1,6 +1,6 @@
-package graph_db
+package main
 
-import "github.com/kevinkhanda/graph-db/internal/app/core"
+import "graph-db/internal/app/core"
 
 func main() {
 	core.InitDatabase("asd")

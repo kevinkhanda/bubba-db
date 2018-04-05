@@ -3,7 +3,7 @@ package core
 import (
 	"testing"
 	"os"
-	"github.com/KKhanda/graph-db/internal/pkg/utils"
+	"graph-db/internal/pkg/utils"
 )
 
 var testFile *os.File

@@ -2,8 +2,8 @@ package structs
 
 import (
 	"fmt"
-	"github.com/kkhanda/graph-db/internal/pkg/utils"
-	"github.com/kkhanda/graph-db/internal/app/core/globals"
+	"graph-db/internal/pkg/utils"
+	"graph-db/internal/app/core/globals"
 )
 
 type Node struct {
