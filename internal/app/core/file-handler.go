@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"errors"
-	"github.com/kkhanda/graph-db/internal/pkg/utils"
+	"github.com/KKhanda/graph-db/internal/pkg/utils"
 )
 
 var (
