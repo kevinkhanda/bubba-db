@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"strconv"
+	"graph-db/internal/app/core/globals"
 )
 
 var (
@@ -57,12 +58,14 @@ func initDatabaseStructure(dbTitle string) {
 	// nodes/id
 	nodesId, err = os.Create(filepath.Join(nodesIdPath, "nodes.id"))
 	utils.CheckError(err)
+	globals.NodesId = nodesId
 	labelsId, err = os.Create(filepath.Join(nodesIdPath, "labels.id"))
 	utils.CheckError(err)
 	labelsTitlesId, err = os.Create(filepath.Join(nodesIdPath, "labelsTitles.id"))
 	utils.CheckError(err)
 	// nodes/store
 	nodesStore, err = os.Create(filepath.Join(nodesStorePath, "nodes.store"))
+	globals.NodesStore = nodesStore
 	utils.CheckError(err)
 	labelsStore, err = os.Create(filepath.Join(nodesStorePath, "labels.store"))
 	utils.CheckError(err)
@@ -112,7 +115,7 @@ func initDatabaseStructure(dbTitle string) {
 	doubleId.WriteString(fmt.Sprintf("%d", 0))
 }
 
-func write(file *os.File, offset int, bs []byte) (err error) {
+func Write(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesWritten, err := file.WriteAt(bs, int64(offset))
 	if bytesWritten != len(bs) {
@@ -121,7 +124,7 @@ func write(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func read(file *os.File, offset int, bs []byte) (err error) {
+func Read(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesRead, err := file.ReadAt(bs, int64(offset))
 	if bytesRead != len(bs) {
@@ -130,7 +133,7 @@ func read(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func readId(file *os.File) (id int, err error) {
+func ReadId(file *os.File) (id int, err error) {
 	fileData, err := ioutil.ReadFile(file.Name())
 	if err == nil {
 		ids := strings.Split(string(fileData), "\n")

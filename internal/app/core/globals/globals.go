@@ -1,5 +1,7 @@
 package globals
 
+import "os"
+
 const (
 	INTEGER = 0
 	DOUBLE = 1
@@ -16,4 +18,9 @@ const (
 	PropertiesSize = 14
 	StringSize = 36
 	DoubleSize = 9
+)
+
+var (
+	NodesStore *os.File
+	NodesId *os.File
 )
