@@ -12,7 +12,7 @@ func init() {
 	testFile, _ = os.Create("test.txt")
 }
 
-func TestIntToByteConversion(test *testing.T) {
+func TestInt32ToByteConversion(test *testing.T) {
 	number := 123
 	array := utils.Int32ToByteArray(int32(number))
 	if len(array) != 4  {
@@ -25,7 +25,7 @@ func TestIntToByteConversion(test *testing.T) {
 	}
 }
 
-func TestByteToIntConversion(test *testing.T) {
+func TestByteToInt32Conversion(test *testing.T) {
 	bs := []byte {53, 64, 71, 59}  // 994525237
 	number, err := utils.ByteArrayToInt32(bs)
 	if err != nil {
@@ -44,7 +44,7 @@ func TestByteToIntConversion(test *testing.T) {
 	}
 }
 
-func TestFloat64ToByteArray(test *testing.T) {
+func TestFloat64ToByteArrayConversion(test *testing.T) {
 	float  := float64(10)
 	array := utils.Float64ToByteArray(float)
 	if len(array) != 8 {
@@ -61,7 +61,7 @@ func TestFloat64ToByteArray(test *testing.T) {
 	}
 }
 
-func TestByteToFloatConversation(test *testing.T) {
+func TestByteToFloat64Conversion(test *testing.T) {
 	bs := []byte {53, 64, 71, 59, 55, 67, 43, 29}
 	float, err := utils.ByteArrayToFloat64(bs)
 
