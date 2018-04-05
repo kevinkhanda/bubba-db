@@ -50,6 +50,8 @@ func TestIdReading(test *testing.T) {
 		test.Errorf("Error creating file")
 	}
 
+	defer testFile.Close()
+	defer os.Remove(testFile.Name())
 	testFile.WriteString(fmt.Sprintf("%d\n%d", 12, 17))
 	id, err := readId(testFile)
 	if err != nil {
