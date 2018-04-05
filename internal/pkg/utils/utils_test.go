@@ -2,7 +2,7 @@ package utils
 
 import "testing"
 
-func TestInt32ToByteConversion(test *testing.T) {
+func TestInt32ToByte(test *testing.T) {
 	number := 123
 	array := Int32ToByteArray(int32(number))
 	if len(array) != 4  {
@@ -15,7 +15,7 @@ func TestInt32ToByteConversion(test *testing.T) {
 	}
 }
 
-func TestByteToInt32Conversion(test *testing.T) {
+func TestByteToInt32(test *testing.T) {
 	bs := []byte {53, 64, 71, 59}  // 994525237
 	number, err := ByteArrayToInt32(bs)
 	if err != nil {
@@ -34,7 +34,7 @@ func TestByteToInt32Conversion(test *testing.T) {
 	}
 }
 
-func TestFloat64ToByteArrayConversion(test *testing.T) {
+func TestFloat64ToByteArray(test *testing.T) {
 	float  := float64(10)
 	array := Float64ToByteArray(float)
 	if len(array) != 8 {
@@ -51,7 +51,7 @@ func TestFloat64ToByteArrayConversion(test *testing.T) {
 	}
 }
 
-func TestByteToFloat64Conversion(test *testing.T) {
+func TestByteToFloat64(test *testing.T) {
 	bs := []byte {53, 64, 71, 59, 55, 67, 43, 29}
 	float, err := ByteArrayToFloat64(bs)
 
