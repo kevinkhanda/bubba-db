@@ -1,10 +1,9 @@
-package core_test
+package core
 
 import (
 	"testing"
-	"github.com/kevinkhanda/graph-db/internal/pkg/utils"
-	"github.com/kevinkhanda/graph-db/internal/app/core"
 	"os"
+	"graph-db/internal/pkg/utils"
 )
 
 var testFile *os.File
@@ -80,13 +79,13 @@ func TestByteToFloatConversation(test *testing.T) {
 
 func TestFileReadWrite(test *testing.T) {
 	bs := []byte{53, 57, 50, 54}
-	err := core.Write(testFile, 0, bs)
+	err := Write(testFile, 0, bs)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
 
 	readBs := make([]byte, 4)
-	core.Read(testFile, 0, readBs)
+	Read(testFile, 0, readBs)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")
@@ -94,13 +93,13 @@ func TestFileReadWrite(test *testing.T) {
 	}
 
 	bs = []byte{79, 11, 254, 98}
-	err = core.Write(testFile, 1, bs)
+	err = Write(testFile, 1, bs)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
 
 	readBs = make([]byte, 4)
-	core.Read(testFile, 1, readBs)
+	Read(testFile, 1, readBs)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")

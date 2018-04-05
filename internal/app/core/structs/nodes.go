@@ -2,8 +2,8 @@ package structs
 
 import (
 	"fmt"
-	"github.com/kevinkhanda/graph-db/internal/pkg/utils"
-	"github.com/kevinkhanda/graph-db/internal/app/core/globals"
+	"graph-db/internal/pkg/utils"
+	"graph-db/internal/app/core/globals"
 )
 
 type Node struct {
