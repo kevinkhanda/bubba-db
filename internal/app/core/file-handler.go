@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"errors"
+	"github.com/kevinkhanda/graph-db/internal/pkg/utils"
 )
 
 var rootPath = "databases"
@@ -36,48 +37,48 @@ func initDatabaseStructure(dbTitle string) {
 
 	// nodes/id
 	nodesId, err = os.Create(filepath.Join(nodesIdPath, "nodes.id"))
-	checkError(err)
+	utils.CheckError(err)
 	labelsId, err = os.Create(filepath.Join(nodesIdPath, "labels.id"))
-	checkError(err)
+	utils.CheckError(err)
 	labelsTitlesId, err = os.Create(filepath.Join(nodesIdPath, "labelsTitles.id"))
-	checkError(err)
+	utils.CheckError(err)
 	// nodes/store
 	nodesStore, err = os.Create(filepath.Join(nodesStorePath, "nodes.store"))
-	checkError(err)
+	utils.CheckError(err)
 	labelsStore, err = os.Create(filepath.Join(nodesStorePath, "labels.store"))
-	checkError(err)
+	utils.CheckError(err)
 	labelsTitlesStore, err = os.Create(filepath.Join(nodesStorePath, "labelsTitles.store"))
-	checkError(err)
+	utils.CheckError(err)
 
 	// relationships/id
 	relationshipsId, err = os.Create(filepath.Join(relationshipsIdPath, "relationships.id"))
-	checkError(err)
+	utils.CheckError(err)
 	relationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
-	checkError(err)
+	utils.CheckError(err)
 	// relationships/store
 	relationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
-	checkError(err)
+	utils.CheckError(err)
 	relationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
-	checkError(err)
+	utils.CheckError(err)
 
 	// properties/id
 	propertiesId, err = os.Create(filepath.Join(propertiesIdPath, "properties.id"))
-	checkError(err)
+	utils.CheckError(err)
 	propertiesTitlesId, err = os.Create(filepath.Join(propertiesIdPath, "propertiesTitles.id"))
-	checkError(err)
+	utils.CheckError(err)
 	stringId, err = os.Create(filepath.Join(propertiesIdPath, "string.id"))
-	checkError(err)
+	utils.CheckError(err)
 	doubleId, err = os.Create(filepath.Join(propertiesIdPath, "double.id"))
-	checkError(err)
+	utils.CheckError(err)
 	// properties/store
 	propertiesStore, err = os.Create(filepath.Join(propertiesStorePath, "properties.store"))
-	checkError(err)
+	utils.CheckError(err)
 	propertiesTitlesStore, err = os.Create(filepath.Join(propertiesStorePath, "propertiesTitles.store"))
-	checkError(err)
+	utils.CheckError(err)
 	stringStore, err = os.Create(filepath.Join(propertiesStorePath, "string.store"))
-	checkError(err)
+	utils.CheckError(err)
 	doubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
-	checkError(err)
+	utils.CheckError(err)
 
 	nodesId.WriteString(fmt.Sprintf("%d", 0))
 	labelsId.WriteString(fmt.Sprintf("%d", 0))
@@ -100,7 +101,7 @@ func initDatabaseStructure(dbTitle string) {
 	//print(ids[1])
 }
 
-func write(file *os.File, offset int, bs []byte) (err error) {
+func Write(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesWritten, err := file.WriteAt(bs, int64(offset))
 	if bytesWritten != len(bs) {
@@ -109,7 +110,7 @@ func write(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func read(file *os.File, offset int, bs []byte) (err error) {
+func Read(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesRead, err := file.ReadAt(bs, int64(offset))
 	if bytesRead != len(bs) {

@@ -19,6 +19,12 @@ var (
 )
 
 const (
+	INTEGER = 0
+	DOUBLE = 1
+	STRING = 2
+)
+
+const (
 	LabelsTitlesSize = 36
 	RelationshipsTitlesSize = 36
 	PropertiesTitlesSize = 36
