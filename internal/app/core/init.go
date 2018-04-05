@@ -1,6 +1,6 @@
 package core
 
-func initDatabase(dbTitle string) {
+func InitDatabase(dbTitle string) {
 	initFileSystem()
 	initDatabaseStructure(dbTitle)
 }
