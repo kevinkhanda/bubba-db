@@ -18,9 +18,9 @@ func (n Node) toBytes() []byte {
 	//todo
 	var bs []byte
 	isUsed := utils.BoolToByteArray(n.isUsed)
-	rel := utils.Int32ToByteArray(int32(n.getRelationship().id))
-	prop := utils.Int32ToByteArray(int32(n.getProperty().id))
-	label := utils.Int32ToByteArray(int32(n.getLabel().id))
+	rel := utils.Int32ToByteArray(int32(n.GetRelationship().id))
+	prop := utils.Int32ToByteArray(int32(n.GetProperty().id))
+	label := utils.Int32ToByteArray(int32(n.GetLabel().id))
 	bs = append(isUsed, rel...)
 	bs = append(bs, prop...)
 	bs = append(bs, label...)
@@ -55,17 +55,17 @@ func (n Node) fromBytes(bs []byte) {
 	n.label = label
 }
 
-func (n Node) getRelationship() Relationship {
+func (n Node) GetRelationship() Relationship {
 	//todo
 	return Relationship{}
 }
 
-func (n Node) getProperty() Property {
+func (n Node) GetProperty() Property {
 	//todo
 	return Property{}
 }
 
-func (n Node) getLabel() Label {
+func (n Node) GetLabel() Label {
 	//todo
 	return Label{}
 }

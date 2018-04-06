@@ -6,7 +6,7 @@ type Storage interface {
 
 }
 
-func createNode() structs.Node {
+func CreateNode() structs.Node {
 	var node structs.Node
 	node.Create()
 	return node
