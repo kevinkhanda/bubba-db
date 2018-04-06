@@ -25,25 +25,17 @@ func (n Node) toBytes() (bs []byte) {
 	)
 	isUsed := utils.BoolToByteArray(n.isUsed)
 	rel = n.GetRelationship()
-	if rel != nil {
-		relBs = utils.Int32ToByteArray(int32((*rel).id))
-	} else {
-		relBs = utils.Int32ToByteArray(-1)
-	}
+	id := IfNilAssignMinusOne(rel)
+	relBs = utils.Int32ToByteArray(int32(id))
 
 	prop = n.GetProperty()
-	if prop != nil {
-		propBs = utils.Int32ToByteArray(int32((*prop).id))
-	} else {
-		propBs = utils.Int32ToByteArray(-1)
-	}
+	id = IfNilAssignMinusOne(prop)
+	propBs = utils.Int32ToByteArray(int32(id))
 
 	label = n.GetLabel()
-	if label != nil {
-		labelBs = utils.Int32ToByteArray(int32((*label).id))
-	} else {
-		labelBs = utils.Int32ToByteArray(-1)
-	}
+	id = IfNilAssignMinusOne(label)
+	labelBs = utils.Int32ToByteArray(int32(id))
+
 	bs = append(isUsed, relBs...)
 	bs = append(bs, propBs...)
 	bs = append(bs, labelBs...)
