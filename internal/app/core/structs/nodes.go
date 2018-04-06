@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"graph-db/internal/pkg/utils"
 	"graph-db/internal/app/core/globals"
-	"graph-db/internal/app/core"
 )
 
 type Node struct {
@@ -75,7 +74,7 @@ func (n Node) write()  {
 	//todo
 	offset := globals.NodesSize * n.id
 	bs := n.toBytes()
-	core.Write(globals.NodesStore, offset, bs)
+	globals.FileHandler.Write(globals.NodesStore, offset, bs)
 }
 
 func (n Node) read() {
@@ -85,7 +84,7 @@ func (n Node) read() {
 func (n Node) Create() {
 	//todo
 	var id int
-	id, err = core.ReadId(globals.NodesId)
+	id, err = globals.FileHandler.ReadId(globals.NodesId)
 	utils.CheckError(err)
 	n.id = id
 	n.write()

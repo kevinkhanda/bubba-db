@@ -13,30 +13,21 @@ import (
 )
 
 var (
-	// nodes/id
-	nodesId, labelsId, labelsTitlesId,
-	// nodes/store
-	nodesStore, labelsStore, labelsTitlesStore,
-	// relationships/id
-	relationshipsId, relationshipsTypesId,
-	// relationships/store
-	relationshipsStore, relationshipsTypesStore,
-	// properties/id
-	propertiesId, propertiesTitlesId, stringId, doubleId,
-	// properties/store
-	propertiesStore, propertiesTitlesStore, stringStore, doubleStore * os.File
+	rootPath = "databases"
 	err error
 )
 
-var rootPath = "databases"
 
-func initFileSystem() {
+type FileHandler struct {
+}
+
+func (fh FileHandler) InitFileSystem() {
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
 		os.Mkdir(rootPath, os.ModePerm)
 	}
 }
 
-func initDatabaseStructure(dbTitle string) {
+func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	var storagePath = filepath.Join(rootPath, dbTitle, "storage")
 	var nodesPath = filepath.Join(storagePath, "nodes")
 	var nodesIdPath = filepath.Join(nodesPath, "id")
@@ -56,66 +47,64 @@ func initDatabaseStructure(dbTitle string) {
 	os.MkdirAll(propertiesStorePath, os.ModePerm)
 
 	// nodes/id
-	nodesId, err = os.Create(filepath.Join(nodesIdPath, "nodes.id"))
+	globals.NodesId, err = os.Create(filepath.Join(nodesIdPath, "nodes.id"))
 	utils.CheckError(err)
-	globals.NodesId = nodesId
-	labelsId, err = os.Create(filepath.Join(nodesIdPath, "labels.id"))
+	globals.LabelsId, err = os.Create(filepath.Join(nodesIdPath, "labels.id"))
 	utils.CheckError(err)
-	labelsTitlesId, err = os.Create(filepath.Join(nodesIdPath, "labelsTitles.id"))
+	globals.LabelsTitlesId, err = os.Create(filepath.Join(nodesIdPath, "labelsTitles.id"))
 	utils.CheckError(err)
 	// nodes/store
-	nodesStore, err = os.Create(filepath.Join(nodesStorePath, "nodes.store"))
-	globals.NodesStore = nodesStore
+	globals.NodesStore, err = os.Create(filepath.Join(nodesStorePath, "nodes.store"))
 	utils.CheckError(err)
-	labelsStore, err = os.Create(filepath.Join(nodesStorePath, "labels.store"))
+	globals.LabelsStore, err = os.Create(filepath.Join(nodesStorePath, "labels.store"))
 	utils.CheckError(err)
-	labelsTitlesStore, err = os.Create(filepath.Join(nodesStorePath, "labelsTitles.store"))
+	globals.LabelsTitlesStore, err = os.Create(filepath.Join(nodesStorePath, "labelsTitles.store"))
 	utils.CheckError(err)
 
 	// relationships/id
-	relationshipsId, err = os.Create(filepath.Join(relationshipsIdPath, "relationships.id"))
+	globals.RelationshipsId, err = os.Create(filepath.Join(relationshipsIdPath, "relationships.id"))
 	utils.CheckError(err)
-	relationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+	globals.RelationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
 	utils.CheckError(err)
 	// relationships/store
-	relationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
+	globals.RelationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
 	utils.CheckError(err)
-	relationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+	globals.RelationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
 	utils.CheckError(err)
 
 	// properties/id
-	propertiesId, err = os.Create(filepath.Join(propertiesIdPath, "properties.id"))
+	globals.PropertiesId, err = os.Create(filepath.Join(propertiesIdPath, "properties.id"))
 	utils.CheckError(err)
-	propertiesTitlesId, err = os.Create(filepath.Join(propertiesIdPath, "propertiesTitles.id"))
+	globals.PropertiesTitlesId, err = os.Create(filepath.Join(propertiesIdPath, "propertiesTitles.id"))
 	utils.CheckError(err)
-	stringId, err = os.Create(filepath.Join(propertiesIdPath, "string.id"))
+	globals.StringId, err = os.Create(filepath.Join(propertiesIdPath, "string.id"))
 	utils.CheckError(err)
-	doubleId, err = os.Create(filepath.Join(propertiesIdPath, "double.id"))
+	globals.DoubleId, err = os.Create(filepath.Join(propertiesIdPath, "double.id"))
 	utils.CheckError(err)
 	// properties/store
-	propertiesStore, err = os.Create(filepath.Join(propertiesStorePath, "properties.store"))
+	globals.PropertiesStore, err = os.Create(filepath.Join(propertiesStorePath, "properties.store"))
 	utils.CheckError(err)
-	propertiesTitlesStore, err = os.Create(filepath.Join(propertiesStorePath, "propertiesTitles.store"))
+	globals.PropertiesTitlesStore, err = os.Create(filepath.Join(propertiesStorePath, "propertiesTitles.store"))
 	utils.CheckError(err)
-	stringStore, err = os.Create(filepath.Join(propertiesStorePath, "string.store"))
+	globals.StringStore, err = os.Create(filepath.Join(propertiesStorePath, "string.store"))
 	utils.CheckError(err)
-	doubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
+	globals.DoubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
 	utils.CheckError(err)
 
-	nodesId.WriteString(fmt.Sprintf("%d", 0))
-	labelsId.WriteString(fmt.Sprintf("%d", 0))
-	labelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.NodesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.LabelsId.WriteString(fmt.Sprintf("%d", 0))
+	globals.LabelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
 
-	relationshipsId.WriteString(fmt.Sprintf("%d", 0))
-	relationshipsTypesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.RelationshipsId.WriteString(fmt.Sprintf("%d", 0))
+	globals.RelationshipsTypesId.WriteString(fmt.Sprintf("%d", 0))
 
-	propertiesId.WriteString(fmt.Sprintf("%d", 0))
-	propertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
-	stringId.WriteString(fmt.Sprintf("%d", 0))
-	doubleId.WriteString(fmt.Sprintf("%d", 0))
+	globals.PropertiesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.PropertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.StringId.WriteString(fmt.Sprintf("%d", 0))
+	globals.DoubleId.WriteString(fmt.Sprintf("%d", 0))
 }
 
-func Write(file *os.File, offset int, bs []byte) (err error) {
+func (fh FileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesWritten, err := file.WriteAt(bs, int64(offset))
 	if bytesWritten != len(bs) {
@@ -124,7 +113,7 @@ func Write(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func Read(file *os.File, offset int, bs []byte) (err error) {
+func (fh FileHandler) Read(file *os.File, offset int, bs []byte) (err error) {
 	offset = offset * len(bs)
 	bytesRead, err := file.ReadAt(bs, int64(offset))
 	if bytesRead != len(bs) {
@@ -133,7 +122,7 @@ func Read(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func ReadId(file *os.File) (id int, err error) {
+func (fh FileHandler) ReadId(file *os.File) (id int, err error) {
 	fileData, err := ioutil.ReadFile(file.Name())
 	if err == nil {
 		ids := strings.Split(string(fileData), "\n")
