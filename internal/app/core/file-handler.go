@@ -145,3 +145,34 @@ func (fh FileHandler) ReadId(file *os.File) (id int, err error) {
 	}
 	return 0, err
 }
+
+func (fh FileHandler) FreeId(file *os.File, id int) (err error) {
+	fileData, err := ioutil.ReadFile(file.Name())
+	if err == nil {
+		ids := strings.Split(string(fileData), "\n")
+		str := strconv.Itoa(id)
+		var fetchedPrev, fetchedNext, firstId, lastId int
+		firstId, err = strconv.Atoi(ids[0])
+		utils.CheckError(err)
+		lastId, err = strconv.Atoi(ids[len(ids) - 1])
+		utils.CheckError(err)
+		if id < firstId {
+			ids = append([]string{str}, ids[:]...)
+		} else if id > lastId {
+			ids = append(ids[:], []string{str}...)
+		} else {
+			for i := 0; i < len(ids) - 1; i++ {
+				fetchedPrev, err = strconv.Atoi(ids[i])
+				utils.CheckError(err)
+				fetchedNext, err = strconv.Atoi(ids[i + 1])
+				utils.CheckError(err)
+				if id > fetchedPrev && id < fetchedNext {
+					ids = append(ids[:i + 1], append([]string{str}, ids[i + 1:]...)...)
+				}
+			}
+		}
+		str = strings.Join(ids, "\n")
+		err = ioutil.WriteFile(file.Name(), []byte(str), os.ModePerm)
+	}
+	return err
+}
