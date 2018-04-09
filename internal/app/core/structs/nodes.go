@@ -93,6 +93,11 @@ func (n Node) GetRelationship() *Relationship {
 	}
 }
 
+func (n Node) SetRelationship(rel *Relationship) {
+	n.relationship = rel
+	n.write()
+}
+
 func (n Node) GetProperty() *Property {
 	//todo
 	if n.property != nil {
@@ -116,6 +121,11 @@ func (n Node) GetProperty() *Property {
 	}
 }
 
+func (n Node) SetProperty(prop *Property) {
+	n.property = prop
+	n.write()
+}
+
 func (n Node) GetLabel() *Label {
 	//todo
 	if n.label != nil {
@@ -137,6 +147,11 @@ func (n Node) GetLabel() *Label {
 			return n.label
 		}
 	}
+}
+
+func (n Node) SetLabel(label *Label) {
+	n.label = label
+	n.write()
 }
 
 func (n Node) write()  {
