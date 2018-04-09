@@ -28,9 +28,14 @@ func CreateNode() (node structs.Node) {
 }
 
 func GetNode(id int) (node structs.Node) {
+	//todo Recover from error or make node.Get() return error
 	return node.Get(id)
 }
 
+func DeleteNode(id int) (err error) {
+	var n structs.Node
+	return n.Delete(id)
+}
 
 func CreateRelationship() (relationship structs.Relationship) {
 	//relationship.Create()

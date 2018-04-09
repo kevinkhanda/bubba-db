@@ -10,6 +10,7 @@ type FileHandlerInterface interface {
 	Write(file *os.File, offset int, bs []byte) (err error)
 	Read(file *os.File, offset int, bs []byte) (err error)
 	ReadId(file *os.File) (id int, err error)
+	FreeId(file *os.File, id int) (err error)
 }
 
 const (

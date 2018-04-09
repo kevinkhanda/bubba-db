@@ -189,6 +189,18 @@ func (n Node) Get(id int) Node {
 	return n
 }
 
+func (n Node) Delete(id int) (err error) {
+	bs := make([]byte, globals.NodesSize)
+	bs[0] = utils.BoolToByteArray(false)[0]
+	err = globals.FileHandler.FreeId(globals.NodesId, id)
+	if err != nil {
+		return err
+	}
+	offset := globals.NodesSize * n.id
+	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
+	return nil
+}
+
 type Label struct {
 	id int
 	isUsed bool
