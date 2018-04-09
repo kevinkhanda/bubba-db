@@ -150,6 +150,12 @@ func (n Node) write()  {
 
 func (n Node) read() {
 	//todo
+	bs := make([]byte, 13)
+	offset := globals.NodesSize * n.id
+	err := globals.FileHandler.Read(globals.NodesStore, offset, bs)
+	utils.CheckError(err)
+	n.fromBytes(bs)
+
 }
 
 func (n Node) Create() {
@@ -160,6 +166,12 @@ func (n Node) Create() {
 	n.isUsed = true
 	n.isWritten = false
 	n.write()
+}
+
+func (n Node) Get(id int) Node {
+	n.id = id
+	n.read()
+	return n
 }
 
 type Label struct {
