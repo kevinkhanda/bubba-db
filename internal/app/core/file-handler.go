@@ -17,7 +17,6 @@ var (
 	err error
 )
 
-
 type FileHandler struct {
 }
 
@@ -102,6 +101,79 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	globals.PropertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.StringId.WriteString(fmt.Sprintf("%d", 0))
 	globals.DoubleId.WriteString(fmt.Sprintf("%d", 0))
+}
+
+func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
+	if _, err := os.Stat(filepath.Join(rootPath, dbTitle)); err == nil {
+		var storagePath = filepath.Join(rootPath, dbTitle, "storage")
+		var nodesPath = filepath.Join(storagePath, "nodes")
+		var nodesIdPath = filepath.Join(nodesPath, "id")
+		var nodesStorePath = filepath.Join(nodesPath, "store")
+		var relationshipsPath = filepath.Join(storagePath, "relationships")
+		var relationshipsIdPath = filepath.Join(relationshipsPath, "id")
+		var relationshipsStorePath = filepath.Join(relationshipsPath, "store")
+		var propertiesPath = filepath.Join(storagePath, "properties")
+		var propertiesIdPath = filepath.Join(propertiesPath, "id")
+		var propertiesStorePath = filepath.Join(propertiesPath, "store")
+
+		// nodes/id
+		globals.NodesId, err = os.Open(filepath.Join(nodesIdPath, "nodes.id"))
+		utils.CheckError(err)
+		globals.LabelsId, err = os.Open(filepath.Join(nodesIdPath, "labels.id"))
+		utils.CheckError(err)
+		globals.LabelsTitlesId, err = os.Open(filepath.Join(nodesIdPath, "labelsTitles.id"))
+		utils.CheckError(err)
+		// nodes/store
+		globals.NodesStore, err = os.Open(filepath.Join(nodesStorePath, "nodes.store"))
+		utils.CheckError(err)
+		globals.LabelsStore, err = os.Open(filepath.Join(nodesStorePath, "labels.store"))
+		utils.CheckError(err)
+		globals.LabelsTitlesStore, err = os.Open(filepath.Join(nodesStorePath, "labelsTitles.store"))
+		utils.CheckError(err)
+
+		// relationships/id
+		globals.RelationshipsId, err = os.Open(filepath.Join(relationshipsIdPath, "relationships.id"))
+		utils.CheckError(err)
+		globals.RelationshipsTypesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+		utils.CheckError(err)
+		// relationships/store
+		globals.RelationshipsStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationships.store"))
+		utils.CheckError(err)
+		globals.RelationshipsTypesStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+		utils.CheckError(err)
+
+		// properties/id
+		globals.PropertiesId, err = os.Open(filepath.Join(propertiesIdPath, "properties.id"))
+		utils.CheckError(err)
+		globals.PropertiesTitlesId, err = os.Open(filepath.Join(propertiesIdPath, "propertiesTitles.id"))
+		utils.CheckError(err)
+		globals.StringId, err = os.Open(filepath.Join(propertiesIdPath, "string.id"))
+		utils.CheckError(err)
+		globals.DoubleId, err = os.Open(filepath.Join(propertiesIdPath, "double.id"))
+		utils.CheckError(err)
+		// properties/store
+		globals.PropertiesStore, err = os.Open(filepath.Join(propertiesStorePath, "properties.store"))
+		utils.CheckError(err)
+		globals.PropertiesTitlesStore, err = os.Open(filepath.Join(propertiesStorePath, "propertiesTitles.store"))
+		utils.CheckError(err)
+		globals.StringStore, err = os.Open(filepath.Join(propertiesStorePath, "string.store"))
+		utils.CheckError(err)
+		globals.DoubleStore, err = os.Open(filepath.Join(propertiesStorePath, "double.store"))
+		utils.CheckError(err)
+
+		return err
+	} else {
+		return errors.New(fmt.Sprintf("Database with title %s does not exist", dbTitle))
+	}
+}
+
+func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
+	if _, err := os.Stat(filepath.Join(rootPath, dbTitle)); err == nil {
+		err = os.RemoveAll(filepath.Join(rootPath, dbTitle))
+		return err
+	} else {
+		return errors.New(fmt.Sprintf("Database with title %s does not exist", dbTitle))
+	}
 }
 
 func (fh FileHandler) Write(file *os.File, offset int, bs []byte) (err error) {

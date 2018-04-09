@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	err := core.InitDatabase("asd", "local")
+	err := core.InitDb("asd", "local")
 	utils.CheckError(err)
 }
