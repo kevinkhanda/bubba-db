@@ -15,6 +15,23 @@ func init()  {
 	globals.FileHandler = fh
 }
 
+func TestInitDatabaseStructure(test *testing.T) {
+	fh.InitDatabaseStructure("test_db")
+	if globals.NodesId.Name() != "databases/test_db/storage/nodes/id/nodes.id" {
+		test.Errorf("Expected file was not created")
+	}
+
+	fileData, err := ioutil.ReadFile(globals.NodesId.Name())
+	if err != nil {
+		test.Errorf("Error reading a file")
+	}
+
+	if string(fileData) != "0" {
+		test.Errorf("File content mismatch")
+	}
+	fh.DropDatabase("test_db")
+}
+
 func TestFileReadWrite(test *testing.T) {
 	testFile, err := os.Create("test.txt")
 	if err != nil {
