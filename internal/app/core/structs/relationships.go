@@ -14,6 +14,10 @@ type Relationship struct {
 	isFirst bool
 }
 
+func (r Relationship) GetId() int {
+	return r.id
+}
+
 type RelationshipTitle struct {
 	id int
 	title string

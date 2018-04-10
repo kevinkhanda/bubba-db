@@ -190,6 +190,7 @@ func (n Node) Create() {
 func (n Node) Get(id int) Node {
 	n.id = id
 	n.read()
+	n.isWritten = true	//Doesn't work if placed into read (-_-)
 	return n
 }
 
@@ -211,6 +212,10 @@ type Label struct {
 	isUsed bool
 	numberOfLabels int
 	labelNames [5]LabelTitle
+}
+
+func (l Label) GetId() int {
+	return l.id
 }
 
 type LabelTitle struct {

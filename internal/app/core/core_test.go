@@ -213,3 +213,36 @@ func TestNodeDelete(test *testing.T) {
 
 	fh.DropDatabase("test_db")
 }
+
+func TestNodeGet(test *testing.T) {
+	var (
+		n structs.Node
+		relId, propId, labelId []byte
+		bs []byte
+	)
+	fh.InitDatabaseStructure("test_db")
+	relId = utils.Int32ToByteArray(10)
+	propId = utils.Int32ToByteArray(20)
+	labelId = utils.Int32ToByteArray(30)
+	bs = append(utils.BoolToByteArray(true), relId...)
+	bs = append(bs, propId...)
+	bs = append(bs, labelId...)
+	err = fh.Write(globals.NodesStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error writing to file")
+	}
+	n = n.Get(0)
+	if n.GetRelationship().GetId() != 10 {
+		test.Errorf("Id value mismatch")
+	}
+
+	if n.GetProperty().GetId() != 20 {
+		test.Errorf("Id value mismatch")
+	}
+
+	if n.GetLabel().GetId() != 30 {
+		test.Errorf("Id value mismatch")
+	}
+
+	fh.DropDatabase("test_db")
+}

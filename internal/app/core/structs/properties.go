@@ -9,6 +9,10 @@ type Property struct {
 	value Value
 }
 
+func (p Property) GetId() int {
+	return p.id
+}
+
 type PropertyTitle struct {
 	id int
 	title string
