@@ -32,6 +32,20 @@ func TestInitDatabaseStructure(test *testing.T) {
 	fh.DropDatabase("test_db")
 }
 
+func TestSwitchDatabase(test *testing.T) {
+	fh.InitDatabaseStructure("test_db")
+	fh.InitDatabaseStructure("test_db2")
+	if globals.NodesId.Name() != "databases/test_db2/storage/nodes/id/nodes.id" {
+		test.Errorf("File pointers mismatch")
+	}
+	fh.SwitchDatabaseStructure("test_db")
+	if globals.NodesId.Name() != "databases/test_db/storage/nodes/id/nodes.id" {
+		test.Errorf("File pointers mismatch")
+	}
+	fh.DropDatabase("test_db")
+	fh.DropDatabase("test_db2")
+}
+
 func TestFileReadWrite(test *testing.T) {
 	testFile, err := os.Create("test.txt")
 	if err != nil {
