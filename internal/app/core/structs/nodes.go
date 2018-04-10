@@ -93,6 +93,10 @@ func (n Node) GetRelationship() *Relationship {
 	}
 }
 
+func (n Node) GetId() int {
+	return n.id
+}
+
 func (n Node) SetRelationship(rel *Relationship) {
 	n.relationship = rel
 	n.write()
@@ -196,9 +200,10 @@ func (n Node) Delete(id int) (err error) {
 	if err != nil {
 		return err
 	}
+
 	offset := globals.NodesSize * n.id
 	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
-	return nil
+	return err
 }
 
 type Label struct {

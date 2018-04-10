@@ -231,8 +231,9 @@ func (fh FileHandler) FreeId(file *os.File, id int) (err error) {
 		if id < firstId {
 			ids = append([]string{str}, ids[:]...)
 		} else if id > lastId {
-			//ids = append(ids[:], []string{str}...)
-			return errors.New("Bad id")
+			return errors.New("Bad id (specified id is out of range)")
+		} else if id == lastId {
+			return errors.New("Bad id (specified id is already free)")
 		} else {
 			for i := 0; i < len(ids) - 1; i++ {
 				fetchedPrev, err = strconv.Atoi(ids[i])
@@ -240,10 +241,11 @@ func (fh FileHandler) FreeId(file *os.File, id int) (err error) {
 				fetchedNext, err = strconv.Atoi(ids[i + 1])
 				utils.CheckError(err)
 				if id == fetchedPrev {
-					return errors.New("Bad id")
+					return errors.New("Bad id (specified id is already free)")
 				}
 				if id > fetchedPrev && id < fetchedNext {
 					ids = append(ids[:i + 1], append([]string{str}, ids[i + 1:]...)...)
+					break
 				}
 			}
 		}
