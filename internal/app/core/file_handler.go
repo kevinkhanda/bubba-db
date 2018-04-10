@@ -169,6 +169,70 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 
 func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 	if _, err := os.Stat(filepath.Join(rootPath, dbTitle)); err == nil {
+		if globals.CurrentDb == dbTitle {
+			// nodes/id
+			err = globals.NodesId.Close()
+			globals.NodesId = nil
+			utils.CheckError(err)
+			err = globals.LabelsId.Close()
+			globals.LabelsId = nil
+			utils.CheckError(err)
+			err = globals.LabelsTitlesId.Close()
+			globals.LabelsTitlesId = nil
+			utils.CheckError(err)
+			// nodes/store
+			err = globals.NodesStore.Close()
+			globals.NodesStore = nil
+			utils.CheckError(err)
+			err = globals.LabelsStore.Close()
+			globals.LabelsStore = nil
+			utils.CheckError(err)
+			err = globals.LabelsTitlesStore.Close()
+			globals.LabelsTitlesStore = nil
+			utils.CheckError(err)
+
+			// relationships/id
+			err = globals.RelationshipsId.Close()
+			globals.RelationshipsId = nil
+			utils.CheckError(err)
+			err = globals.RelationshipsTypesId.Close()
+			globals.RelationshipsId = nil
+			utils.CheckError(err)
+			// relationships/store
+			err = globals.RelationshipsStore.Close()
+			globals.RelationshipsStore = nil
+			utils.CheckError(err)
+			err = globals.RelationshipsTypesStore.Close()
+			globals.RelationshipsTypesStore = nil
+			utils.CheckError(err)
+
+			// properties/id
+			err = globals.PropertiesId.Close()
+			globals.PropertiesId = nil
+			utils.CheckError(err)
+			err = globals.PropertiesTitlesId.Close()
+			globals.PropertiesTitlesId = nil
+			utils.CheckError(err)
+			err = globals.StringId.Close()
+			globals.StringId = nil
+			utils.CheckError(err)
+			err = globals.DoubleId.Close()
+			globals.DoubleId = nil
+			utils.CheckError(err)
+			// properties/store
+			err = globals.PropertiesStore.Close()
+			globals.PropertiesStore = nil
+			utils.CheckError(err)
+			err = globals.PropertiesTitlesStore.Close()
+			globals.PropertiesTitlesStore = nil
+			utils.CheckError(err)
+			err = globals.StringStore.Close()
+			globals.StringStore = nil
+			utils.CheckError(err)
+			err = globals.DoubleStore.Close()
+			globals.DoubleStore = nil
+			utils.CheckError(err)
+		}
 		err = os.RemoveAll(filepath.Join(rootPath, dbTitle))
 		return err
 	} else {

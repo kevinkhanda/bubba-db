@@ -32,6 +32,7 @@ const (
 )
 
 var (
+	CurrentDb string
 	// nodes/id
 	NodesId, LabelsId, LabelsTitlesId,
 	// nodes/store
