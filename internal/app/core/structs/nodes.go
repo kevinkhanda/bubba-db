@@ -16,7 +16,6 @@ type Node struct {
 }
 
 func (n Node) toBytes() (bs []byte) {
-	//todo
 	var (
 		rel *Relationship
 		prop *Property
@@ -43,7 +42,6 @@ func (n Node) toBytes() (bs []byte) {
 }
 
 func (n Node) fromBytes(bs []byte) {
-	//todo
 	var (
 		id int32
 		rel Relationship
@@ -71,7 +69,6 @@ func (n Node) fromBytes(bs []byte) {
 }
 
 func (n Node) GetRelationship() *Relationship {
-	//todo
 	if n.relationship != nil {
 		return n.relationship
 	} else if !n.isWritten {
@@ -103,7 +100,6 @@ func (n Node) SetRelationship(rel *Relationship) {
 }
 
 func (n Node) GetProperty() *Property {
-	//todo
 	if n.property != nil {
 		return n.property
 	} else if !n.isWritten {
@@ -131,7 +127,6 @@ func (n Node) SetProperty(prop *Property) {
 }
 
 func (n Node) GetLabel() *Label {
-	//todo
 	if n.label != nil {
 		return n.label
 	} else if !n.isWritten {
@@ -159,7 +154,6 @@ func (n Node) SetLabel(label *Label) {
 }
 
 func (n Node) write()  {
-	//todo
 	offset := globals.NodesSize * n.id
 	bs := n.toBytes()
 	err := globals.FileHandler.Write(globals.NodesStore, offset, bs)
@@ -168,17 +162,14 @@ func (n Node) write()  {
 }
 
 func (n Node) read() {
-	//todo
-	bs := make([]byte, 13)
+	bs := make([]byte, globals.NodesSize)
 	offset := globals.NodesSize * n.id
 	err := globals.FileHandler.Read(globals.NodesStore, offset, bs)
 	utils.CheckError(err)
 	n.fromBytes(bs)
-
 }
 
 func (n Node) Create() {
-	//todo
 	id, err := globals.FileHandler.ReadId(globals.NodesId)
 	utils.CheckError(err)
 	n.id = id
@@ -202,16 +193,50 @@ func (n Node) Delete(id int) (err error) {
 		return err
 	}
 
-	offset := globals.NodesSize * n.id
+	offset := globals.NodesSize * id
 	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
 	return err
 }
 
 type Label struct {
 	id int
+	isWritten bool
 	isUsed bool
 	numberOfLabels int
 	labelNames [5]LabelTitle
+}
+
+func (l Label) fromBytes(bs []byte) {
+
+}
+
+func (l Label) toBytes() (bs []byte) {
+	return bs
+}
+
+func (l Label) write() {
+	offset := globals.LabelsSize * l.id
+	bs := l.toBytes()
+	err := globals.FileHandler.Write(globals.LabelsStore, offset, bs)
+	utils.CheckError(err)
+	l.isWritten = true
+}
+
+func (l Label) read() {
+	bs := make([]byte, globals.LabelsSize)
+	offset := globals.LabelsSize * l.id
+	err := globals.FileHandler.Read(globals.LabelsStore, offset, bs)
+	utils.CheckError(err)
+	l.fromBytes(bs)
+}
+
+func (l Label) Create() {
+	id, err := globals.FileHandler.ReadId(globals.LabelsId)
+	utils.CheckError(err)
+	l.id = id
+	l.isUsed = true
+	l.isWritten = false
+	l.write()
 }
 
 func (l Label) GetId() int {
