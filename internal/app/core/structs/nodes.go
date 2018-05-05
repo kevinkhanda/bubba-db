@@ -207,8 +207,31 @@ type Label struct {
 	labelNames [5]*LabelTitle
 }
 
-//todo Label from bytes
 func (l Label) fromBytes(bs []byte) {
+	var (
+		id int32
+		numberOfLabels int32
+		title []LabelTitle
+	)
+
+	if len(bs) != globals.LabelsSize {
+		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 34, actual length is %d", len(bs))
+		panic(errorMessage)
+	}
+
+	l.isUsed, err = utils.ByteArrayToBool(bs[0:1])
+	utils.CheckError(err)
+	numberOfLabels, err = utils.ByteArrayToInt32(bs[1:5])
+	utils.CheckError(err)
+	title = make([]LabelTitle, numberOfLabels)
+	l.numberOfLabels = int(numberOfLabels)
+	for i := 0; i < int(numberOfLabels); i++ {
+		id, err = utils.ByteArrayToInt32(bs[5 + i * 4:5 + (i + 1) * 4])
+		utils.CheckError(err)
+		title[i].id = int(id)
+		l.labelNames[i] = &title[i]
+	}
+
 
 }
 
