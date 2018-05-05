@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"graph-db/internal/pkg/utils"
 	"graph-db/internal/app/core/globals"
+	"errors"
 )
 
 type Node struct {
@@ -197,19 +198,21 @@ func (n Node) Delete(id int) (err error) {
 	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
 	return err
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
 type Label struct {
 	id int
 	isWritten bool
 	isUsed bool
 	numberOfLabels int
-	labelNames [5]LabelTitle
+	labelNames [5]*LabelTitle
 }
 
+//todo Label from bytes
 func (l Label) fromBytes(bs []byte) {
 
 }
 
+//todo Label to bytes
 func (l Label) toBytes() (bs []byte) {
 	return bs
 }
@@ -230,10 +233,52 @@ func (l Label) read() {
 	l.fromBytes(bs)
 }
 
+//todo
+func (l Label) GetLabelNames() []*LabelTitle  {
+	return nil
+}
+
+func (l Label) AddLabelName(title *LabelTitle) (err error) {
+	if l.numberOfLabels == 5 {
+		err = errors.New("Already max amount of labels")
+
+	} else {
+		l.labelNames[l.numberOfLabels] = title
+		l.numberOfLabels++
+	}
+	return err
+}
+
+//todo
+func (l Label) RemoveLabelName() (err error)  {
+	return nil
+}
+
+func (l Label) Get(id int) Label {
+	l.id = id
+	l.read()
+	l.isWritten = true
+	return l
+}
+
+func (l Label) Delete(id int) (err error) {
+	bs := make([]byte, globals.LabelsSize)
+	bs[0] = utils.BoolToByteArray(false)[0]
+	err = globals.FileHandler.FreeId(globals.LabelsId, id)
+	if err != nil {
+		return err
+	}
+
+	offset := globals.LabelsSize * id
+	err = globals.FileHandler.Write(globals.LabelsStore, offset, bs)
+	return err
+}
+
 func (l Label) Create() {
 	id, err := globals.FileHandler.ReadId(globals.LabelsId)
 	utils.CheckError(err)
 	l.id = id
+	l.numberOfLabels = 0
 	l.isUsed = true
 	l.isWritten = false
 	l.write()
@@ -242,7 +287,7 @@ func (l Label) Create() {
 func (l Label) GetId() int {
 	return l.id
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////
 type LabelTitle struct {
 	id int
 	title string
