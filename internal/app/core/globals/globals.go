@@ -19,6 +19,11 @@ const (
 	STRING = 2
 )
 
+type MapValue struct {
+	Counter int
+	Id int
+}
+
 const (
 	LabelsTitlesSize = 36
 	RelationshipsTitlesSize = 36
@@ -47,4 +52,6 @@ var (
 	PropertiesStore, PropertiesTitlesStore, StringStore, DoubleStore * os.File
 	// file handler
 	FileHandler FileHandlerInterface
+	//title maps
+	LabelTitleMap, PropertyTitleMap, RelationshipTitleMap map[string]MapValue
 )
