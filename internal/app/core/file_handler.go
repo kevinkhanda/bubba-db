@@ -65,10 +65,14 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	utils.CheckError(err)
 	globals.RelationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
 	utils.CheckError(err)
+	globals.RelationshipsTitlesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
+	utils.CheckError(err)
 	// relationships/store
 	globals.RelationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
 	utils.CheckError(err)
 	globals.RelationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+	utils.CheckError(err)
+	globals.RelationshipsTitlesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"))
 	utils.CheckError(err)
 
 	// properties/id
