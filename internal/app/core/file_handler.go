@@ -65,14 +65,10 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	utils.CheckError(err)
 	globals.RelationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
 	utils.CheckError(err)
-	globals.RelationshipsTitlesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
-	utils.CheckError(err)
 	// relationships/store
 	globals.RelationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
 	utils.CheckError(err)
 	globals.RelationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
-	utils.CheckError(err)
-	globals.RelationshipsTitlesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"))
 	utils.CheckError(err)
 
 	// properties/id
@@ -140,14 +136,10 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 		utils.CheckError(err)
 		globals.RelationshipsTypesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
 		utils.CheckError(err)
-		globals.RelationshipsTitlesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
-		utils.CheckError(err)
 		// relationships/store
 		globals.RelationshipsStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationships.store"))
 		utils.CheckError(err)
 		globals.RelationshipsTypesStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
-		utils.CheckError(err)
-		globals.RelationshipsTitlesStore, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTitles.store"))
 		utils.CheckError(err)
 
 		// properties/id
@@ -204,10 +196,7 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			globals.RelationshipsId = nil
 			utils.CheckError(err)
 			err = globals.RelationshipsTypesId.Close()
-			globals.RelationshipsTypesId = nil
-			utils.CheckError(err)
-			err = globals.RelationshipsTitlesId.Close()
-			globals.RelationshipsTitlesId = nil
+			globals.RelationshipsId = nil
 			utils.CheckError(err)
 			// relationships/store
 			err = globals.RelationshipsStore.Close()
@@ -215,9 +204,6 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			utils.CheckError(err)
 			err = globals.RelationshipsTypesStore.Close()
 			globals.RelationshipsTypesStore = nil
-			utils.CheckError(err)
-			err = globals.RelationshipsTitlesStore.Close()
-			globals.RelationshipsTitlesStore = nil
 			utils.CheckError(err)
 
 			// properties/id
