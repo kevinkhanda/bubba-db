@@ -29,6 +29,28 @@ type RelationshipTitle struct {
 	counter int
 }
 
+func (r Relationship) Create() {
+	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
+	utils.CheckError(err)
+	r.id = id
+	r.isUsed = true
+	r.isWritten = false
+	r.write()
+}
+
+func (r Relationship) Delete(id int) (err error) {
+	bs := make([]byte, globals.RelationshipsSize)
+	bs[0] = utils.BoolToByteArray(false)[0]
+	err = globals.FileHandler.FreeId(globals.RelationshipsId, id)
+	if err != nil {
+		return err
+	}
+
+	offset := globals.RelationshipsSize * id
+	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs)
+	return err
+}
+
 func (r Relationship) GetId() int {
 	return r.id
 }
@@ -325,11 +347,4 @@ func (r Relationship) write() {
 	r.isWritten = true
 }
 
-func (r Relationship) Create() {
-	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
-	utils.CheckError(err)
-	r.id = id
-	r.isUsed = true
-	r.isWritten = false
-	r.write()
-}
+//func (title RelationshipTitle) 
