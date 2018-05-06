@@ -378,11 +378,10 @@ func (lt LabelTitle) GetId() int  {
 	return lt.id
 }
 
-//TODO: String Length
 func  WriteLabelTitle(id int, title string, counter int)  {
 	offset := id * globals.LabelsTitlesSize
 	bs := make([]byte, globals.LabelsTitlesSize)
-	titleBs := utils.StringToByteArray(title)
+	titleBs := utils.StringToByteArray(utils.AddStopCharacter(title, globals.LabelsTitlesSize - 4))
 	for i := 0; i < len(titleBs); i++ {
 		bs[i] = titleBs[i]
 	}

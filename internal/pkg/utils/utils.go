@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strings"
 )
 
 func CheckError(err error)  {
@@ -101,4 +102,23 @@ func ByteArrayToFloat64(bs []byte) (float64, error) {
 	bits := binary.LittleEndian.Uint64(bs)
 	float := math.Float64frombits(bits)
 	return float, nil
+}
+
+// If string parameter length is less than requiredLength then '#' character is added to the end of string
+func AddStopCharacter(str string, requiredLength int) string {
+	if len(str) < requiredLength {
+		str += "#"
+	}
+
+	return str
+}
+
+// Returns string slice until the '#' character
+func RemoveStopCharacter(str string) string {
+	i := strings.Index(str, "#")
+	if i > -1 {
+		return str[:i]
+	} else {
+		return str
+	}
 }

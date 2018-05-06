@@ -61,7 +61,7 @@ func fillMap(m map[string]globals.MapValue, file *os.File, recordSize int) {
 		counter, conversionError = utils.ByteArrayToInt32(bs[recordSize - 4:])
 		utils.CheckError(conversionError)
 		if counter != 0 {
-			str = utils.ByteArrayToString(bs[0 : recordSize-4])
+			str = utils.RemoveStopCharacter(utils.ByteArrayToString(bs[0 : recordSize-4]))
 			utils.CheckError(conversionError)
 			m[str] = globals.MapValue{Id: i, Counter: int(counter)}
 		}
