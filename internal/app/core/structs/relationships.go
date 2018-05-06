@@ -29,7 +29,7 @@ type RelationshipTitle struct {
 	counter int
 }
 
-func (r Relationship) Create() {
+func (r *Relationship) Create() {
 	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
 	utils.CheckError(err)
 	r.id = id
@@ -39,7 +39,7 @@ func (r Relationship) Create() {
 	r.write()
 }
 
-func (r Relationship) Delete(id int) (err error) {
+func (r *Relationship) Delete(id int) (err error) {
 	bs := make([]byte, globals.RelationshipsSize)
 	bs[0] = utils.BoolToByteArray(false)[0]
 	err = globals.FileHandler.FreeId(globals.RelationshipsId, id)
@@ -52,11 +52,18 @@ func (r Relationship) Delete(id int) (err error) {
 	return err
 }
 
-func (r Relationship) GetId() int {
+func (r *Relationship) Get(id int) Relationship {
+	r.id = id
+	r.read()
+	r.isWritten = true
+	return *r
+}
+
+func (r *Relationship) GetId() int {
 	return r.id
 }
 
-func (r Relationship) getNode(start int, end int) *Node {
+func (r *Relationship) getNode(start int, end int) *Node {
 	var (
 		nodeId int32
 		bs = make([]byte, globals.RelationshipsSize)
@@ -78,7 +85,7 @@ func (r Relationship) getNode(start int, end int) *Node {
 	}
 }
 
-func (r Relationship) getRelationship(start int, end int) *Relationship {
+func (r *Relationship) getRelationship(start int, end int) *Relationship {
 	var (
 		relationshipId int32
 		bs = make([]byte, globals.RelationshipsSize)
@@ -100,7 +107,7 @@ func (r Relationship) getRelationship(start int, end int) *Relationship {
 	}
 }
 
-func (r Relationship) GetFirstNode() *Node {
+func (r *Relationship) GetFirstNode() *Node {
 	if r.node1 != nil {
 		return r.node1
 	} else if !r.isWritten {
@@ -112,7 +119,7 @@ func (r Relationship) GetFirstNode() *Node {
 	}
 }
 
-func (r Relationship) GetSecondNode() *Node {
+func (r *Relationship) GetSecondNode() *Node {
 	if r.node2 != nil {
 		return r.node2
 	} else if !r.isWritten {
@@ -124,7 +131,7 @@ func (r Relationship) GetSecondNode() *Node {
 	}
 }
 
-func (r Relationship) GetTitle() *RelationshipTitle {
+func (r *Relationship) GetTitle() *RelationshipTitle {
 	if r.title != nil {
 		return r.title
 	} else if !r.isWritten {
@@ -154,7 +161,7 @@ func (r Relationship) GetTitle() *RelationshipTitle {
 	}
 }
 
-func (r Relationship) GetFirstPreviousRelationship() *Relationship {
+func (r *Relationship) GetFirstPreviousRelationship() *Relationship {
 	if r.previousRelationship1 != nil {
 		return r.previousRelationship1
 	} else if !r.isWritten {
@@ -166,7 +173,7 @@ func (r Relationship) GetFirstPreviousRelationship() *Relationship {
 	}
 }
 
-func (r Relationship) GetSecondPreviousRelationship() *Relationship {
+func (r *Relationship) GetSecondPreviousRelationship() *Relationship {
 	if r.previousRelationship2 != nil {
 		return r.previousRelationship2
 	} else if !r.isWritten {
@@ -178,7 +185,7 @@ func (r Relationship) GetSecondPreviousRelationship() *Relationship {
 	}
 }
 
-func (r Relationship) GetFirstNextRelationship() *Relationship {
+func (r *Relationship) GetFirstNextRelationship() *Relationship {
 	if r.nextRelationship1 != nil {
 		return r.nextRelationship1
 	} else if !r.isWritten {
@@ -190,7 +197,7 @@ func (r Relationship) GetFirstNextRelationship() *Relationship {
 	}
 }
 
-func (r Relationship) GetSecondNextRelationship() *Relationship {
+func (r *Relationship) GetSecondNextRelationship() *Relationship {
 	if r.nextRelationship2 != nil {
 		return r.nextRelationship2
 	} else if !r.isWritten {
@@ -202,7 +209,7 @@ func (r Relationship) GetSecondNextRelationship() *Relationship {
 	}
 }
 
-func (r Relationship) GetProperty() *Property {
+func (r *Relationship) GetProperty() *Property {
 	if r.property != nil {
 		return r.property
 	} else if !r.isWritten {
@@ -232,7 +239,7 @@ func (r Relationship) GetProperty() *Property {
 	}
 }
 
-func (r Relationship) toBytes() (bs []byte) {
+func (r *Relationship) toBytes() (bs []byte) {
 	var (
 		isUsed []byte
 		isFirst []byte
@@ -278,7 +285,7 @@ func (r Relationship) toBytes() (bs []byte) {
 	return bs
 }
 
-func (r Relationship) fromBytes(bs []byte) {
+func (r *Relationship) fromBytes(bs []byte) {
 	var (
 		id int32
 		node1 Node
@@ -338,7 +345,7 @@ func (r Relationship) fromBytes(bs []byte) {
 	utils.CheckError(err)
 }
 
-func (r Relationship) read() {
+func (r *Relationship) read() {
 	bs := make([]byte, globals.RelationshipsSize)
 	offset := globals.RelationshipsSize * r.id
 	err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
@@ -346,7 +353,7 @@ func (r Relationship) read() {
 	r.fromBytes(bs)
 }
 
-func (r Relationship) write() {
+func (r *Relationship) write() {
 	offset := globals.RelationshipsSize * r.id
 	bs := r.toBytes()
 	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs)
@@ -355,7 +362,7 @@ func (r Relationship) write() {
 }
 
 // Relationships Title
-func (title RelationshipTitle) GetId() int {
+func (title *RelationshipTitle) GetId() int {
 	return title.id
 }
 
