@@ -19,5 +19,5 @@ func main() {
 	//}
 	//go http.Serve(l, nil)
 
-	core.Test()
+	core.Init()
 }

@@ -10,22 +10,21 @@ import (
 type Entity struct {
 	ip 				string
 	port 			string
-	identifier 		int
+	identifier 		string
 	connector		rpc.Client
 	isActive		bool
 	slaves			[]Entity
 }
 
 type RPCRequest struct {
-	Method 	string
-	Data 	[]byte
+	Data []byte
 }
 
 func initMaster(ip string, port string) Entity{
 	master = Entity{
 		ip:         ip,
 		port:       port,
-		identifier: 0,
+		identifier: "master",
 		isActive:   true,
 		connector:  rpc.Client{},
 		slaves:     nil,
@@ -44,7 +43,7 @@ func initSlaves(master *Entity){
 		newSlave := Entity {
 			ip:			slaveAddress[0],
 			port:		slaveAddress[1],
-			identifier:	initialIdentifier,
+			identifier:	"slave"+string(initialIdentifier),
 			isActive:	false,
 			connector:	rpc.Client{},
 			slaves:		nil,

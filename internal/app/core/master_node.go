@@ -15,21 +15,59 @@ var master Entity
 
 func requestSlaveStatus(entity *Entity) error {
 	var reply string
-	request := RPCRequest{"ping", nil}
-	err = entity.connector.Call("Entity.SendStatus", &request, &reply)
-	if err != nil {
-		log.Fatal("Problems in requestSlaveStatus ", err)
-	}
-	if reply == "success" {
-		println("Slave " + entity.ip + ":"+ entity.port + "is ready")
-		for i, slave := range master.slaves {
-			if slave.ip == entity.ip && slave.port == entity.port {
-				master.slaves[i].isActive = true
-				break
+	var attempts = 0
+	for attempts < 5 {
+		err = errors.New("")
+		request := RPCRequest{nil}
+		err = entity.connector.Call("Entity.SendStatus", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
+		}
+		if reply == "success" {
+			println("Slave " + entity.ip + ":" + entity.port + " is available")
+			reply = ""
+			request := RPCRequest{[]byte("db")}
+			err = entity.connector.Call("Entity.Deploy", &request, &reply)
+			if err != nil {
+				log.Fatal("Problems during Deploying")
+				err = errors.New("problems during Deploying")
+				attempts++
+				continue
+			}
+			if reply == "success" {
+				println("Slave " + entity.ip + ":" + entity.port + "is initialized")
+				for i, slave := range master.slaves {
+					if slave.ip == entity.ip && slave.port == entity.port {
+						master.slaves[i].isActive = true
+						attempts = 5
+						break
+					}
+				}
 			}
 		}
-	} else {
-		err = errors.New("incorrect response")
+	}
+	return err
+}
+
+func SendDropDatabase(entity *Entity) error {
+	var reply string
+	var attempts = 0
+	for attempts < 5 {
+		err = errors.New("")
+		request := RPCRequest{nil}
+		err = entity.connector.Call("Entity.SendStatus", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
+		}
+		if reply == "success" {
+			attempts = 5
+		}
 	}
 	return err
 }
@@ -46,7 +84,7 @@ func getSlavesIps() ([]string, error) {
 	return ips, err
 }
 
-func Test() {
+func Init() {
 	var myIp, err = getEntityIpAddress()
 	if err == nil {
 		println("My IP: ", myIp)
@@ -63,10 +101,8 @@ func Test() {
 	go http.Serve(l, nil)
 
 	for i, slave := range master.slaves {
-		// RPC call...
 		var rpcClient *rpc.Client
-		//var err error
-		attempt := 1
+		attempt := 0
 		for attempt != -1 {
 			log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
 			println()
@@ -82,26 +118,22 @@ func Test() {
 			select {
 			case err := <-c:
 				if err != nil {
-					log.Print("dialing:", err)
-					time.Sleep(time.Second)
+					log.Print("Dialing:", err)
+					if attempt == 5 {
+						attempt = -1
+					} else {
+						time.Sleep(time.Second)
+					}
 				} else {
 					attempt = -1
 				}
 			case <-time.After(time.Second * 5):
-				println("timeout...")
+				println("Timeout...")
 			}
 		}
 	}
 
 	for _, slave := range master.slaves {
 		requestSlaveStatus(&slave)
-		var readyCount= 0
-		for _, entity := range master.slaves {
-			if entity.isActive {
-				readyCount++
-			}
-		}
-		if readyCount == len(master.slaves) {
-		}
 	}
 }
