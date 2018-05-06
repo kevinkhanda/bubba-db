@@ -314,15 +314,14 @@ func (l *Label) AddLabelName(title string) (err error) {
 	return err
 }
 
-func (l *Label) RemoveLabelName(id int) (err error)  {
+func (l *Label) RemoveLabelName(title string) (err error)  {
 	if l.numberOfLabels == 0 {
 		err = errors.New("There is no such label")
 		return err
 	}
 	_ = l.GetLabelNames()
 	for i := 0; i < l.numberOfLabels; i++ {
-		if (l.labelNames[i].GetId() == id) {
-			title := l.labelNames[i].title
+		if (l.labelNames[i].GetTitle() == title) {
 			if i == l.numberOfLabels - 1 {
 				l.numberOfLabels--
 				l.write()

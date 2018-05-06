@@ -412,13 +412,39 @@ func TestLabelNameMethods(test *testing.T)  {
 	value, present := globals.LabelTitleMap["test"]
 	if !present {
 		test.Errorf("Absence of value in map")
-	} else if value.Id != 0 {
-		test.Errorf("Id value mismatch")
+	} else {
+		if value.Id != 0 {
+			test.Errorf("Id value mismatch")
+		}
+		if value.Counter != 2 {
+			test.Errorf("Counter value mismatch")
+		}
 	}
-	if value.Counter != 2 {
-		test.Errorf("Counter value mismatch")
+
+	l2.RemoveLabelName("test")
+	if l2.GetNumberOfLabels() != 0 {
+		test.Errorf("Number of labels mismatch")
 	}
-	
+	value, present = globals.LabelTitleMap["test"]
+	if !present {
+		test.Errorf("Absence of value in map")
+	} else {
+		if value.Id != 0 {
+			test.Errorf("Id value mismatch")
+		}
+		if value.Counter != 1 {
+			test.Errorf("Counter value mismatch")
+		}
+	}
+	l1.RemoveLabelName("test")
+	if l1.GetNumberOfLabels() != 0 {
+		test.Errorf("Number of labels mismatch")
+	}
+	_, present = globals.LabelTitleMap["test"]
+	if present {
+		test.Errorf("Unexpected presence of value in map")
+	}
+
 
 }
 
