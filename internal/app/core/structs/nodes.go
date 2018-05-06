@@ -237,8 +237,6 @@ func (l *Label) fromBytes(bs []byte) {
 		title[i].id = int(id)
 		l.labelNames[i] = &title[i]
 	}
-	println("in bytes")
-	println(l.numberOfLabels)
 }
 
 func (l *Label) toBytes() (bs []byte) {
@@ -279,8 +277,6 @@ func (l *Label) read() {
 	err := globals.FileHandler.Read(globals.LabelsStore, offset, bs)
 	utils.CheckError(err)
 	l.fromBytes(bs)
-	println("in read")
-	println(l.numberOfLabels)
 }
 
 func (l *Label) GetLabelNames() []*LabelTitle  {

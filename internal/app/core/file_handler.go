@@ -27,6 +27,7 @@ func (fh FileHandler) InitFileSystem() {
 }
 
 func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
+	var dbPath = filepath.Join(rootPath, dbTitle)
 	var storagePath = filepath.Join(rootPath, dbTitle, "storage")
 	var nodesPath = filepath.Join(storagePath, "nodes")
 	var nodesIdPath = filepath.Join(nodesPath, "id")
@@ -91,7 +92,8 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	utils.CheckError(err)
 
 	//config
-	globals.Config, err = os.Create(filepath.Join(rootPath, dbTitle, "connections.config"))
+	globals.Config, err = os.Create(filepath.Join(dbPath, "connections.config"))
+	utils.CheckError(err)
 
 	globals.NodesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.LabelsId.WriteString(fmt.Sprintf("%d", 0))
