@@ -50,8 +50,10 @@ var (
 	PropertiesId, PropertiesTitlesId, StringId, DoubleId,
 	// properties/store
 	PropertiesStore, PropertiesTitlesStore, StringStore, DoubleStore * os.File
+	// config file
+	Config *os.File
 	// file handler
 	FileHandler FileHandlerInterface
-	//title maps
+	// title maps
 	LabelTitleMap, PropertyTitleMap, RelationshipTitleMap map[string]MapValue
 )
