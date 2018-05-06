@@ -303,3 +303,102 @@ func TestNodeGet(test *testing.T) {
 
 	fh.DropDatabase("test_db")
 }
+
+func TestLabelCreate(test *testing.T) {
+	var (
+		l structs.Label
+		bsExpected []byte
+	)
+	InitDb("test_db", "local")
+	l.Create()
+	bs := make([]byte, globals.LabelsSize)
+	bsNumber := utils.Int32ToByteArray(0)
+	bsExpected = append(utils.BoolToByteArray(true), bsNumber...)
+	err := fh.Read(globals.LabelsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error reading a file")
+		println(err.Error())
+	}
+
+	for i := 0; i < len(bsExpected); i++ {
+		if bsExpected[i] != bs[i] {
+			test.Errorf("Read value mismatch")
+		}
+	}
+
+	DropDb("test_db")
+}
+
+//TODO: Test id availability after deletion for all delete methods
+func TestLabelDelete(test *testing.T) {
+	InitDb("test_db", "local")
+	var l structs.Label
+	l.Create()
+	l.Delete(l.GetId())
+	bs := make([]byte, globals.LabelsSize)
+	bsExpected := make([]byte, globals.LabelsSize)
+	bsExpected[0] = utils.BoolToByteArray(false)[0]
+	err := fh.Read(globals.LabelsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error reading from LabelStore")
+	}
+
+	for i := 0; i < len(bs); i++ {
+		if bs[i] != bsExpected[i] {
+			test.Errorf("Read values mismatch")
+		}
+	}
+
+	DropDb("test_tb")
+}
+
+func TestLabelGet(test *testing.T)  {
+	var(
+		l structs.Label
+		numberBs, firstBs, secondBs, emptyBs,
+		bs []byte
+	)
+	InitDb("test_db", "local")
+	numberBs = utils.Int32ToByteArray(2)
+	firstBs = utils.Int32ToByteArray(10)
+	secondBs = utils.Int32ToByteArray(20)
+	emptyBs = make([]byte, 4)
+	bs = append(utils.BoolToByteArray(true), numberBs...)
+	bs = append(bs, firstBs...)
+	bs = append(bs, secondBs...)
+	bs = append(bs, emptyBs...)
+	bs = append(bs, emptyBs...)
+	bs = append(bs, emptyBs...)
+	err = fh.Write(globals.LabelsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error writing to file")
+	}
+
+	l = l.Get(0)
+	if l.GetNumberOfLabels() != 2 {
+		test.Errorf("Label number mismatch")
+		println(l.GetNumberOfLabels())
+	}
+
+	//if l.GetLabelNames()[0].GetId() != 10 {
+	//	test.Errorf("Id value mismatch")
+	//}
+	//
+	//if l.GetLabelNames()[1].GetId() != 20 {
+	//	test.Errorf("Id value mismatch")
+	//}
+
+	DropDb("test_tb")
+}
+
+func TestAddLabelName(test *testing.T)  {
+
+}
+
+func TestRemoveLabelName(test *testing.T) {
+
+}
+
+func TestGetLabelNames(test *testing.T) {
+
+}
