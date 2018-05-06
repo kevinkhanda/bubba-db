@@ -17,8 +17,8 @@ type RPCCall struct {
 	Data 	[]byte
 }
 
-func (entity *Entity) Ping(request *RPCCall, reply string) error {
-	reply = "Pong"
+func (entity *Entity) Ping(request *RPCCall, reply *string) error {
+	*reply = "Pong"
 	return nil
 }
 
