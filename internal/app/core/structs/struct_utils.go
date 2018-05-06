@@ -19,9 +19,12 @@ func IfNilAssignMinusOne(value interface{}) int {
 		if reflect.TypeOf(value) == reflect.TypeOf(Label{}) {
 			value := value.(Label)
 			return value.id
-		} else {
-			return -1
 		}
+		if reflect.TypeOf(value) == reflect.TypeOf(RelationshipTitle{}) {
+			value := value.(RelationshipTitle)
+			return value.id
+		}
+		return -1
 	} else {
 		return -1
 	}

@@ -48,6 +48,8 @@ func (n Node) fromBytes(bs []byte) {
 		rel Relationship
 		prop Property
 		label Label
+
+		err error
 	)
 	if len(bs) != globals.NodesSize {
 		errorMessage := fmt.Sprintf("converter: wrong byte array length. expected array length is 13, actual length is %d", len(bs))

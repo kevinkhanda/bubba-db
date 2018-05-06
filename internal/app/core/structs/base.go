@@ -1,7 +1,5 @@
 package structs
 
-var err error
-
 type Store interface {
 	read()
 	write()
