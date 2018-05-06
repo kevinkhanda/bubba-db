@@ -8,5 +8,15 @@ import (
 func main() {
 	err := core.InitDb("asd", "local")
 	utils.CheckError(err)
+
+	//arith := new(core.Entity)
+	//rpc.Register(arith)
+	//rpc.HandleHTTP()
+	//l, e := net.Listen("tcp", ":7000")
+	//if e != nil {
+	//	log.Fatal("listen error:", e)
+	//}
+	//go http.Serve(l, nil)
+
 	core.Test()
 }
