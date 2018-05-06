@@ -21,9 +21,9 @@ func sendPing(slave *Entity)  {
 	println("Answer from ", slave.ip, ":", slave.port, " ", reply)
 }
 
-func getSalvesIps() ([]string, error) {
+func getSlavesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.240.20.132:5000\",\"10.240.18.30:5000\"]")
+	var ipsJson = string("[\"10.240.18.30:8080\"]")
 	err := json.Unmarshal([]byte(ipsJson), &ips)
 	return ips, err
 }
@@ -34,7 +34,7 @@ func Test() {
 		println("My IP: ", myIp)
 	}
 
-	master = initMaster(myIp, "5000")
+	master = initMaster(myIp, "8080")
 	initSlaves(&master)
 
 	for _, slave := range master.slaves {
