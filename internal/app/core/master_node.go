@@ -5,6 +5,8 @@ import (
 	"net/rpc"
 	"log"
 	"time"
+	"net"
+	"net/http"
 )
 
 var master Entity
@@ -23,7 +25,7 @@ func sendPing(slave *Entity)  {
 
 func getSlavesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.91.40.48:5000\"]")
+	var ipsJson = string("[\"10.240.19.80:5000\"]")
 	err := json.Unmarshal([]byte(ipsJson), &ips)
 	return ips, err
 }
@@ -37,6 +39,14 @@ func Test() {
 	master = initMaster(myIp, "7000")
 	initSlaves(&master)
 
+	rpc.Register(master)
+	rpc.HandleHTTP()
+	l, e := net.Listen("tcp", myIp+":7000")
+	if e != nil {
+		log.Fatal("listen error:", e)
+	}
+	go http.Serve(l, nil)
+
 	for _, slave := range master.slaves {
 		// RPC call...
 		var rpcClient *rpc.Client
@@ -44,9 +54,11 @@ func Test() {
 		attempt := 1
 		for attempt != -1 {
 			log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
+			println()
 			attempt = attempt + 1
 			c := make(chan error, 1)
 			go func() {
+				println(slave.ip)
 				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
 				if err == nil {
 					println("GG WP")
