@@ -11,16 +11,14 @@ import (
 
 var master Entity
 
-type RPCRequest struct {
-	Method 	string
-	Data 	[]byte
-}
-
 func sendPing(slave *Entity)  {
 	var reply string
 	request := RPCRequest{"ping", nil}
-	slave.connector.Call("Ping", &request, &reply)
-	println("Answer from ", slave.ip, ":", slave.port, " ", reply)
+	err = slave.connector.Call("Ping", &request, &reply)
+	if err != nil {
+		log.Fatal("Problems in Ping ", err)
+	}
+	println("Answer from " + slave.ip + ":"+ slave.port, reply)
 }
 
 func getSlavesIps() ([]string, error) {
@@ -38,7 +36,7 @@ func Test() {
 
 	master = initMaster(myIp, "7000")
 	initSlaves(&master)
-	rpc.Register(master)
+	rpc.Register(&master)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", myIp+":7000")
 	if e != nil {

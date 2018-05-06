@@ -2,7 +2,7 @@ package core
 
 import "net/rpc"
 
-type Slavef struct {
+type Slave struct {
 	ip			string
 	port		string
 	identifier	string
@@ -10,15 +10,8 @@ type Slavef struct {
 }
 
 
-type RPCCall struct {
-	Ip		string
-	Port	string
-	Method 	string
-	Data 	[]byte
-}
-
-func (entity *Entity) Ping(request *RPCCall, reply *string) error {
+func (entity *Entity) Ping(request *RPCRequest, reply *string) error {
 	*reply = "Pong"
-	return nil
+	return err
 }
 
