@@ -209,6 +209,10 @@ type Label struct {
 	labelNames []*LabelTitle
 }
 
+func (l Label) GetNumberOfLabels() int {
+	return l.numberOfLabels
+}
+
 func (l Label) fromBytes(bs []byte) {
 	var (
 		id int32
@@ -251,6 +255,11 @@ func (l Label) toBytes() (bs []byte) {
 		bs = append(bs, titleBs...)
 	}
 
+	//Need to append some stuff to make bs of needed size
+	//numberBs was chosen because it was already created and has suitable size
+	for len(bs) < globals.LabelsSize {
+		bs = append(bs, numberBs...)
+	}
 	return bs
 }
 
