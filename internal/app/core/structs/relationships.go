@@ -36,7 +36,6 @@ func (r Relationship) GetId() int {
 func (r Relationship) getNode(start int, end int) *Node {
 	var (
 		nodeId int32
-		err error
 		bs = make([]byte, globals.RelationshipsSize)
 	)
 	if len(r.byteString) < 0 {
@@ -59,7 +58,6 @@ func (r Relationship) getNode(start int, end int) *Node {
 func (r Relationship) getRelationship(start int, end int) *Relationship {
 	var (
 		relationshipId int32
-		err error
 		bs = make([]byte, globals.RelationshipsSize)
 	)
 	if len(r.byteString) < 0 {
@@ -265,8 +263,6 @@ func (r Relationship) fromBytes(bs []byte) {
 		nextRelationship1 Relationship
 		nextRelationship2 Relationship
 		property Property
-
-		err error
 	)
 	if len(bs) != globals.RelationshipsSize {
 		errorMessage := fmt.Sprintf("Converter: wrong relationships byte array length, expected 34, given %d", len(bs))
@@ -316,7 +312,7 @@ func (r Relationship) fromBytes(bs []byte) {
 func (r Relationship) read() {
 	bs := make([]byte, globals.RelationshipsSize)
 	offset := globals.RelationshipsSize * r.id
-	err := globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
+	err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
 	utils.CheckError(err)
 	r.fromBytes(bs)
 }
@@ -324,7 +320,7 @@ func (r Relationship) read() {
 func (r Relationship) write() {
 	offset := globals.RelationshipsSize * r.id
 	bs := r.toBytes()
-	err := globals.FileHandler.Write(globals.NodesStore, offset, bs)
+	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
 	utils.CheckError(err)
 	r.isWritten = true
 }
