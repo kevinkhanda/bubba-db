@@ -204,7 +204,7 @@ type Label struct {
 	isWritten bool
 	isUsed bool
 	numberOfLabels int
-	labelNames [5]*LabelTitle
+	labelNames []*LabelTitle
 }
 
 func (l Label) fromBytes(bs []byte) {
@@ -235,8 +235,22 @@ func (l Label) fromBytes(bs []byte) {
 
 }
 
-//todo Label to bytes
 func (l Label) toBytes() (bs []byte) {
+	var (
+		titleBs []byte
+		numberBs []byte
+		titles []*LabelTitle
+	)
+
+	titles = l.GetLabelNames()
+	isUsed := utils.BoolToByteArray(l.isUsed)
+	numberBs = utils.Int32ToByteArray(int32(l.numberOfLabels))
+	bs = append(isUsed, numberBs...)
+	for i := 0; i < l.numberOfLabels; i++ {
+		titleBs = utils.Int32ToByteArray(int32(titles[i].GetId()))
+		bs = append(bs, titleBs...)
+	}
+
 	return bs
 }
 
@@ -256,9 +270,27 @@ func (l Label) read() {
 	l.fromBytes(bs)
 }
 
-//todo
 func (l Label) GetLabelNames() []*LabelTitle  {
-	return nil
+	if l.numberOfLabels == 0 || !l.isWritten {
+		return nil
+	} else if l.labelNames[0] != nil {
+		return l.labelNames
+	} else {
+		var id int32
+		offset := l.id * globals.LabelsSize
+		bs := make([]byte, globals.LabelsSize)
+		err := globals.FileHandler.Read(globals.LabelsStore, offset, bs)
+		utils.CheckError(err)
+		titles := make([]*LabelTitle, l.numberOfLabels)
+		for i := 0; i < l.numberOfLabels; i++ {
+			id, err = utils.ByteArrayToInt32(bs[5 + i * 4:5 + (i + 1) * 4])
+			utils.CheckError(err)
+			titles[i].id = int(id)
+			l.labelNames[i] = titles[i]
+		}
+		return l.labelNames
+	}
+
 }
 
 func (l Label) AddLabelName(title *LabelTitle) (err error) {
@@ -268,17 +300,37 @@ func (l Label) AddLabelName(title *LabelTitle) (err error) {
 	} else {
 		l.labelNames[l.numberOfLabels] = title
 		l.numberOfLabels++
+		l.write()
 	}
 	return err
 }
 
-//todo
-func (l Label) RemoveLabelName() (err error)  {
-	return nil
+func (l Label) RemoveLabelName(id int) (err error)  {
+	if l.numberOfLabels == 0 {
+		err = errors.New("There is no such label")
+		return err
+	}
+	_ = l.GetLabelNames()
+	for i := 0; i < l.numberOfLabels; i++ {
+		if (l.labelNames[i].GetId() == id) {
+			if i == l.numberOfLabels - 1 {
+				l.numberOfLabels--
+				l.write()
+			} else {
+				l.labelNames[i] = l.labelNames[l.numberOfLabels - 1]
+				l.numberOfLabels--;
+				l.write()
+			}
+			return nil
+		}
+	}
+	err = errors.New("There is no such label")
+	return err
 }
 
 func (l Label) Get(id int) Label {
 	l.id = id
+	l.labelNames = make([]*LabelTitle, 5)
 	l.read()
 	l.isWritten = true
 	return l
@@ -302,6 +354,7 @@ func (l Label) Create() {
 	utils.CheckError(err)
 	l.id = id
 	l.numberOfLabels = 0
+	l.labelNames = make([]*LabelTitle, 5)
 	l.isUsed = true
 	l.isWritten = false
 	l.write()
@@ -315,4 +368,8 @@ type LabelTitle struct {
 	id int
 	title string
 	counter int
+}
+
+func (lt LabelTitle) GetId() int  {
+	return lt.id
 }
