@@ -63,12 +63,12 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	// relationships/id
 	globals.RelationshipsId, err = os.Create(filepath.Join(relationshipsIdPath, "relationships.id"))
 	utils.CheckError(err)
-	globals.RelationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+	globals.RelationshipsTitlesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
 	utils.CheckError(err)
 	// relationships/store
 	globals.RelationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
 	utils.CheckError(err)
-	globals.RelationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+	globals.RelationshipsTitlesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"))
 	utils.CheckError(err)
 
 	// properties/id
@@ -95,7 +95,7 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	globals.LabelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
 
 	globals.RelationshipsId.WriteString(fmt.Sprintf("%d", 0))
-	globals.RelationshipsTypesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.RelationshipsTitlesId.WriteString(fmt.Sprintf("%d", 0))
 
 	globals.PropertiesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.PropertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
@@ -134,12 +134,12 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 		// relationships/id
 		globals.RelationshipsId, err = os.Open(filepath.Join(relationshipsIdPath, "relationships.id"))
 		utils.CheckError(err)
-		globals.RelationshipsTypesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+		globals.RelationshipsTitlesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
 		utils.CheckError(err)
 		// relationships/store
 		globals.RelationshipsStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationships.store"))
 		utils.CheckError(err)
-		globals.RelationshipsTypesStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+		globals.RelationshipsTitlesStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"))
 		utils.CheckError(err)
 
 		// properties/id
@@ -195,15 +195,15 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			err = globals.RelationshipsId.Close()
 			globals.RelationshipsId = nil
 			utils.CheckError(err)
-			err = globals.RelationshipsTypesId.Close()
+			err = globals.RelationshipsTitlesId.Close()
 			globals.RelationshipsId = nil
 			utils.CheckError(err)
 			// relationships/store
 			err = globals.RelationshipsStore.Close()
 			globals.RelationshipsStore = nil
 			utils.CheckError(err)
-			err = globals.RelationshipsTypesStore.Close()
-			globals.RelationshipsTypesStore = nil
+			err = globals.RelationshipsTitlesStore.Close()
+			globals.RelationshipsTitlesStore = nil
 			utils.CheckError(err)
 
 			// properties/id
