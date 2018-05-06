@@ -47,7 +47,7 @@ func Test() {
 	}
 	go http.Serve(l, nil)
 
-	for _, slave := range master.slaves {
+	for i, slave := range master.slaves {
 		// RPC call...
 		var rpcClient *rpc.Client
 		//var err error
@@ -61,7 +61,7 @@ func Test() {
 				println(slave.ip)
 				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
 				if err == nil {
-					println("GG WP")
+					master.slaves[i].connector = *rpcClient
 				}
 				c <- err
 			}()
