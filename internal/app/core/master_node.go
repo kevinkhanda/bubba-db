@@ -39,25 +39,27 @@ func Test() {
 
 	for _, slave := range master.slaves {
 		var rpcClient *rpc.Client
-		attempt := 1
-		for attempt != -1 {
-			log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
-			attempt = attempt + 1
-			c := make(chan error, 1)
-			go func() {
-				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":" + slave.port)
-				c <- err
-			}()
-			select {
-			case err := <-c:
-				if err != nil {
-					log.Print("Dialing:", err)
-					time.Sleep(time.Second)
-				} else {
-					attempt = -1
+		if slave.ip != myIp {
+			attempt := 1
+			for attempt != -1 {
+				log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
+				attempt = attempt + 1
+				c := make(chan error, 1)
+				go func() {
+					rpcClient, err = rpc.DialHTTP("tcp", slave.ip+":"+slave.port)
+					c <- err
+				}()
+				select {
+				case err := <-c:
+					if err != nil {
+						log.Print("Dialing:", err)
+						time.Sleep(time.Second)
+					} else {
+						attempt = -1
+					}
+				case <-time.After(time.Second * 5):
+					println("Timeout...")
 				}
-			case <-time.After(time.Second * 5):
-				println("Timeout...")
 			}
 		}
 	}
