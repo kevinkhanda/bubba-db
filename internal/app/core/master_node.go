@@ -34,7 +34,7 @@ func Test() {
 		println("My IP: ", myIp)
 	}
 
-	master = initMaster(myIp, "5000")
+	master = initMaster(myIp, "8080")
 	initSlaves(&master)
 
 	for _, slave := range master.slaves {
