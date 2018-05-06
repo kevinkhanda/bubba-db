@@ -515,28 +515,3 @@ func TestGetRelationship(test *testing.T) {
 
 	fh.DropDatabase("test_db")
 }
-
-func TestLabelCreate(test *testing.T) {
-	var (
-		l structs.Label
-		bsExpected []byte
-	)
-	InitDb("test_db", "local")
-	l.Create()
-	bs := make([]byte, globals.LabelsSize)
-	bsNumber := utils.Int32ToByteArray(0)
-	bsExpected = append(utils.BoolToByteArray(true), bsNumber...)
-	err := fh.Read(globals.LabelsStore, 0, bs)
-	if err != nil {
-		test.Errorf("Error reading a file")
-		println(err.Error())
-	}
-
-	for i := 0; i < len(bsExpected); i++ {
-		if bsExpected[i] != bs[i] {
-			test.Errorf("Read value mismatch")
-		}
-	}
-
-	DropDb("test_db")
-}

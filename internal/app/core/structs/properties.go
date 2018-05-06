@@ -203,12 +203,25 @@ func (p *Property) fromBytes(bs []byte) {
 
 	val, err := utils.ByteArrayToInt32(bs[10:14])
 	utils.CheckError(err)
+	store := GetValueFile(p.valueType)
 	if val == 0 {
 		value = &IntegerValue{value: int(val)}
-	} else if val == 1 {
-		value = &DoubleValue{id: int(val), value: nil}
+	} else if p.valueType == 1 {
+		bs := make([]byte, globals.DoubleSize)
+		offset := int(val * globals.DoubleSize)
+		err := globals.FileHandler.Read(store, offset, bs)
+		utils.CheckError(err)
+		fileValue, err := utils.ByteArrayToFloat64(bs)
+		utils.CheckError(err)
+		value = &DoubleValue{id: int(val), value: fileValue}
 	} else {
-		value = &StringValue{id: int(val), value: nil}
+		bs := make([]byte, globals.StringSize)
+		offset := int(val * globals.StringSize)
+		err := globals.FileHandler.Read(store, offset, bs)
+		utils.CheckError(err)
+		fileValue := utils.ByteArrayToString(bs)
+		utils.CheckError(err)
+		value = &StringValue{id: int(val), value: fileValue}
 	}
 	p.value = &value
 }
