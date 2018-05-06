@@ -23,7 +23,7 @@ func sendPing(slave *Entity)  {
 
 func getSalvesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.240.20.132:5000\",\"10.240.23.55:5000\"]")
+	var ipsJson = string("[\"10.240.20.132:5000\",\"10.240.18.30:5000\"]")
 	err := json.Unmarshal([]byte(ipsJson), &ips)
 	return ips, err
 }
