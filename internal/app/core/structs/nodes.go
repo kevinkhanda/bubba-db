@@ -295,12 +295,12 @@ func (l Label) GetLabelNames() []*LabelTitle  {
 
 }
 
-func (l Label) AddLabelName(title *LabelTitle) (err error) {
+func (l Label) AddLabelName(title string) (err error) {
 	if l.numberOfLabels == 5 {
 		err = errors.New("Already max amount of labels")
 
 	} else {
-		l.labelNames[l.numberOfLabels] = title
+		l.labelNames[l.numberOfLabels] = AddLabelTitle(title)
 		l.numberOfLabels++
 		l.write()
 	}
@@ -315,6 +315,7 @@ func (l Label) RemoveLabelName(id int) (err error)  {
 	_ = l.GetLabelNames()
 	for i := 0; i < l.numberOfLabels; i++ {
 		if (l.labelNames[i].GetId() == id) {
+			title := l.labelNames[i].title
 			if i == l.numberOfLabels - 1 {
 				l.numberOfLabels--
 				l.write()
@@ -323,6 +324,7 @@ func (l Label) RemoveLabelName(id int) (err error)  {
 				l.numberOfLabels--;
 				l.write()
 			}
+			DecreaseLabelTitleCounter(title)
 			return nil
 		}
 	}
@@ -374,4 +376,52 @@ type LabelTitle struct {
 
 func (lt LabelTitle) GetId() int  {
 	return lt.id
+}
+
+//TODO: String Length
+func  WriteLabelTitle(id int, title string, counter int)  {
+	offset := id * globals.LabelsTitlesSize
+	bs := make([]byte, globals.LabelsTitlesSize)
+	titleBs := utils.StringToByteArray(title)
+	for i := 0; i < len(titleBs); i++ {
+		bs[i] = titleBs[i]
+	}
+	counterBs := utils.Int32ToByteArray(int32(counter))
+	for j := 0; j < 4; j++ {
+		bs[globals.LabelsTitlesSize - 4 + j] = counterBs[j]
+	}
+	err := globals.FileHandler.Write(globals.LabelsTitlesStore, offset, bs)
+	utils.CheckError(err)
+}
+
+func DecreaseLabelTitleCounter(title string)  {
+	value := globals.LabelTitleMap[title]
+	value.Counter--
+	globals.LabelTitleMap[title] = value
+	WriteLabelTitle(globals.LabelTitleMap[title].Id, title, globals.LabelTitleMap[title].Counter)
+	if globals.LabelTitleMap[title].Counter == 0 {
+		delete(globals.LabelTitleMap, title)
+	}
+}
+
+
+func AddLabelTitle(title string) *LabelTitle {
+	_, present := globals.LabelTitleMap[title]
+	if present {
+		value := globals.LabelTitleMap[title]
+		value.Counter++
+		globals.LabelTitleMap[title] = value
+		WriteLabelTitle(globals.LabelTitleMap[title].Id, title, globals.LabelTitleMap[title].Counter)
+
+		return &LabelTitle{id: globals.LabelTitleMap[title].Id, title: title, counter: globals.LabelTitleMap[title].Counter}
+	} else {
+		var value globals.MapValue
+		value.Counter = 1
+		id, err := globals.FileHandler.ReadId(globals.LabelsTitlesId)
+		utils.CheckError(err)
+		value.Id = id
+		globals.LabelTitleMap[title] = value
+		WriteLabelTitle(globals.LabelTitleMap[title].Id, title, globals.LabelTitleMap[title].Counter)
+		return &LabelTitle{id: id, title: title, counter: 1}
+	}
 }
