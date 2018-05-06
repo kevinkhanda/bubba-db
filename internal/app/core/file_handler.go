@@ -90,6 +90,9 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	globals.DoubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
 	utils.CheckError(err)
 
+	//config
+	globals.Config, err = os.Create(filepath.Join(rootPath, dbTitle, "connections.config"))
+
 	globals.NodesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.LabelsId.WriteString(fmt.Sprintf("%d", 0))
 	globals.LabelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
@@ -161,6 +164,8 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 		globals.DoubleStore, err = os.Open(filepath.Join(propertiesStorePath, "double.store"))
 		utils.CheckError(err)
 
+		globals.Config, err = os.Open(filepath.Join(rootPath, dbTitle, "connections.config"))
+
 		return err
 	} else {
 		return errors.New(fmt.Sprintf("Database with title %s does not exist", dbTitle))
@@ -231,6 +236,10 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			utils.CheckError(err)
 			err = globals.DoubleStore.Close()
 			globals.DoubleStore = nil
+			utils.CheckError(err)
+			// config
+			err = globals.Config.Close()
+			globals.Config = nil
 			utils.CheckError(err)
 		}
 		err = os.RemoveAll(filepath.Join(rootPath, dbTitle))
