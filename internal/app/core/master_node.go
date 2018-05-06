@@ -13,12 +13,12 @@ import (
 
 var master Entity
 
-func sendPing(entity *Entity) error {
+func requestSlaveStatus(entity *Entity) error {
 	var reply string
 	request := RPCRequest{"ping", nil}
 	err = entity.connector.Call("Entity.SendStatus", &request, &reply)
 	if err != nil {
-		log.Fatal("Problems in Ping ", err)
+		log.Fatal("Problems in requestSlaveStatus ", err)
 	}
 	if reply == "success" {
 		println("Slave " + entity.ip + ":"+ entity.port + "is ready")
@@ -76,7 +76,6 @@ func Test() {
 				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
 				if err == nil {
 					master.slaves[i].connector = *rpcClient
-					sendPing(&slave)
 				}
 				c <- err
 			}()
@@ -86,19 +85,23 @@ func Test() {
 					log.Print("dialing:", err)
 					time.Sleep(time.Second)
 				} else {
-					var readyCount = 0
-					for _, slave := range master.slaves {
-						if slave.isActive {
-							readyCount++
-						}
-					}
-					if readyCount == len(master.slaves) {
-						attempt = -1
-					}
+					attempt = -1
 				}
 			case <-time.After(time.Second * 5):
 				println("timeout...")
 			}
+		}
+	}
+
+	for _, slave := range master.slaves {
+		requestSlaveStatus(&slave)
+		var readyCount= 0
+		for _, entity := range master.slaves {
+			if entity.isActive {
+				readyCount++
+			}
+		}
+		if readyCount == len(master.slaves) {
 		}
 	}
 }
