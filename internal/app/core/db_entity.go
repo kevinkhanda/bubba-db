@@ -16,6 +16,10 @@ type Entity struct {
 	slaves			[]Entity
 }
 
+type RPCRequest struct {
+	Method 	string
+	Data 	[]byte
+}
 
 func initMaster(ip string, port string) Entity{
 	master = Entity{

@@ -7,26 +7,42 @@ import (
 	"time"
 	"net"
 	"net/http"
+	"io/ioutil"
+	"errors"
 )
 
 var master Entity
 
-type RPCRequest struct {
-	Method 	string
-	Data 	[]byte
-}
-
-func sendPing(slave *Entity)  {
+func requestSlaveStatus(entity *Entity) error {
 	var reply string
 	request := RPCRequest{"ping", nil}
-	slave.connector.Call("Ping", &request, &reply)
-	println("Answer from ", slave.ip, ":", slave.port, " ", reply)
+	err = entity.connector.Call("Entity.SendStatus", &request, &reply)
+	if err != nil {
+		log.Fatal("Problems in requestSlaveStatus ", err)
+	}
+	if reply == "success" {
+		println("Slave " + entity.ip + ":"+ entity.port + "is ready")
+		for i, slave := range master.slaves {
+			if slave.ip == entity.ip && slave.port == entity.port {
+				master.slaves[i].isActive = true
+				break
+			}
+		}
+	} else {
+		err = errors.New("incorrect response")
+	}
+	return err
 }
 
 func getSlavesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.178.128.31:7000\"]")
-	err := json.Unmarshal([]byte(ipsJson), &ips)
+	var ipsJson, err = ioutil.ReadFile("databases/asd/connections.config")
+	if err != nil {
+		log.Fatal("Problem: ", err)
+	}
+	println(string(ipsJson))
+	err = json.Unmarshal([]byte(ipsJson), &ips)
+
 	return ips, err
 }
 
@@ -38,7 +54,7 @@ func Test() {
 
 	master = initMaster(myIp, "7000")
 	initSlaves(&master)
-	rpc.Register(master)
+	rpc.Register(&master)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", myIp+":7000")
 	if e != nil {
@@ -78,6 +94,14 @@ func Test() {
 	}
 
 	for _, slave := range master.slaves {
-		sendPing(&slave)
+		requestSlaveStatus(&slave)
+		var readyCount= 0
+		for _, entity := range master.slaves {
+			if entity.isActive {
+				readyCount++
+			}
+		}
+		if readyCount == len(master.slaves) {
+		}
 	}
 }
