@@ -432,3 +432,86 @@ func TestCreateRelationship(test *testing.T) {
 	}
 	fh.DropDatabase("test_db")
 }
+
+func TestDeleteRelationship(test *testing.T) {
+	fh.InitDatabaseStructure("test_db")
+	var relationship structs.Relationship
+	relationship.Create()
+	relationship.Delete(relationship.GetId())
+	bs := make([]byte, globals.RelationshipsSize)
+	bsExpected := make([]byte, globals.RelationshipsSize)
+	bsExpected[0] = utils.BoolToByteArray(false)[0]
+	err := fh.Read(globals.RelationshipsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error reading from RelationshipStore")
+	}
+	for i := 0; i < len(bs); i++ {
+		if bs[i] != bsExpected[i] {
+			test.Errorf("Read values mismatch")
+		}
+	}
+	fh.DropDatabase("test_db")
+}
+
+func TestGetRelationship(test *testing.T) {
+	var (
+		relationship structs.Relationship
+		node1Id, node2Id, titleId, prevRel1Id, prevRel2Id,
+		nextRel1Id, nextRel2Id, propertyId, bs []byte
+	)
+	fh.InitDatabaseStructure("test_db")
+	node1Id = utils.Int32ToByteArray(10)
+	node2Id = utils.Int32ToByteArray(20)
+	titleId = utils.Int32ToByteArray(30)
+	prevRel1Id = utils.Int32ToByteArray(40)
+	prevRel2Id = utils.Int32ToByteArray(-1)
+	nextRel1Id = utils.Int32ToByteArray(10)
+	nextRel2Id = utils.Int32ToByteArray(15)
+	propertyId = utils.Int32ToByteArray(1)
+
+	bs = append(utils.BoolToByteArray(true), node1Id...)
+	bs = append(bs, node2Id...)
+	bs = append(bs, titleId...)
+	bs = append(bs, prevRel1Id...)
+	bs = append(bs, prevRel2Id...)
+	bs = append(bs, nextRel1Id...)
+	bs = append(bs, nextRel2Id...)
+	bs = append(bs, propertyId...)
+	bs = append(bs, utils.BoolToByteArray(false)...)
+
+	err = fh.Write(globals.RelationshipsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error writing to file")
+	}
+	relationship = relationship.Get(0)
+	if relationship.GetId() != 0 {
+		test.Errorf("Id value mismatch")
+	}
+
+	if relationship.GetFirstNode().GetId() != 10 {
+		test.Errorf("First node id value mismatch")
+	}
+	if relationship.GetSecondNode().GetId() != 20 {
+		test.Errorf("Second node id value mismatch")
+	}
+	if relationship.GetTitle().GetId() != 30 {
+		test.Errorf("Title id value mismatch")
+	}
+	if relationship.GetFirstPreviousRelationship().GetId() != 40 {
+		test.Errorf("First previous relationship id value mismatch")
+	}
+	if relationship.GetSecondPreviousRelationship().GetId() != -1 {
+		test.Errorf("Second previous relationship id value mismatch")
+	}
+	if relationship.GetFirstNextRelationship().GetId() != 10 {
+		test.Errorf("First next relationship id value mismatch")
+	}
+	if relationship.GetSecondNextRelationship().GetId() != 15 {
+		test.Errorf("Second next relationship id value mismatch")
+	}
+	if relationship.GetProperty().GetId() != 1 {
+		test.Errorf("Property id value mismatch")
+	}
+
+	fh.DropDatabase("test_db")
+}
