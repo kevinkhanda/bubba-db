@@ -16,7 +16,7 @@ type Node struct {
 	label    *Label
 }
 
-func (n Node) toBytes() (bs []byte) {
+func (n *Node) toBytes() (bs []byte) {
 	var (
 		rel *Relationship
 		prop *Property
@@ -42,7 +42,7 @@ func (n Node) toBytes() (bs []byte) {
 	return bs
 }
 
-func (n Node) fromBytes(bs []byte) {
+func (n *Node) fromBytes(bs []byte) {
 	var (
 		id int32
 		rel Relationship
@@ -71,7 +71,7 @@ func (n Node) fromBytes(bs []byte) {
 	n.label = &label
 }
 
-func (n Node) GetRelationship() *Relationship {
+func (n *Node) GetRelationship() *Relationship {
 	if n.relationship != nil {
 		return n.relationship
 	} else if !n.isWritten {
@@ -93,16 +93,16 @@ func (n Node) GetRelationship() *Relationship {
 	}
 }
 
-func (n Node) GetId() int {
+func (n *Node) GetId() int {
 	return n.id
 }
 
-func (n Node) SetRelationship(rel *Relationship) {
+func (n *Node) SetRelationship(rel *Relationship) {
 	n.relationship = rel
 	n.write()
 }
 
-func (n Node) GetProperty() *Property {
+func (n *Node) GetProperty() *Property {
 	if n.property != nil {
 		return n.property
 	} else if !n.isWritten {
@@ -124,12 +124,12 @@ func (n Node) GetProperty() *Property {
 	}
 }
 
-func (n Node) SetProperty(prop *Property) {
+func (n *Node) SetProperty(prop *Property) {
 	n.property = prop
 	n.write()
 }
 
-func (n Node) GetLabel() *Label {
+func (n *Node) GetLabel() *Label {
 	if n.label != nil {
 		return n.label
 	} else if !n.isWritten {
@@ -151,12 +151,12 @@ func (n Node) GetLabel() *Label {
 	}
 }
 
-func (n Node) SetLabel(label *Label) {
+func (n *Node) SetLabel(label *Label) {
 	n.label = label
 	n.write()
 }
 
-func (n Node) write()  {
+func (n *Node) write()  {
 	offset := globals.NodesSize * n.id
 	bs := n.toBytes()
 	err := globals.FileHandler.Write(globals.NodesStore, offset, bs)
@@ -164,7 +164,7 @@ func (n Node) write()  {
 	n.isWritten = true
 }
 
-func (n Node) read() {
+func (n *Node) read() {
 	bs := make([]byte, globals.NodesSize)
 	offset := globals.NodesSize * n.id
 	err := globals.FileHandler.Read(globals.NodesStore, offset, bs)
@@ -172,7 +172,7 @@ func (n Node) read() {
 	n.fromBytes(bs)
 }
 
-func (n Node) Create() {
+func (n *Node) Create() {
 	id, err := globals.FileHandler.ReadId(globals.NodesId)
 	utils.CheckError(err)
 	n.id = id
@@ -181,14 +181,14 @@ func (n Node) Create() {
 	n.write()
 }
 
-func (n Node) Get(id int) Node {
+func (n *Node) Get(id int) Node {
 	n.id = id
 	n.read()
 	n.isWritten = true	//Doesn't work if placed into read (-_-)
-	return n
+	return *n
 }
 
-func (n Node) Delete(id int) (err error) {
+func (n *Node) Delete(id int) (err error) {
 	bs := make([]byte, globals.NodesSize)
 	bs[0] = utils.BoolToByteArray(false)[0]
 	err = globals.FileHandler.FreeId(globals.NodesId, id)
@@ -209,11 +209,11 @@ type Label struct {
 	labelNames []*LabelTitle
 }
 
-func (l Label) GetNumberOfLabels() int {
+func (l *Label) GetNumberOfLabels() int {
 	return l.numberOfLabels
 }
 
-func (l Label) fromBytes(bs []byte) {
+func (l *Label) fromBytes(bs []byte) {
 	var (
 		id int32
 		numberOfLabels int32
@@ -237,9 +237,11 @@ func (l Label) fromBytes(bs []byte) {
 		title[i].id = int(id)
 		l.labelNames[i] = &title[i]
 	}
+	println("in bytes")
+	println(l.numberOfLabels)
 }
 
-func (l Label) toBytes() (bs []byte) {
+func (l *Label) toBytes() (bs []byte) {
 	var (
 		titleBs []byte
 		numberBs []byte
@@ -263,7 +265,7 @@ func (l Label) toBytes() (bs []byte) {
 	return bs
 }
 
-func (l Label) write() {
+func (l *Label) write() {
 	offset := globals.LabelsSize * l.id
 	bs := l.toBytes()
 	err := globals.FileHandler.Write(globals.LabelsStore, offset, bs)
@@ -271,15 +273,17 @@ func (l Label) write() {
 	l.isWritten = true
 }
 
-func (l Label) read() {
+func (l *Label) read() {
 	bs := make([]byte, globals.LabelsSize)
 	offset := globals.LabelsSize * l.id
 	err := globals.FileHandler.Read(globals.LabelsStore, offset, bs)
 	utils.CheckError(err)
 	l.fromBytes(bs)
+	println("in read")
+	println(l.numberOfLabels)
 }
 
-func (l Label) GetLabelNames() []*LabelTitle  {
+func (l *Label) GetLabelNames() []*LabelTitle  {
 	if l.numberOfLabels == 0 || !l.isWritten {
 		return nil
 	} else if l.labelNames[0] != nil {
@@ -302,7 +306,7 @@ func (l Label) GetLabelNames() []*LabelTitle  {
 
 }
 
-func (l Label) AddLabelName(title string) (err error) {
+func (l *Label) AddLabelName(title string) (err error) {
 	if l.numberOfLabels == 5 {
 		err = errors.New("Already max amount of labels")
 
@@ -314,7 +318,7 @@ func (l Label) AddLabelName(title string) (err error) {
 	return err
 }
 
-func (l Label) RemoveLabelName(id int) (err error)  {
+func (l *Label) RemoveLabelName(id int) (err error)  {
 	if l.numberOfLabels == 0 {
 		err = errors.New("There is no such label")
 		return err
@@ -339,15 +343,15 @@ func (l Label) RemoveLabelName(id int) (err error)  {
 	return err
 }
 
-func (l Label) Get(id int) Label {
+func (l *Label) Get(id int) Label {
 	l.id = id
 	l.labelNames = make([]*LabelTitle, 5)
 	l.read()
 	l.isWritten = true
-	return l
+	return *l
 }
 
-func (l Label) Delete(id int) (err error) {
+func (l *Label) Delete(id int) (err error) {
 	bs := make([]byte, globals.LabelsSize)
 	bs[0] = utils.BoolToByteArray(false)[0]
 	err = globals.FileHandler.FreeId(globals.LabelsId, id)
@@ -360,7 +364,7 @@ func (l Label) Delete(id int) (err error) {
 	return err
 }
 
-func (l Label) Create() {
+func (l *Label) Create() {
 	id, err := globals.FileHandler.ReadId(globals.LabelsId)
 	utils.CheckError(err)
 	l.id = id
@@ -371,7 +375,7 @@ func (l Label) Create() {
 	l.write()
 }
 
-func (l Label) GetId() int {
+func (l *Label) GetId() int {
 	return l.id
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -381,7 +385,7 @@ type LabelTitle struct {
 	counter int
 }
 
-func (lt LabelTitle) GetId() int  {
+func (lt *LabelTitle) GetId() int  {
 	return lt.id
 }
 
