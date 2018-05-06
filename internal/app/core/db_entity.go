@@ -21,7 +21,6 @@ type RPCRequest struct {
 	Data 	[]byte
 }
 
-
 func initMaster(ip string, port string) Entity{
 	master = Entity{
 		ip:         ip,

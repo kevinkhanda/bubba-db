@@ -7,24 +7,42 @@ import (
 	"time"
 	"net"
 	"net/http"
+	"io/ioutil"
+	"errors"
 )
 
 var master Entity
 
-func sendPing(slave *Entity)  {
+func sendPing(entity *Entity) error {
 	var reply string
 	request := RPCRequest{"ping", nil}
-	err = slave.connector.Call("Ping", &request, &reply)
+	err = entity.connector.Call("Entity.SendStatus", &request, &reply)
 	if err != nil {
 		log.Fatal("Problems in Ping ", err)
 	}
-	println("Answer from " + slave.ip + ":"+ slave.port, reply)
+	if reply == "success" {
+		println("Slave " + entity.ip + ":"+ entity.port + "is ready")
+		for i, slave := range master.slaves {
+			if slave.ip == entity.ip && slave.port == entity.port {
+				master.slaves[i].isActive = true
+				break
+			}
+		}
+	} else {
+		err = errors.New("incorrect response")
+	}
+	return err
 }
 
 func getSlavesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.178.128.31:7000\"]")
-	err := json.Unmarshal([]byte(ipsJson), &ips)
+	var ipsJson, err = ioutil.ReadFile("databases/asd/connections.config")
+	if err != nil {
+		log.Fatal("Problem: ", err)
+	}
+	println(string(ipsJson))
+	err = json.Unmarshal([]byte(ipsJson), &ips)
+
 	return ips, err
 }
 
@@ -58,6 +76,7 @@ func Test() {
 				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
 				if err == nil {
 					master.slaves[i].connector = *rpcClient
+					sendPing(&slave)
 				}
 				c <- err
 			}()
@@ -67,15 +86,19 @@ func Test() {
 					log.Print("dialing:", err)
 					time.Sleep(time.Second)
 				} else {
-					attempt = -1
+					var readyCount = 0
+					for _, slave := range master.slaves {
+						if slave.isActive {
+							readyCount++
+						}
+					}
+					if readyCount == len(master.slaves) {
+						attempt = -1
+					}
 				}
 			case <-time.After(time.Second * 5):
 				println("timeout...")
 			}
 		}
-	}
-
-	for _, slave := range master.slaves {
-		sendPing(&slave)
 	}
 }
