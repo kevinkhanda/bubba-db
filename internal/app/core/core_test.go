@@ -390,15 +390,41 @@ func TestLabelGet(test *testing.T)  {
 	DropDb("test_tb")
 }
 
-func TestAddLabelName(test *testing.T)  {
+func TestLabelNameMethods(test *testing.T)  {
+	var l structs.Label
+	l.Create()
+	l.AddLabelName("test")
+	l.AddLabelName("test2")
+	if l.GetNumberOfLabels() != 2 {
+		test.Errorf("Number of labels mismatch")
+	}
+
+	value, present := globals.LabelTitleMap["test"]
+	value2, present2 := globals.LabelTitleMap["test"]
+	if !present {
+		test.Errorf("Absence of value in map")
+	}
+	if !present2 {
+		test.Errorf("Absence of value in map")
+	}
+
+	if value.Id != 0 {
+		test.Errorf("Id value mismatch")
+	}
+	if value2.Id != 1 {
+		test.Errorf("Id value mismatch")
+	}
+
+	if value.Counter != 1 {
+		test.Errorf("Counter value mismatch")
+	}
+	if l.GetLabelNames()[0].GetTitle() != "test" {
+		test.Errorf("Label title mismatch")
+	}
 
 }
 
 func TestRemoveLabelName(test *testing.T) {
-
-}
-
-func TestGetLabelNames(test *testing.T) {
 
 }
 
