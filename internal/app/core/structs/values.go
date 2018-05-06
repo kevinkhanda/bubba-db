@@ -19,7 +19,6 @@ func (stringValue StringValue) set(value interface{}) {
 }
 
 type IntegerValue struct {
-	id int
 	value int
 }
 

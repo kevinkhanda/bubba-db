@@ -391,36 +391,60 @@ func TestLabelGet(test *testing.T)  {
 }
 
 func TestLabelNameMethods(test *testing.T)  {
-	var l structs.Label
-	l.Create()
-	l.AddLabelName("test")
-	l.AddLabelName("test2")
-	if l.GetNumberOfLabels() != 2 {
+	var l1, l2 structs.Label
+	l1.Create()
+	l2.Create()
+	l1.AddLabelName("test")
+	l2.AddLabelName("test")
+	if l1.GetNumberOfLabels() != 1 {
 		test.Errorf("Number of labels mismatch")
+	}
+	if l1.GetLabelNames()[0].GetTitle() != "test" {
+		test.Errorf("Label title mismatch")
+	}
+	if l1.GetLabelNames()[0].GetId() != 0 {
+		test.Errorf("Id value mismatch")
+	}
+	if l2.GetLabelNames()[0].GetId() != 0 {
+		test.Errorf("Id value mismatch")
 	}
 
 	value, present := globals.LabelTitleMap["test"]
-	value2, present2 := globals.LabelTitleMap["test"]
 	if !present {
 		test.Errorf("Absence of value in map")
+	} else {
+		if value.Id != 0 {
+			test.Errorf("Id value mismatch")
+		}
+		if value.Counter != 2 {
+			test.Errorf("Counter value mismatch")
+		}
 	}
-	if !present2 {
+
+	l2.RemoveLabelName("test")
+	if l2.GetNumberOfLabels() != 0 {
+		test.Errorf("Number of labels mismatch")
+	}
+	value, present = globals.LabelTitleMap["test"]
+	if !present {
 		test.Errorf("Absence of value in map")
+	} else {
+		if value.Id != 0 {
+			test.Errorf("Id value mismatch")
+		}
+		if value.Counter != 1 {
+			test.Errorf("Counter value mismatch")
+		}
+	}
+	l1.RemoveLabelName("test")
+	if l1.GetNumberOfLabels() != 0 {
+		test.Errorf("Number of labels mismatch")
+	}
+	_, present = globals.LabelTitleMap["test"]
+	if present {
+		test.Errorf("Unexpected presence of value in map")
 	}
 
-	if value.Id != 0 {
-		test.Errorf("Id value mismatch")
-	}
-	if value2.Id != 1 {
-		test.Errorf("Id value mismatch")
-	}
-
-	if value.Counter != 1 {
-		test.Errorf("Counter value mismatch")
-	}
-	if l.GetLabelNames()[0].GetTitle() != "test" {
-		test.Errorf("Label title mismatch")
-	}
 
 }
 

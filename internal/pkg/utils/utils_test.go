@@ -34,6 +34,33 @@ func TestByteToInt32(test *testing.T) {
 	}
 }
 
+func TestInt8ToByteArray(test *testing.T) {
+	number := 12
+	array := Int8ToByteArray(int8(number))
+	if len(array) != 1  {
+		test.Errorf("Array length mismatch")
+	}
+
+	initialNumber := ByteArrayToInt8(array)
+	if int8(number) != initialNumber {
+		test.Errorf("Initial number mismatch")
+	}
+}
+
+func TestByteArrayToInt8(test *testing.T) {
+	bs := []byte {0x53}
+	number := ByteArrayToInt8(bs)
+
+	initialBs := Int8ToByteArray(number)
+	if len(initialBs) != len(bs) {
+		test.Errorf("Arrays length mismatch")
+	}
+
+	if initialBs[0] != bs[0] {
+		test.Errorf("Arrays values mismatch")
+	}
+}
+
 func TestFloat64ToByteArray(test *testing.T) {
 	float  := float64(10)
 	array := Float64ToByteArray(float)
