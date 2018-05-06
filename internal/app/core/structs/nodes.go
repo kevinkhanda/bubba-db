@@ -385,6 +385,14 @@ func (lt *LabelTitle) GetId() int  {
 	return lt.id
 }
 
+func (lt *LabelTitle) GetTitle() string {
+	return lt.title
+}
+
+func (lt *LabelTitle) GetCounter() int {
+	return lt.counter
+}
+
 func WriteLabelTitle(id int, title string, counter int)  {
 	offset := id * globals.LabelsTitlesSize
 	bs := make([]byte, globals.LabelsTitlesSize)
