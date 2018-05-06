@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	err := core.InitDb("asd", "local")
+	//err := core.InitDb("asd", "local")
+	err := core.SwitchDb("asd")
 	utils.CheckError(err)
 
 	//arith := new(core.Entity)
