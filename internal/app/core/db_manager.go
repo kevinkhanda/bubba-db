@@ -45,7 +45,6 @@ func DropDb(dbTitle string) (err error) {
 	return err
 }
 
-//TODO: test it
 func fillMap(m map[string]globals.MapValue, file *os.File, recordSize int) {
 	var (
 		i int
@@ -56,8 +55,11 @@ func fillMap(m map[string]globals.MapValue, file *os.File, recordSize int) {
 	)
 	bs = make([]byte, recordSize)
 	i = 0
-	for err == nil {
+	for true {
 		err = globals.FileHandler.Read(file, i * recordSize, bs)
+		if err != nil {
+			break
+		}
 		counter, conversionError = utils.ByteArrayToInt32(bs[recordSize - 4:])
 		utils.CheckError(conversionError)
 		if counter != 0 {

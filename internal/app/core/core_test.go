@@ -33,15 +33,73 @@ func TestInitDatabaseStructure(test *testing.T) {
 }
 
 func TestSwitchDatabase(test *testing.T) {
-	fh.InitDatabaseStructure("test_db")
-	fh.InitDatabaseStructure("test_db2")
+	InitDb("test_db", "local")
+	InitDb("test_db2", "local")
+	bs1 := make([]byte, globals.LabelsTitlesSize)
+	bs2 := make([]byte, globals.LabelsTitlesSize)
+	titleBs1 := utils.StringToByteArray("deleted#")
+	titleBs2 := utils.StringToByteArray("present#")
+	for i := 0; i < len(titleBs1); i++ {
+		bs1[i] = titleBs1[i]
+	}
+
+	for i := 0; i < len(titleBs2); i++ {
+		bs2[i] = titleBs2[i]
+	}
+
+	counterBs1 := utils.Int32ToByteArray(int32(0))
+	counterBs2 := utils.Int32ToByteArray(int32(7))
+	for j := 0; j < 4; j++ {
+		bs1[globals.LabelsTitlesSize - 4 + j] = counterBs1[j]
+	}
+
+	for j := 0; j < 4; j++ {
+		bs2[globals.LabelsTitlesSize - 4 + j] = counterBs2[j]
+	}
+
+	err := fh.Write(globals.LabelsTitlesStore, 0 * globals.LabelsTitlesSize, bs1)
+	if err != nil {
+		test.Errorf("Error writing to file")
+	}
+
+	err = fh.Write(globals.LabelsTitlesStore, 1 * globals.LabelsTitlesSize, bs2)
+	if err != nil {
+		test.Errorf("Error writing to file")
+	}
+
 	if globals.NodesId.Name() != "databases/test_db2/storage/nodes/id/nodes.id" {
 		test.Errorf("File pointers mismatch")
 	}
-	fh.SwitchDatabaseStructure("test_db")
+
+	SwitchDb("test_db")
+	_, present := globals.LabelTitleMap["present"]
+	if present {
+		test.Errorf("Unexpected presence of map entry")
+	}
+
 	if globals.NodesId.Name() != "databases/test_db/storage/nodes/id/nodes.id" {
 		test.Errorf("File pointers mismatch")
 	}
+
+	SwitchDb("test_db2")
+	_, present = globals.LabelTitleMap["deleted"]
+	if present {
+		test.Errorf("Unexpected presence of map entry")
+	}
+
+	value, present := globals.LabelTitleMap["present"]
+	if !present {
+		test.Errorf("Unexpected absence of map entry")
+	} else {
+		if value.Id != 1 {
+			test.Errorf("Id value mismatch")
+		}
+
+		if value.Counter != 7 {
+			test.Errorf("Counter value mismatch")
+		}
+	}
+
 	fh.DropDatabase("test_db")
 	fh.DropDatabase("test_db2")
 }
@@ -162,7 +220,6 @@ func TestFreeId(test *testing.T)  {
 	str, err = ioutil.ReadFile(testFile.Name())
 	if string(str) != "10\n12\n15\n17" {
 		test.Errorf("Read values mismatch")
-		println(string(str))
 	}
 }
 
