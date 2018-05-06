@@ -1,6 +1,11 @@
 package structs
 
-import "reflect"
+import (
+	"reflect"
+	"os"
+	"graph-db/internal/app/core/globals"
+	"fmt"
+)
 
 func IfNilAssignMinusOne(value interface{}) int {
 	if value != nil {
@@ -27,5 +32,19 @@ func IfNilAssignMinusOne(value interface{}) int {
 		return -1
 	} else {
 		return -1
+	}
+}
+
+func GetValueFile(valueType int8) *os.File {
+	switch valueType {
+		case globals.INTEGER:
+			return nil
+		case globals.DOUBLE:
+			return globals.DoubleStore
+		case globals.STRING:
+			return globals.StringStore
+		default:
+			errorMessage := fmt.Sprintf("Such type does not exist. This should never happen.")
+			panic(errorMessage)
 	}
 }

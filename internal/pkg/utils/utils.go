@@ -39,6 +39,18 @@ func ByteArrayToInt32(bs []byte) (int32, error) {
 	return number, nil
 }
 
+func Int8ToByteArray(number int8) []byte {
+	bs := make([]byte, 1)
+	bs[0] = byte(number)
+	return bs
+}
+
+func ByteArrayToInt8(bs []byte) int8 {
+	var number int8
+	number = int8(bs[0])
+	return number
+}
+
 // BoolToByteArray transforms bool value to byte array
 // Returns byte array of size 1
 // Reversed conversion is possible only with ByteArrayToBool function

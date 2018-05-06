@@ -25,7 +25,7 @@ func InitDb(dbTitle string, storageMode string) (err error) {
 	}
 }
 
-func SwitchDb(dbTitle string) (err error){
+func SwitchDb(dbTitle string) (err error) {
 	var fh FileHandler
 	err = fh.SwitchDatabaseStructure(dbTitle)
 	utils.CheckError(err)
