@@ -43,9 +43,9 @@ var (
 	// nodes/store
 	NodesStore, LabelsStore, LabelsTitlesStore,
 	// relationships/id
-	RelationshipsId, RelationshipsTypesId, RelationshipsTitlesId,
+	RelationshipsId, RelationshipsTitlesId,
 	// relationships/store
-	RelationshipsStore, RelationshipsTypesStore, RelationshipsTitlesStore,
+	RelationshipsStore, RelationshipsTitlesStore,
 	// properties/id
 	PropertiesId, PropertiesTitlesId, StringId, DoubleId,
 	// properties/store

@@ -1,8 +1,8 @@
 package core
 
 import (
-	"net/rpc"
 	"encoding/json"
+	"net/rpc"
 	"log"
 	"time"
 )
@@ -21,9 +21,9 @@ func sendPing(slave *Entity)  {
 	println("Answer from ", slave.ip, ":", slave.port, " ", reply)
 }
 
-func getSalvesIps() ([]string, error) {
+func getSlavesIps() ([]string, error) {
 	var ips []string
-	var ipsJson = string("[\"10.240.20.132:5000\",\"10.240.18.30:5000\"]")
+	var ipsJson = string("[\"10.91.40.48:5000\"]")
 	err := json.Unmarshal([]byte(ipsJson), &ips)
 	return ips, err
 }
@@ -34,35 +34,39 @@ func Test() {
 		println("My IP: ", myIp)
 	}
 
-	master = initMaster(myIp, "5000")
+	master = initMaster(myIp, "7000")
 	initSlaves(&master)
 
 	for _, slave := range master.slaves {
+		// RPC call...
 		var rpcClient *rpc.Client
-		if slave.ip != myIp {
-			attempt := 1
-			for attempt != -1 {
-				log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
-				attempt = attempt + 1
-				c := make(chan error, 1)
-				go func() {
-					rpcClient, err = rpc.DialHTTP("tcp", slave.ip+":"+slave.port)
-					c <- err
-				}()
-				select {
-				case err := <-c:
-					if err != nil {
-						log.Print("Dialing:", err)
-						time.Sleep(time.Second)
-					} else {
-						attempt = -1
-					}
-				case <-time.After(time.Second * 5):
-					println("Timeout...")
+		//var err error
+		attempt := 1
+		for attempt != -1 {
+			log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
+			attempt = attempt + 1
+			c := make(chan error, 1)
+			go func() {
+				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
+				if err == nil {
+					println("GG WP")
 				}
+				c <- err
+			}()
+			select {
+			case err := <-c:
+				if err != nil {
+					log.Print("dialing:", err)
+					time.Sleep(time.Second)
+				} else {
+					attempt = -1
+				}
+			case <-time.After(time.Second * 5):
+				println("timeout...")
 			}
 		}
 	}
+
 
 	for _, slave := range master.slaves {
 		sendPing(&slave)

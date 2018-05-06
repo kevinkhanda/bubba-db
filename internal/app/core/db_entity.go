@@ -30,7 +30,7 @@ func initMaster(ip string, port string) Entity{
 }
 
 func initSlaves(master *Entity){
-	var slavesAddresses, err = getSalvesIps()
+	var slavesAddresses, err = getSlavesIps()
 	if err != nil {
 		log.Fatal("Problem in decoding JSON Ips", err)
 	}

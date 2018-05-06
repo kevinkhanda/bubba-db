@@ -237,8 +237,6 @@ func (l Label) fromBytes(bs []byte) {
 		title[i].id = int(id)
 		l.labelNames[i] = &title[i]
 	}
-
-
 }
 
 func (l Label) toBytes() (bs []byte) {
@@ -387,7 +385,7 @@ func (lt LabelTitle) GetId() int  {
 	return lt.id
 }
 
-func  WriteLabelTitle(id int, title string, counter int)  {
+func WriteLabelTitle(id int, title string, counter int)  {
 	offset := id * globals.LabelsTitlesSize
 	bs := make([]byte, globals.LabelsTitlesSize)
 	titleBs := utils.StringToByteArray(utils.AddStopCharacter(title, globals.LabelsTitlesSize - 4))
@@ -419,9 +417,9 @@ func AddLabelTitle(title string) *LabelTitle {
 		value := globals.LabelTitleMap[title]
 		value.Counter++
 		globals.LabelTitleMap[title] = value
-		WriteLabelTitle(globals.LabelTitleMap[title].Id, title, globals.LabelTitleMap[title].Counter)
+		WriteLabelTitle(value.Id, title, value.Counter)
 
-		return &LabelTitle{id: globals.LabelTitleMap[title].Id, title: title, counter: globals.LabelTitleMap[title].Counter}
+		return &LabelTitle{id: value.Id, title: title, counter: value.Counter}
 	} else {
 		var value globals.MapValue
 		value.Counter = 1

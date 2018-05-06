@@ -402,3 +402,34 @@ func TestRemoveLabelName(test *testing.T) {
 func TestGetLabelNames(test *testing.T) {
 
 }
+
+func TestCreateRelationship(test *testing.T) {
+	var (
+		relationship structs.Relationship
+		bsExpected []byte
+	)
+	fh.InitDatabaseStructure("test_db")
+	relationship.Create()
+	bs := make([]byte, globals.RelationshipsSize)
+	bsId := utils.Int32ToByteArray(-1)
+	bsExpected = append(utils.BoolToByteArray(true), bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, bsId...)
+	bsExpected = append(bsExpected, utils.BoolToByteArray(false)...)
+	err := fh.Read(globals.RelationshipsStore, 0, bs)
+	if err != nil {
+		test.Errorf("Error reading from RelationshipsStore")
+	}
+	for i := 0; i < len(bs); i++ {
+		if bs[i] != bsExpected[i] {
+			test.Logf("%b %b", bs[i], bsExpected[i])
+			test.Errorf("Read values mismatch")
+		}
+	}
+	fh.DropDatabase("test_db")
+}

@@ -35,6 +35,7 @@ func (r Relationship) Create() {
 	r.id = id
 	r.isUsed = true
 	r.isWritten = false
+	r.isFirst = false
 	r.write()
 }
 
@@ -234,6 +235,7 @@ func (r Relationship) GetProperty() *Property {
 func (r Relationship) toBytes() (bs []byte) {
 	var (
 		isUsed []byte
+		isFirst []byte
 		node1 *Node
 		node2 *Node
 		title *RelationshipTitle
@@ -261,6 +263,7 @@ func (r Relationship) toBytes() (bs []byte) {
 	nextRelationship1Bs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(nextRelationship1)))
 	nextRelationship2Bs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(nextRelationship2)))
 	propertyBs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(property)))
+	isFirst = utils.BoolToByteArray(r.isFirst)
 
 	bs = append(isUsed, node1Bs...)
 	bs = append(bs, node2Bs...)
@@ -270,6 +273,7 @@ func (r Relationship) toBytes() (bs []byte) {
 	bs = append(bs, nextRelationship1Bs...)
 	bs = append(bs, nextRelationship2Bs...)
 	bs = append(bs, propertyBs...)
+	bs = append(bs, isFirst...)
 
 	return bs
 }
@@ -329,6 +333,9 @@ func (r Relationship) fromBytes(bs []byte) {
 	utils.CheckError(err)
 	property.id = int(id)
 	r.property = &property
+
+	r.isFirst, err = utils.ByteArrayToBool(bs[33:34])
+	utils.CheckError(err)
 }
 
 func (r Relationship) read() {
@@ -342,9 +349,52 @@ func (r Relationship) read() {
 func (r Relationship) write() {
 	offset := globals.RelationshipsSize * r.id
 	bs := r.toBytes()
-	err = globals.FileHandler.Write(globals.NodesStore, offset, bs)
+	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs)
 	utils.CheckError(err)
 	r.isWritten = true
 }
 
-//func (title RelationshipTitle) 
+// Relationships Title
+func (title RelationshipTitle) GetId() int {
+	return title.id
+}
+
+func WriteRelationshipsTitle(id int, title string, counter int) {
+	offset := id * globals.RelationshipsTitlesSize
+	bs := make([]byte, globals.RelationshipsTitlesSize)
+	titleBs := utils.StringToByteArray(utils.AddStopCharacter(title, globals.RelationshipsTitlesSize - 4))
+	for i := 0; i < len(titleBs); i++ {
+		bs[i] = titleBs[i]
+	}
+	counterBs := utils.Int32ToByteArray(int32(counter))
+	for i := 0; i < 4; i++ {
+		bs[globals.RelationshipsTitlesSize - 4 + i] = counterBs[i]
+	}
+	err := globals.FileHandler.Write(globals.RelationshipsTitlesStore, offset, bs)
+	utils.CheckError(err)
+}
+
+func DecreaseRelationshipTitleCounter(title string) {
+	value := globals.RelationshipTitleMap[title]
+	value.Counter--
+	globals.RelationshipTitleMap[title] = value
+	WriteRelationshipsTitle(value.Id, title, value.Counter)
+	if globals.RelationshipTitleMap[title].Counter == 0 {
+		delete(globals.RelationshipTitleMap, title)
+	}
+}
+
+func AddRelationshipTitle(title string) *RelationshipTitle {
+	value, present := globals.RelationshipTitleMap[title]
+	if present {
+		value.Counter++
+		globals.RelationshipTitleMap[title] = value
+	} else {
+		id, err := globals.FileHandler.ReadId(globals.RelationshipsTitlesId)
+		utils.CheckError(err)
+		value = globals.MapValue{Counter: 1, Id: id}
+		globals.RelationshipTitleMap[title] = value
+	}
+	WriteRelationshipsTitle(value.Id, title, value.Counter)
+	return &RelationshipTitle{id: value.Id, title: title, counter: value.Counter}
+}
