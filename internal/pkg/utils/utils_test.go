@@ -118,3 +118,32 @@ func TestByteArrayToString(test *testing.T) {
 		test.Errorf("String value mismatch")
 	}
 }
+
+func TestAddStopCharacter(test *testing.T) {
+	requiredLength := 5
+	string1 := "abcd"
+	string2 := "abcde"
+	expectedString1 := "abcd#"
+	expectedString2 := "abcde"
+	if AddStopCharacter(string1, requiredLength) != expectedString1 {
+		test.Errorf("String value mismatch")
+	}
+
+	if AddStopCharacter(string2, requiredLength) != expectedString2 {
+		test.Errorf("String value mismatch")
+	}
+}
+
+func TestRemoveStopCharacter(test *testing.T) {
+	string1 := "abcd#sfsdf"
+	string2 := "abcde"
+	expectedString1 := "abcd"
+	expectedString2 := "abcde"
+	if RemoveStopCharacter(string1) != expectedString1 {
+		test.Errorf("String value mismatch")
+	}
+
+	if RemoveStopCharacter(string2) != expectedString2 {
+		test.Errorf("String value mismatch")
+	}
+}
