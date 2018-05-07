@@ -14,7 +14,6 @@ func IfNilAssignMinusOne(value interface{}) int {
 			return value.id
 		}
 		if reflect.TypeOf(value).String() == reflect.TypeOf(&Relationship{}).String() {
-			println("Came here")
 			value := value.(*Relationship)
 			return value.id
 		}
