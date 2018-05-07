@@ -194,6 +194,7 @@ func (p *Property) fromBytes(bs []byte) {
 		errorMessage := fmt.Sprintf("Converter: wrong properties byte array length, expected 14, given %d", len(bs))
 		panic(errorMessage)
 	}
+	p.byteString = bs
 	p.isUsed, err = utils.ByteArrayToBool(bs[0:1])
 	utils.CheckError(err)
 
