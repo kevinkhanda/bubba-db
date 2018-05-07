@@ -29,7 +29,8 @@ type RelationshipTitle struct {
 	counter int
 }
 
-func Create(isFirst bool) (r *Relationship) {
+func Create(isFirst bool) *Relationship {
+	var r Relationship
 	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
 	utils.CheckError(err)
 	r.id = id
@@ -37,7 +38,7 @@ func Create(isFirst bool) (r *Relationship) {
 	r.isWritten = false
 	r.isFirst = isFirst
 	r.write()
-	return r
+	return &r
 }
 
 func (r *Relationship) Delete(id int) (err error) {

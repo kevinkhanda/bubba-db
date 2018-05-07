@@ -455,7 +455,7 @@ func TestCreateRelationship(test *testing.T) {
 		bsExpected []byte
 	)
 	fh.InitDatabaseStructure("test_db")
-	structs.Create(true)
+	structs.Create(false)
 	bs := make([]byte, globals.RelationshipsSize)
 	bsId := utils.Int32ToByteArray(-1)
 	bsExpected = append(utils.BoolToByteArray(true), bsId...)
@@ -483,7 +483,7 @@ func TestCreateRelationship(test *testing.T) {
 func TestDeleteRelationship(test *testing.T) {
 	fh.InitDatabaseStructure("test_db")
 	var relationship structs.Relationship
-	relationship = *structs.Create(true)
+	relationship = *structs.Create(false)
 	relationship.Delete(relationship.GetId())
 	bs := make([]byte, globals.RelationshipsSize)
 	bsExpected := make([]byte, globals.RelationshipsSize)

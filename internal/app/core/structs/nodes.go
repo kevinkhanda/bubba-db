@@ -184,14 +184,15 @@ func (n *Node) read() {
 	n.fromBytes(bs)
 }
 
-func CreateNode() (n *Node) {
+func CreateNode() *Node {
+	var n Node
 	id, err := globals.FileHandler.ReadId(globals.NodesId)
 	utils.CheckError(err)
 	n.id = id
 	n.isUsed = true
 	n.isWritten = false
 	n.write()
-	return n
+	return &n
 }
 
 func (n *Node) Get(id int) Node {
@@ -374,7 +375,8 @@ func (l *Label) Delete(id int) (err error) {
 	return err
 }
 
-func CreateLabel() (l *Label) {
+func CreateLabel() *Label {
+	var l Label
 	id, err := globals.FileHandler.ReadId(globals.LabelsId)
 	utils.CheckError(err)
 	l.id = id
@@ -383,7 +385,7 @@ func CreateLabel() (l *Label) {
 	l.isUsed = true
 	l.isWritten = false
 	l.write()
-	return l
+	return &l
 }
 
 func (l *Label) GetId() int {
