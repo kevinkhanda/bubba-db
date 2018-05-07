@@ -24,6 +24,11 @@ func (entity *Entity) InitDatabaseStructure(request *RPCRequest, reply *Reply) e
 }
 
 func (entity *Entity) SwitchDatabaseStructure(request *RPCRequest, reply *Reply) error  {
+	fh := new(FileHandler)
+	err = fh.SwitchDatabaseStructure(request.Data.Payload)
+	if err == nil {
+		reply.Message = "success"
+	}
 	return nil
 }
 
@@ -36,15 +41,18 @@ func (entity *Entity) DropDatabase(request *RPCRequest, reply *Reply) error  {
 
 func (entity *Entity) Read(request *RPCRequest, reply *Reply) error  {
 	fh := new(FileHandler)
-	fh.Read(request.Data.File, request.Data.Offset, reply.Data)
+	fh.Read(request.Data.File, request.Data.Offset, reply.Data, request.Data.Id)
 	reply.Message = "success"
 	return nil
 }
 
 func (entity *Entity) Write(request *RPCRequest, reply *Reply) error  {
-	//fh := new(FileHandler)
-	//fh.Write(request.Data.File, request.Data.Offset, )
-	return nil
+	fh := new(FileHandler)
+	err = fh.Write(request.Data.File, request.Data.Offset, request.Data.Bs, request.Data.Id)
+	if err == nil {
+		reply.Message = "success"
+	}
+	return err
 }
 
 func (entity *Entity) FreeId(request *RPCRequest, reply *Reply) error {

@@ -47,11 +47,12 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id 
 	return nil
 }
 
-func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
+func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
 		// kek
 	} else {
-		//SendWriteData()
+		slaveIndex := id % len(master.slaves) + 1
+		SendWriteData(&master.slaves[slaveIndex], file, offset, id, bs)
 	}
 	//TODO: implement
 	return nil

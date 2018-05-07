@@ -36,9 +36,15 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte) error {
 	reply := new(Reply)
 	var attempts = 0
+	requestedData := RequestedData{
+		File: file,
+		Offset: offset,
+		Id: id,
+		Bs: bs,
+	}
 	for attempts < 5 {
 		err = nil
-		request := RPCRequest{nil }
+		request := RPCRequest{ requestedData }
 		err = entity.connector.Call("Entity.Write", &request, &reply)
 		if err != nil {
 			log.Fatal("Problems in requestSlaveStatus ", err)
