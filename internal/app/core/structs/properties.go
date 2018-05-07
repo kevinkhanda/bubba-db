@@ -319,7 +319,7 @@ func DecreasePropertyTitleCounter(title string) {
 	}
 }
 
-func CreatePropertyTitle(title string) *PropertyTitle {
+func AddPropertyTitle(title string) *PropertyTitle {
 	value, present := globals.PropertyTitleMap[title]
 	if present {
 		value.Counter++
