@@ -29,6 +29,47 @@ type RelationshipTitle struct {
 	counter int
 }
 
+
+func (r *Relationship) SetNode1(node1 *Node) {
+	r.node1 = node1
+	r.write()
+}
+
+func (r *Relationship) SetNode2(node2 *Node) {
+	r.node2 = node2
+	r.write()
+}
+
+func (r *Relationship) SetTitle(rt *RelationshipTitle) {
+	r.title = rt
+	r.write()
+}
+
+func (r *Relationship) SetPreviousRelationship1(relationship *Relationship) {
+	r.previousRelationship1 = relationship
+	r.write()
+}
+
+func (r *Relationship) SetPreviousRelationship2(relationship *Relationship) {
+	r.previousRelationship2 = relationship
+	r.write()
+}
+
+func (r *Relationship) SetNextRelationship1(relationship *Relationship) {
+	r.nextRelationship1 = relationship
+	r.write()
+}
+
+func (r *Relationship) SetNextRelationship2(relationship *Relationship) {
+	r.nextRelationship2 = relationship
+	r.write()
+}
+
+func (r *Relationship) SetProperty(property *Property) {
+	r.property = property
+	r.write()
+}
+
 func CreateRelationship(isFirst bool) *Relationship {
 	var r Relationship
 	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
