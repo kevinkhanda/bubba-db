@@ -99,7 +99,7 @@ func getEntityIpAddress() (string, error) {
 func InitEntity(entityType int) {
 	switch entityType {
 	case 0: // slave
-		entity := new(Entity)
+		var entity Entity
 		rpc.Register(&entity)
 		rpc.HandleHTTP()
 		l, e := net.Listen("tcp", ":" + listeningPort)

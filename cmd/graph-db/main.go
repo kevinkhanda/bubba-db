@@ -11,7 +11,7 @@ func main() {
 	//err := core.InitDb("asd", "local")
 	//err := core.SwitchDb("asd")
 	//utils.CheckError(err)
-	dbTitle := "testtt"
+	dbTitle := "asd"
 	err := core.InitDb(dbTitle, "distributed")
 	if err != nil {
 		log.Fatal("Error in initialization of database")

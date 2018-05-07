@@ -31,7 +31,7 @@ func InitDb(dbTitle string, storageMode string) (err error) {
 		}
 		entityType := 1
 		for _, slaveAddress := range slavesAddresses {
-			if slaveAddress == myIp {
+			if slaveAddress == myIp + ":7000" {
 				entityType = 0
 				break
 			}
@@ -39,7 +39,7 @@ func InitDb(dbTitle string, storageMode string) (err error) {
 		InitEntity(entityType)
 		var dfh DistributedFileHandler
 		globals.FileHandler = dfh
-		return errors.New("not implemented yet")
+		return nil
 	} else {
 		return errors.New("storageMode should be local or distributed")
 	}

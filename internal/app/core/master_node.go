@@ -9,7 +9,7 @@ import (
 var master Entity
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	requestedData := RequestedData{
 		File: file,
@@ -34,7 +34,7 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 }
 
 func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	requestedData := RequestedData{
 		File: file,
@@ -60,7 +60,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 }
 
 func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
@@ -81,7 +81,7 @@ func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
 }
 
 func RequestSlaveStatus(entity *Entity) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
@@ -102,7 +102,7 @@ func RequestSlaveStatus(entity *Entity) error {
 }
 
 func SendDeploy(entity *Entity) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
@@ -122,7 +122,7 @@ func SendDeploy(entity *Entity) error {
 }
 
 func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
@@ -142,7 +142,7 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 }
 
 func SendDropDatabase(entity *Entity, dbName *string) error {
-	reply := new(Reply)
+	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
