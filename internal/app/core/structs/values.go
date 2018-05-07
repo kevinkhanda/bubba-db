@@ -52,12 +52,13 @@ func (s *StringValue) set(value interface{}) {
 	s.write()
 }
 
-func CreateStringValue() *StringValue {
+func CreateStringValue(value string) *StringValue {
 	var s StringValue
 	id, err := globals.FileHandler.ReadId(globals.StringId)
 	utils.CheckError(err)
 	s.id = id
 	s.isUsed = true
+	s.set(value)
 	s.write()
 	return &s
 }
@@ -91,15 +92,15 @@ func (s *StringValue) GetNextChunk() *StringValue {
 }
 
 func (s *StringValue) toBytes() (bs []byte) {
-	bs = append(utils.BoolToByteArray(s.isUsed),
-		utils.StringToByteArray(utils.AddStopCharacter(s.value, 31))...)
+	bs = append(utils.BoolToByteArray(s.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(s.value)))...)
 	bs = append(bs, utils.Int32ToByteArray(int32(IfNilAssignMinusOne(s.nextChunk)))...)
 	return bs
 }
 
 func (s *StringValue) fromBytes(bs []byte) {
 	if len(bs) != globals.StringSize {
-		errorMessage := fmt.Sprintf("Converter: wrong string value byte array length, expected 36, given %d", len(bs))
+		errorMessage := fmt.Sprintf("Converter: wrong string value byte array length, " +
+			"expected 36, given %d", len(bs))
 		panic(errorMessage)
 	}
 	isUsed, err := utils.ByteArrayToBool(bs[0:1])
@@ -135,6 +136,7 @@ func (s *StringValue) write() {
 // Double value
 type DoubleValue struct {
 	id int
+	isUsed bool
 	value float64
 }
 
@@ -144,4 +146,56 @@ func (d DoubleValue) get() interface{} {
 
 func (d *DoubleValue) set(value interface{}) {
 	d.value = value.(float64)
+}
+
+func CreateDoubleValue(value float64) *DoubleValue {
+	var d DoubleValue
+	id, err := globals.FileHandler.ReadId(globals.DoubleId)
+	utils.CheckError(err)
+	d.id = id
+	d.isUsed = true
+	d.set(value)
+	d.write()
+	return &d
+}
+
+func (d *DoubleValue) GetValue() float64 {
+	return d.get().(float64)
+}
+
+func (d *DoubleValue) SetValue(value float64) {
+	d.set(value)
+}
+
+func (d *DoubleValue) toBytes() (bs []byte) {
+	bs = append(utils.BoolToByteArray(d.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(d.value)))...)
+	return bs
+}
+
+func (d *DoubleValue) fromBytes(bs []byte) {
+	if len(bs) != globals.DoubleSize {
+		errorMessage := fmt.Sprintf("Converter: wrong double value byte array length, " +
+			"expected 9, given %d", len(bs))
+		panic(errorMessage)
+	}
+	d.isUsed, err = utils.ByteArrayToBool(bs[0:1])
+	utils.CheckError(err)
+
+	d.value, err = utils.ByteArrayToFloat64(bs[1:9])
+	utils.CheckError(err)
+}
+
+func (d *DoubleValue) read() {
+	bs :=  make([]byte, globals.DoubleSize)
+	offset := globals.DoubleSize * d.id
+	err = globals.FileHandler.Read(globals.DoubleStore, offset, bs, d.id)
+	utils.CheckError(err)
+	d.fromBytes(bs)
+}
+
+func (d *DoubleValue) write() {
+	offset := globals.DoubleSize * d.id
+	bs := d.toBytes()
+	err := globals.FileHandler.Write(globals.DoubleStore, offset, bs, d.id)
+	utils.CheckError(err)
 }
