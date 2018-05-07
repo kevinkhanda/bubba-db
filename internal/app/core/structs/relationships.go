@@ -29,14 +29,15 @@ type RelationshipTitle struct {
 	counter int
 }
 
-func (r *Relationship) Create() {
+func Create(isFirst bool) (r *Relationship) {
 	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
 	utils.CheckError(err)
 	r.id = id
 	r.isUsed = true
 	r.isWritten = false
-	r.isFirst = false
+	r.isFirst = isFirst
 	r.write()
+	return r
 }
 
 func (r *Relationship) Delete(id int) (err error) {

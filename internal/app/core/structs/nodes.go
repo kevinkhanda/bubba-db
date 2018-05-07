@@ -304,7 +304,7 @@ func (l *Label) GetLabelNames() []*LabelTitle  {
 
 func (l *Label) AddLabelName(title string) (err error) {
 	if l.numberOfLabels == 5 {
-		err = errors.New("Already max amount of labels")
+		err = errors.New("already max amount of labels")
 
 	} else {
 		l.labelNames[l.numberOfLabels] = AddLabelTitle(title)
@@ -316,7 +316,7 @@ func (l *Label) AddLabelName(title string) (err error) {
 
 func (l *Label) RemoveLabelName(title string) (err error)  {
 	if l.numberOfLabels == 0 {
-		err = errors.New("There is no such label")
+		err = errors.New("there is no such label")
 		return err
 	}
 	_ = l.GetLabelNames()
@@ -334,7 +334,7 @@ func (l *Label) RemoveLabelName(title string) (err error)  {
 			return nil
 		}
 	}
-	err = errors.New("There is no such label")
+	err = errors.New("there is no such label")
 	return err
 }
 
