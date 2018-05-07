@@ -34,7 +34,7 @@ func (entity *Entity) Deploy(request *RPCRequest, reply *Reply) error  {
 
 func (entity *Entity) InitDatabaseStructure(request *RPCRequest, reply *Reply) error {
 	var fileHandler  FileHandler
-	fileHandler.InitDatabaseStructure(string(request.Data.Payload))
+	fileHandler.InitDatabaseStructure(request.Data.Payload)
 	reply.Message = "success"
 	return nil
 }
