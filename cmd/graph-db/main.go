@@ -1,10 +1,10 @@
 package main
 
 import (
-	"graph-db/internal/pkg/utils"
-	"graph-db/internal/app/core/globals"
 	"graph-db/internal/app/core"
 	"log"
+	"graph-db/internal/pkg/utils"
+	"graph-db/internal/app/core/globals"
 )
 
 func main() {

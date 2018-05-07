@@ -1,6 +1,8 @@
 package core
 
-import "os"
+import (
+	"os"
+)
 
 type DistributedFileHandler struct {
 }
@@ -19,27 +21,24 @@ func inArray(fileName string) bool {
 }
 
 func (dfh DistributedFileHandler) InitFileSystem() {
-	//for i := range master.slaves {
-	//	SendInitFileSystem(&master.slaves[i])
-	//}
 }
 
 func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
-	for i := range master.slaves {
-		SendInitDatabaseStructure(&master.slaves[i], &dbIdentifier)
+	for i := range master.Slaves {
+		SendInitDatabaseStructure(&master.Slaves[i], &dbIdentifier)
 	}
 }
 
 func (dfh DistributedFileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
-	for i := range master.slaves {
-		SendSwitchDatabaseStructure(&master.slaves[i], &dbTitle)
+	for i := range master.Slaves {
+		SendSwitchDatabaseStructure(&master.Slaves[i], &dbTitle)
 	}
 	return nil
 }
 
 func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) (err error) {
-	for i := range master.slaves {
-		SendDropDatabase(&master.slaves[i], &dbIdentifier)
+	for i := range master.Slaves {
+		SendDropDatabase(&master.Slaves[i], &dbIdentifier)
 	}
 	return nil
 }
@@ -49,8 +48,8 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id 
 		fh := new(FileHandler)
 		fh.Read(file, offset, bs, id)
 	} else {
-		slaveIndex := id%len(master.slaves) + 1
-		bs, err = SendReadData(&master.slaves[slaveIndex], file, offset, id)
+		slaveIndex := id % len(master.Slaves) + 1
+		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id)
 	}
 	return nil
 }
@@ -60,8 +59,8 @@ func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte, id
 		fh := new(FileHandler)
 		fh.Write(file, offset, bs, id)
 	} else {
-		slaveIndex := id%len(master.slaves) + 1
-		SendWriteData(&master.slaves[slaveIndex], file, offset, id, bs)
+		slaveIndex := id % len(master.Slaves) + 1
+		SendWriteData(&master.Slaves[slaveIndex], file, offset, id, bs)
 	}
 	return nil
 }

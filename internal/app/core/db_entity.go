@@ -9,23 +9,22 @@ import (
 	"time"
 	"io/ioutil"
 	"encoding/json"
-	"os"
 )
 
 var listeningPort = "7000"
 
 type Entity struct {
-	ip 				string
-	port 			string
-	identifier 		int
-	connector		rpc.Client
-	isActive		bool
-	slaves			[]Entity
+	Ip 				string
+	Port 			string
+	Identifier 		int
+	Connector		rpc.Client
+	IsActive		bool
+	Slaves			[]Entity
 }
 
 type RequestedData struct {
 	Payload			string
-	File 			*os.File
+	File 			string
 	Offset			int
 	Id				int
 	Bs 				[]byte
@@ -53,12 +52,12 @@ func getSlavesIps() ([]string, error) {
 
 func setMasterProp(ip string, port string) Entity{
 	master = Entity{
-		ip:         ip,
-		port:       port,
-		identifier: 0,
-		isActive:   true,
-		connector:  rpc.Client{},
-		slaves:     nil,
+		Ip:         ip,
+		Port:       port,
+		Identifier: 0,
+		IsActive:   true,
+		Connector:  rpc.Client{},
+		Slaves:     nil,
 	}
 	setSlavesTo(&master)
 	return master
@@ -72,14 +71,14 @@ func setSlavesTo(master *Entity) {
 	for i, slaveAddress := range slavesAddresses {
 		slaveAddress := strings.Split(slaveAddress, ":")
 		newSlave := Entity {
-			ip:			slaveAddress[0],
-			port:		slaveAddress[1],
-			identifier:	i + 1,
-			isActive:	false,
-			connector:	rpc.Client{},
-			slaves:		nil,
+			Ip:			slaveAddress[0],
+			Port:		slaveAddress[1],
+			Identifier:	i + 1,
+			IsActive:	false,
+			Connector:	rpc.Client{},
+			Slaves:		nil,
 		}
-		master.slaves = append(master.slaves, newSlave)
+		master.Slaves = append(master.Slaves, newSlave)
 	}
 }
 
@@ -124,17 +123,17 @@ func InitEntity(entityType int) {
 
 		go http.Serve(l, nil)
 
-		for i, slave := range master.slaves {
+		for i, slave := range master.Slaves {
 			var rpcClient *rpc.Client
 			attempts := 0
 			for attempts != -1 {
-				log.Printf("Try to connect (attempts %d) to %s:%s\n", attempts, slave.ip, slave.port)
+				log.Printf("Try to connect (attempts %d) to %s:%s\n", attempts, slave.Ip, slave.Port)
 				attempts++
 				c := make(chan error, 1)
 				go func() {
-					rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":" + listeningPort)
+					rpcClient, err = rpc.DialHTTP("tcp", slave.Ip + ":" + listeningPort)
 					if err == nil {
-						master.slaves[i].connector = *rpcClient
+						master.Slaves[i].Connector = *rpcClient
 					}
 					c <- err
 				}()
@@ -156,12 +155,12 @@ func InitEntity(entityType int) {
 			}
 		}
 
-		for i, slave := range master.slaves {
+		for i, slave := range master.Slaves {
 			resp := RequestSlaveStatus(&slave)
 			if resp == nil {
 				resp := SendDeploy(&slave)
 				if resp != nil {
-					master.slaves[i].isActive = true
+					master.Slaves[i].IsActive = true
 				}
 			}
 		}
