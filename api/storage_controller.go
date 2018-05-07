@@ -89,7 +89,8 @@ func CreateRelationship(firstNode *structs.Node, secondNode *structs.Node, title
 		}
 	}
 
-	relTitle := structs.AddRelationshipTitle(title)
+	relTitle, err := structs.AddRelationshipTitle(title)
+	utils.CheckError(err)
 	relationship.SetTitle(relTitle)
 
 	return relationship

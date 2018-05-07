@@ -336,7 +336,7 @@ func (l *Label) RemoveLabelName(title string) (err error)  {
 	}
 	_ = l.GetLabelNames()
 	for i := 0; i < l.numberOfLabels; i++ {
-		if (l.labelNames[i].GetTitle() == title) {
+		if l.labelNames[i].GetTitle() == title {
 			if i == l.numberOfLabels - 1 {
 				l.numberOfLabels--
 				l.write()
@@ -434,7 +434,6 @@ func DecreaseLabelTitleCounter(title string)  {
 		delete(globals.LabelTitleMap, title)
 	}
 }
-
 
 func AddLabelTitle(title string) *LabelTitle {
 	_, present := globals.LabelTitleMap[title]

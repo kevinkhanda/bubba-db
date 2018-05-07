@@ -320,9 +320,10 @@ func DecreasePropertyTitleCounter(title string) {
 	}
 }
 
-func AddPropertyTitle(title string) *PropertyTitle {
+func AddPropertyTitle(title string) (*PropertyTitle, error) {
 	if len(title) > globals.PropertiesTitlesSize - 5 {
 		err = errors.New("property title is too big")
+		return nil, err
 	} else {
 		value, present := globals.PropertyTitleMap[title]
 		if present {
@@ -335,6 +336,6 @@ func AddPropertyTitle(title string) *PropertyTitle {
 			globals.PropertyTitleMap[title] = value
 		}
 		WritePropertyTitle(value.Id, title, value.Counter)
-		return &PropertyTitle{id: value.Id, title: title, counter: value.Counter}
+		return &PropertyTitle{id: value.Id, title: title, counter: value.Counter}, nil
 	}
 }

@@ -112,7 +112,7 @@ func (r *Relationship) getNode(start int, end int) *Node {
 		nodeId int32
 		bs = make([]byte, globals.RelationshipsSize)
 	)
-	if len(r.byteString) < 0 {
+	if len(r.byteString) == 0 {
 		offset := r.id * globals.RelationshipsSize
 		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs, r.id)
 		utils.CheckError(err)
@@ -410,6 +410,10 @@ func (title *RelationshipTitle) GetId() int {
 	return title.id
 }
 
+func (title *RelationshipTitle) GetTitle() string {
+	return title.title
+}
+
 func WriteRelationshipsTitle(id int, title string, counter int) {
 	offset := id * globals.RelationshipsTitlesSize
 	bs := make([]byte, globals.RelationshipsTitlesSize)
@@ -436,9 +440,10 @@ func DecreaseRelationshipTitleCounter(title string) {
 	}
 }
 
-func AddRelationshipTitle(title string) *RelationshipTitle {
+func AddRelationshipTitle(title string) (*RelationshipTitle, error) {
 	if len(title) > globals.RelationshipsTitlesSize - 5 {
 		err = errors.New("property title is too big")
+		return nil, err
 	} else {
 		value, present := globals.RelationshipTitleMap[title]
 		if present {
@@ -451,6 +456,6 @@ func AddRelationshipTitle(title string) *RelationshipTitle {
 			globals.RelationshipTitleMap[title] = value
 		}
 		WriteRelationshipsTitle(value.Id, title, value.Counter)
-		return &RelationshipTitle{id: value.Id, title: title, counter: value.Counter}
+		return &RelationshipTitle{id: value.Id, title: title, counter: value.Counter}, nil
 	}
 }
