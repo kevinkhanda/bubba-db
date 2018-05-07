@@ -38,6 +38,6 @@ func DeleteNode(id int) (err error) {
 }
 
 func CreateRelationship() (relationship structs.Relationship) {
-	//relationship.Create()
+	//relationship.CreateRelationship()
 	return relationship
 }

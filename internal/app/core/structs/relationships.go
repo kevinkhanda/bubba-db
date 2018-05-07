@@ -29,7 +29,7 @@ type RelationshipTitle struct {
 	counter int
 }
 
-func Create(isFirst bool) *Relationship {
+func CreateRelationship(isFirst bool) *Relationship {
 	var r Relationship
 	id, err := globals.FileHandler.ReadId(globals.RelationshipsId)
 	utils.CheckError(err)
@@ -390,6 +390,7 @@ func DecreaseRelationshipTitleCounter(title string) {
 	WriteRelationshipsTitle(value.Id, title, value.Counter)
 	if globals.RelationshipTitleMap[title].Counter == 0 {
 		delete(globals.RelationshipTitleMap, title)
+		globals.FileHandler.FreeId(globals.RelationshipsTitlesStore, value.Id)
 	}
 }
 

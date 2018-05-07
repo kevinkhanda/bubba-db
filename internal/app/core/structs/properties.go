@@ -35,6 +35,25 @@ func CreateProperty() *Property {
 	return &p
 }
 
+func (p *Property) Delete(id int) (err error) {
+	bs := make([]byte, globals.PropertiesSize)
+	bs[0] = utils.BoolToByteArray(false)[0]
+	err = globals.FileHandler.FreeId(globals.PropertiesId, id)
+	if err != nil {
+		return err
+	}
+	offset := globals.PropertiesSize * id
+	err = globals.FileHandler.Write(globals.PropertiesStore, offset, bs, id)
+	return err
+}
+
+func (p *Property) Get(id int) Property {
+	p.id = id
+	p.read()
+	p.isWritten = true
+	return *p
+}
+
 func (p Property) GetId() int {
 	return p.id
 }
@@ -69,6 +88,11 @@ func (p Property) GetNextProperty() *Property {
 	}
 }
 
+func (p *Property) SetNextProperty(nextProperty *Property) {
+	p.nextProperty = nextProperty
+	p.write()
+}
+
 func (p *Property) GetTitle() *PropertyTitle {
 	if p.title != nil {
 		return p.title
@@ -99,8 +123,18 @@ func (p *Property) GetTitle() *PropertyTitle {
 	}
 }
 
+func (p *Property) SetTitle(title *PropertyTitle) {
+	p.title = title
+	p.write()
+}
+
 func (p *Property) GetValueType() int8 {
 	return p.valueType
+}
+
+func (p *Property) SetValueType(valueType int8) {
+	p.valueType = valueType
+	p.write()
 }
 
 func (p *Property) GetValue() *Value {
@@ -151,6 +185,11 @@ func (p *Property) GetValue() *Value {
 		p.value = &value
 		return &value
 	}
+}
+
+func (p *Property) SetValue(value *Value) {
+	p.value = value
+	p.write()
 }
 
 func (p *Property) toBytes() (bs []byte) {
@@ -276,10 +315,11 @@ func DecreasePropertyTitleCounter(title string) {
 	WritePropertyTitle(value.Id, title, value.Counter)
 	if globals.PropertyTitleMap[title].Counter == 0 {
 		delete(globals.PropertyTitleMap, title)
+		globals.FileHandler.FreeId(globals.PropertiesId, value.Id)
 	}
 }
 
-func AddPropertyTitle(title string) *PropertyTitle {
+func CreatePropertyTitle(title string) *PropertyTitle {
 	value, present := globals.PropertyTitleMap[title]
 	if present {
 		value.Counter++
