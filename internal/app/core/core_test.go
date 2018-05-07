@@ -287,7 +287,7 @@ func TestNodeGet(test *testing.T) {
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
-	n = n.Get(0)
+	n = *n.Get(0)
 	if n.GetRelationship().GetId() != 10 {
 		test.Errorf("Id value mismatch")
 	}
@@ -530,7 +530,7 @@ func TestGetRelationship(test *testing.T) {
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
-	relationship = relationship.Get(0)
+	relationship = *relationship.Get(0)
 	if relationship.GetId() != 0 {
 		test.Errorf("Id value mismatch")
 	}

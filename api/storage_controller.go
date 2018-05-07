@@ -32,58 +32,58 @@ func CreateNode(title string) (node structs.Node) {
 	return node
 }
 
-func CreateRelationship(firstNode *structs.Node, secondNode *structs.Node, title string) (relationship structs.Relationship) {
+func CreateRelationship(firstNode *structs.Node, secondNode *structs.Node, title string) (relationship *structs.Relationship) {
 	flag := firstNode.GetRelationship() == nil
-	relationship = *structs.CreateRelationship(flag)
+	relationship = structs.CreateRelationship(flag)
 	relationship.SetNode1(firstNode)
 	relationship.SetNode2(secondNode)
 	if flag {
-		firstNode.SetRelationship(&relationship)
+		firstNode.SetRelationship(relationship)
 		relationship.SetPreviousRelationship1(nil)
 	} else {
-		lastRelationship1 := firstNode.GetRelationship()
+		lastRelationship1 := *firstNode.GetRelationship()
 		for true {
 			if lastRelationship1.GetFirstNode().GetId() == firstNode.GetId() {
 				if lastRelationship1.GetFirstNextRelationship() == nil {
-					lastRelationship1.SetNextRelationship1(&relationship)
-					relationship.SetPreviousRelationship1(lastRelationship1)
+					firstNode.GetRelationship().SetNextRelationship1(relationship)
+					relationship.SetPreviousRelationship1(firstNode.GetRelationship())
 					break
 				} else {
-					lastRelationship1 = lastRelationship1.GetFirstNextRelationship()
+					lastRelationship1 = *lastRelationship1.GetFirstNextRelationship()
 				}
 			} else {
 				if lastRelationship1.GetSecondNextRelationship() == nil {
-					lastRelationship1.SetNextRelationship2(&relationship)
-					relationship.SetPreviousRelationship1(lastRelationship1)
+					firstNode.GetRelationship().SetNextRelationship2(relationship)
+					relationship.SetPreviousRelationship1(firstNode.GetRelationship())
 					break
 				} else {
-					lastRelationship1 = lastRelationship1.GetSecondNextRelationship()
+					lastRelationship1 = *lastRelationship1.GetSecondNextRelationship()
 				}
 			}
 		}
 	}
 
 	if secondNode.GetRelationship() == nil {
-		secondNode.SetRelationship(&relationship)
+		secondNode.SetRelationship(relationship)
 		relationship.SetPreviousRelationship2(nil)
 	} else {
-		lastRelationship2 := secondNode.GetRelationship()
+		lastRelationship2 := *secondNode.GetRelationship()
 		for true {
 			if lastRelationship2.GetFirstNode().GetId() == secondNode.GetId() {
 				if lastRelationship2.GetFirstNextRelationship() == nil {
-					lastRelationship2.SetNextRelationship1(&relationship)
-					relationship.SetPreviousRelationship2(lastRelationship2)
+					secondNode.GetRelationship().SetNextRelationship1(relationship)
+					relationship.SetPreviousRelationship2(secondNode.GetRelationship())
 					break
 				} else {
-					lastRelationship2 = lastRelationship2.GetFirstNextRelationship()
+					lastRelationship2 = *lastRelationship2.GetFirstNextRelationship()
 				}
 			} else {
 				if lastRelationship2.GetSecondNextRelationship() == nil {
-					lastRelationship2.SetNextRelationship2(&relationship)
-					relationship.SetPreviousRelationship2(lastRelationship2)
+					secondNode.GetRelationship().SetNextRelationship2(relationship)
+					relationship.SetPreviousRelationship2(secondNode.GetRelationship())
 					break
 				} else {
-					lastRelationship2 = lastRelationship2.GetSecondNextRelationship()
+					lastRelationship2 = *lastRelationship2.GetSecondNextRelationship()
 				}
 			}
 		}
@@ -96,7 +96,7 @@ func CreateRelationship(firstNode *structs.Node, secondNode *structs.Node, title
 	return relationship
 }
 
-func GetNode(id int) (node structs.Node) {
+func GetNode(id int) (node *structs.Node) {
 	//todo Recover from error or make node.Get() return error
 	return node.Get(id)
 }
