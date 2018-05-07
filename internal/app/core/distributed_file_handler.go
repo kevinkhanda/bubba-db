@@ -19,10 +19,8 @@ func inArray(fileName string) bool {
 }
 
 func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string)  {
-	for i, slave := range master.slaves{
-		if slave.identifier == dbIdentifier {
-			SendDropDatabase(&master.slaves[i])
-		}
+	for i := range master.slaves {
+		SendDropDatabase(&master.slaves[i])
 	}
 }
 

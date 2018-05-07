@@ -16,7 +16,7 @@ var listeningPort = "7000"
 type Entity struct {
 	ip 				string
 	port 			string
-	identifier 		string
+	identifier 		int
 	connector		rpc.Client
 	isActive		bool
 	slaves			[]Entity
@@ -42,7 +42,7 @@ func setMasterProp(ip string, port string) Entity{
 	master = Entity{
 		ip:         ip,
 		port:       port,
-		identifier: "master",
+		identifier: 0,
 		isActive:   true,
 		connector:  rpc.Client{},
 		slaves:     nil,
@@ -56,12 +56,12 @@ func setSlavesTo(master *Entity) {
 	if err != nil {
 		log.Fatal("Problem in decoding JSON Ips", err)
 	}
-	for _, slaveAddress := range slavesAddresses {
+	for i, slaveAddress := range slavesAddresses {
 		slaveAddress := strings.Split(slaveAddress, ":")
 		newSlave := Entity {
 			ip:			slaveAddress[0],
 			port:		slaveAddress[1],
-			identifier:	"slave",
+			identifier:	i + 1,
 			isActive:	false,
 			connector:	rpc.Client{},
 			slaves:		nil,

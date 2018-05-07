@@ -24,6 +24,16 @@ type PropertyTitle struct {
 	counter int
 }
 
+func CreateProperty() (p *Property) {
+	id, err := globals.FileHandler.ReadId(globals.PropertiesId)
+	utils.CheckError(err)
+	p.id = id
+	p.isUsed = true
+	p.isWritten = false
+	p.write()
+	return p
+}
+
 func (p Property) GetId() int {
 	return p.id
 }
@@ -184,6 +194,7 @@ func (p *Property) fromBytes(bs []byte) {
 		errorMessage := fmt.Sprintf("Converter: wrong properties byte array length, expected 14, given %d", len(bs))
 		panic(errorMessage)
 	}
+	p.byteString = bs
 	p.isUsed, err = utils.ByteArrayToBool(bs[0:1])
 	utils.CheckError(err)
 
@@ -224,6 +235,22 @@ func (p *Property) fromBytes(bs []byte) {
 		value = &StringValue{id: int(val), value: fileValue}
 	}
 	p.value = &value
+}
+
+func (p *Property) read() {
+	bs := make([]byte, globals.PropertiesSize)
+	offset := globals.PropertiesSize * p.id
+	err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs)
+	utils.CheckError(err)
+	p.fromBytes(bs)
+}
+
+func (p *Property) write() {
+	offset := globals.PropertiesSize * p.id
+	bs := p.toBytes()
+	err = globals.FileHandler.Write(globals.PropertiesStore, offset, bs)
+	utils.CheckError(err)
+	p.isWritten = true
 }
 
 func WritePropertyTitle(id int, title string, counter int) {
