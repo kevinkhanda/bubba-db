@@ -33,15 +33,41 @@ type StringValue struct {
 }
 
 func (s StringValue) get() interface{} {
-	return s.value
+	str := s.value
+	if s.nextChunk != nil {
+		str += s.nextChunk.get().(string)
+	}
+	return str
 }
 
 func (s *StringValue) set(value interface{}) {
-	s.value = value.(string)
+	str := value.(string)
+	if len(str) > 31 {
+		s.value = str[0:31]
+		nextChunk := CreateStringValue()
+		nextChunk.set(str[31:])
+	} else {
+		s.value = str
+	}
+	s.write()
+}
+
+func CreateStringValue() *StringValue {
+	var s StringValue
+	id, err := globals.FileHandler.ReadId(globals.StringId)
+	utils.CheckError(err)
+	s.id = id
+	s.isUsed = true
+	s.write()
+	return &s
 }
 
 func (s *StringValue) GetValue() string {
-	return s.value
+	return s.get().(string)
+}
+
+func (s *StringValue) SetValue(value string) {
+	s.set(value)
 }
 
 func (s *StringValue) GetNextChunk() *StringValue {
@@ -50,7 +76,7 @@ func (s *StringValue) GetNextChunk() *StringValue {
 	} else {
 		offset := s.id * globals.NodesSize
 		bs := make([]byte, globals.NodesSize)
-		globals.FileHandler.Read(globals.NodesStore, offset, bs)
+		globals.FileHandler.Read(globals.NodesStore, offset, bs, s.id)
 		nextChunkId, err := utils.ByteArrayToInt32(bs[1:5])
 		utils.CheckError(err)
 		if nextChunkId == -1 {
@@ -94,7 +120,7 @@ func (s *StringValue) fromBytes(bs []byte) {
 func (s *StringValue) read() {
 	bs :=  make([]byte, globals.StringSize)
 	offset := globals.StringSize * s.id
-	err = globals.FileHandler.Read(globals.StringStore, offset, bs)
+	err = globals.FileHandler.Read(globals.StringStore, offset, bs, s.id)
 	utils.CheckError(err)
 	s.fromBytes(bs)
 }
@@ -102,7 +128,7 @@ func (s *StringValue) read() {
 func (s *StringValue) write() {
 	offset := globals.StringSize * s.id
 	bs := s.toBytes()
-	err := globals.FileHandler.Write(globals.StringStore, offset, bs)
+	err := globals.FileHandler.Write(globals.StringStore, offset, bs, s.id)
 	utils.CheckError(err)
 }
 

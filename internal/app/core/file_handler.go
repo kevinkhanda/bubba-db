@@ -251,7 +251,7 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 	}
 }
 
-func (fh FileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
+func (fh FileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
 	offset = offset * len(bs)
 	bytesWritten, err := file.WriteAt(bs, int64(offset))
 	if bytesWritten != len(bs) {
@@ -260,7 +260,7 @@ func (fh FileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
 	return err
 }
 
-func (fh FileHandler) Read(file *os.File, offset int, bs []byte) (err error) {
+func (fh FileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
 	offset = offset * len(bs)
 	bytesRead, err := file.ReadAt(bs, int64(offset))
 	if bytesRead != len(bs) {
