@@ -303,7 +303,9 @@ func (l *Label) GetLabelNames() []*LabelTitle  {
 }
 
 func (l *Label) AddLabelName(title string) (err error) {
-	if l.numberOfLabels == 5 {
+	if len(title) > globals.LabelsTitlesSize - 4 {
+		err = errors.New("Label is too big")
+	} else if l.numberOfLabels == 5 {
 		err = errors.New("Already max amount of labels")
 
 	} else {
