@@ -24,9 +24,9 @@ func (entity *Entity) SwitchDatabaseStructure(request *RPCRequest, reply *string
 
 func (entity *Entity) DropDatabase(request *RPCRequest, reply *string) error  {
 	var fileHandler = new(FileHandler)
-	fileHandler.DropDatabase(string(request.Data))
+	err = fileHandler.DropDatabase(string(request.Data))
 	*reply = "success"
-	return nil
+	return err
 }
 
 func (entity *Entity) Read(request *RPCRequest, reply *string) error  {
