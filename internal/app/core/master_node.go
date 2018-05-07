@@ -5,9 +5,25 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var master Entity
+
+func getFilePath(fileName string) string {
+	path, err := filepath.Abs("./" + fileName)
+	if err != nil {
+		log.Panic("Error at master_node getFilePath")
+	}
+	pathElems := strings.Split(path, "/")
+	res := 0
+	for i := range pathElems {
+		if pathElems[i] == "go" && pathElems[i + 1] == "src" {
+			res = i
+		}
+	}
+	return "~/" + strings.Join(pathElems[res:],"/")
+}
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
 	var reply Reply
@@ -38,8 +54,11 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte) error {
 	var reply Reply
 	var attempts = 0
+
+	fileAbsPath := getFilePath(file.Name())
+	println(fileAbsPath)
 	requestedData := RequestedData{
-		//File: *file,
+		File: fileAbsPath,
 		Offset: offset,
 		Id: id,
 		Bs: bs,
@@ -138,7 +157,6 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 			attempts++
 			continue
 		}
-		println(reply.Message)
 		if reply.Message == "success" {
 			attempts = 5
 		}

@@ -2,6 +2,7 @@ package core
 
 import (
 	"os"
+	"graph-db/internal/app/core/globals"
 )
 
 type DistributedFileHandler struct {
@@ -21,9 +22,15 @@ func inArray(fileName string) bool {
 }
 
 func (dfh DistributedFileHandler) InitFileSystem() {
+	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
+		os.Mkdir(rootPath, os.ModePerm)
+	}
 }
 
 func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
+	var fh FileHandler
+	fh.InitDatabaseStructure(dbIdentifier)
+	globals.Config.WriteAt([]byte("[\"10.240.22.31:7000\"]"), 0)
 	for i := range master.Slaves {
 		SendInitDatabaseStructure(&master.Slaves[i], &dbIdentifier)
 	}
@@ -45,10 +52,10 @@ func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) (err error) 
 
 func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
-		fh := new(FileHandler)
+		var fh FileHandler
 		fh.Read(file, offset, bs, id)
 	} else {
-		slaveIndex := id % len(master.Slaves) + 1
+		slaveIndex := id % len(master.Slaves)
 		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id)
 	}
 	return nil
@@ -56,23 +63,23 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id 
 
 func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
-		fh := new(FileHandler)
+		var fh FileHandler
 		fh.Write(file, offset, bs, id)
 	} else {
-		slaveIndex := id % len(master.Slaves) + 1
+		slaveIndex := id % len(master.Slaves)
 		SendWriteData(&master.Slaves[slaveIndex], file, offset, id, bs)
 	}
 	return nil
 }
 
 func (dfh DistributedFileHandler) ReadId(file *os.File) (id int, err error) {
-	var fh = new(FileHandler)
+	var fh FileHandler
 	id, err = fh.ReadId(file)
 	return id, err
 }
 
 func (dfh DistributedFileHandler) FreeId(file *os.File, id int) (err error) {
-	var fh = new(FileHandler)
+	var fh FileHandler
 	err = fh.FreeId(file, id)
 	return err
 }
