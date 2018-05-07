@@ -321,7 +321,7 @@ func DecreasePropertyTitleCounter(title string) {
 }
 
 func AddPropertyTitle(title string) *PropertyTitle {
-	if len(title) > globals.PropertiesTitlesSize - 4 {
+	if len(title) > globals.PropertiesTitlesSize - 5 {
 		err = errors.New("property title is too big")
 	} else {
 		value, present := globals.PropertyTitleMap[title]

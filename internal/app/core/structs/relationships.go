@@ -4,6 +4,7 @@ import (
 	"graph-db/internal/app/core/globals"
 	"graph-db/internal/pkg/utils"
 	"fmt"
+	"errors"
 )
 
 type Relationship struct {
@@ -436,16 +437,20 @@ func DecreaseRelationshipTitleCounter(title string) {
 }
 
 func AddRelationshipTitle(title string) *RelationshipTitle {
-	value, present := globals.RelationshipTitleMap[title]
-	if present {
-		value.Counter++
-		globals.RelationshipTitleMap[title] = value
+	if len(title) > globals.RelationshipsTitlesSize - 5 {
+		err = errors.New("property title is too big")
 	} else {
-		id, err := globals.FileHandler.ReadId(globals.RelationshipsTitlesId)
-		utils.CheckError(err)
-		value = globals.MapValue{Counter: 1, Id: id}
-		globals.RelationshipTitleMap[title] = value
+		value, present := globals.RelationshipTitleMap[title]
+		if present {
+			value.Counter++
+			globals.RelationshipTitleMap[title] = value
+		} else {
+			id, err := globals.FileHandler.ReadId(globals.RelationshipsTitlesId)
+			utils.CheckError(err)
+			value = globals.MapValue{Counter: 1, Id: id}
+			globals.RelationshipTitleMap[title] = value
+		}
+		WriteRelationshipsTitle(value.Id, title, value.Counter)
+		return &RelationshipTitle{id: value.Id, title: title, counter: value.Counter}
 	}
-	WriteRelationshipsTitle(value.Id, title, value.Counter)
-	return &RelationshipTitle{id: value.Id, title: title, counter: value.Counter}
 }
