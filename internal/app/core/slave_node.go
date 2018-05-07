@@ -13,8 +13,13 @@ func (entity *Entity) SendStatus(request *RPCRequest, reply *string) error {
 func (entity *Entity) Deploy(request *RPCRequest, reply *string) error  {
 	var fileHandler = new (FileHandler)
 	fileHandler.InitFileSystem()
-	fileHandler.InitDatabaseStructure(string(request.Data))
 	*reply = "success"
+	return nil
+}
+
+func (entity *Entity) InitDatabaseStructure(request *RPCRequest, reply *string) error {
+	var fileHandler  = new(FileHandler)
+	fileHandler.InitDatabaseStructure(string(request.Data))
 	return nil
 }
 
