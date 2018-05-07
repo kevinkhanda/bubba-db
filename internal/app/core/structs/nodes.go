@@ -59,16 +59,28 @@ func (n *Node) fromBytes(bs []byte) {
 	utils.CheckError(err)
 	id, err = utils.ByteArrayToInt32(bs[1:5])
 	utils.CheckError(err)
-	rel.id = int(id)
-	n.relationship = &rel
+	if id == -1 {
+		n.relationship = nil
+	} else {
+		rel.id = int(id)
+		n.relationship = &rel
+	}
 	id, err = utils.ByteArrayToInt32(bs[5:9])
 	utils.CheckError(err)
-	prop.id = int(id)
-	n.property = &prop
+	if id == -1 {
+		n.property = nil
+	} else {
+		prop.id = int(id)
+		n.property = &prop
+	}
 	id, err = utils.ByteArrayToInt32(bs[9:13])
 	utils.CheckError(err)
-	label.id = int(id)
-	n.label = &label
+	if id == -1 {
+		n.label = nil
+	} else {
+		label.id = int(id)
+		n.label = &label
+	}
 }
 
 func (n *Node) GetRelationship() *Relationship {
