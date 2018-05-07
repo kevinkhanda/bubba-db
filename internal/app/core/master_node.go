@@ -1,107 +1,109 @@
 package core
 
 import (
-	"encoding/json"
-	"net/rpc"
 	"log"
-	"time"
-	"net"
-	"net/http"
-	"io/ioutil"
 	"errors"
 )
 
 var master Entity
 
-func requestSlaveStatus(entity *Entity) error {
-	var reply string
-	request := RPCRequest{"ping", nil}
-	err = entity.connector.Call("Entity.SendStatus", &request, &reply)
-	if err != nil {
-		log.Fatal("Problems in requestSlaveStatus ", err)
-	}
-	if reply == "success" {
-		println("Slave " + entity.ip + ":"+ entity.port + "is ready")
-		for i, slave := range master.slaves {
-			if slave.ip == entity.ip && slave.port == entity.port {
-				master.slaves[i].isActive = true
-				break
-			}
+func SendReadData(entity *Entity) error  {
+	var reply  string
+	var attempts = 0
+	for attempts < 5 {
+		err = nil
+		request := RPCRequest{nil}
+		err = entity.connector.Call("Entity.Read", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
 		}
-	} else {
-		err = errors.New("incorrect response")
+		if reply == "success" {
+			attempts = 5
+		}
 	}
 	return err
 }
 
-func getSlavesIps() ([]string, error) {
-	var ips []string
-	var ipsJson, err = ioutil.ReadFile("databases/asd/connections.config")
-	if err != nil {
-		log.Fatal("Problem: ", err)
+func RequestSlaveStatus(entity *Entity) error {
+	var reply string
+	var attempts = 0
+	for attempts < 5 {
+		err = nil
+		request := RPCRequest{nil}
+		err = entity.connector.Call("Entity.SendStatus", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
+		}
+		if reply == "success" {
+			println("Slave " + entity.ip + ":" + entity.port + " is available")
+			attempts = 5
+		}
 	}
-	println(string(ipsJson))
-	err = json.Unmarshal([]byte(ipsJson), &ips)
-
-	return ips, err
+	return err
 }
 
-func Test() {
-	var myIp, err = getEntityIpAddress()
-	if err == nil {
-		println("My IP: ", myIp)
-	}
-
-	master = initMaster(myIp, "7000")
-	initSlaves(&master)
-	rpc.Register(&master)
-	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", myIp+":7000")
-	if e != nil {
-		log.Fatal("listen error:", e)
-	}
-	go http.Serve(l, nil)
-
-	for i, slave := range master.slaves {
-		// RPC call...
-		var rpcClient *rpc.Client
-		//var err error
-		attempt := 1
-		for attempt != -1 {
-			log.Printf("Try to connect (attempt %d) to %s", attempt, slave.ip)
-			println()
-			attempt = attempt + 1
-			c := make(chan error, 1)
-			go func() {
-				rpcClient, err = rpc.DialHTTP("tcp", slave.ip + ":7000")
-				if err == nil {
-					master.slaves[i].connector = *rpcClient
-				}
-				c <- err
-			}()
-			select {
-			case err := <-c:
-				if err != nil {
-					log.Print("dialing:", err)
-					time.Sleep(time.Second)
-				} else {
-					attempt = -1
-				}
-			case <-time.After(time.Second * 5):
-				println("timeout...")
-			}
+func SendDeploy(entity *Entity) error {
+	var reply string
+	var attempts = 0
+	for attempts < 5 {
+		err = nil
+		request := RPCRequest{[]byte(entity.identifier)}
+		err = entity.connector.Call("Entity.Deploy", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
+		}
+		if reply == "success" {
+			attempts = 5
 		}
 	}
+	return err
+}
 
-	for _, slave := range master.slaves {
-		requestSlaveStatus(&slave)
-		var readyCount= 0
-		for _, entity := range master.slaves {
-			if entity.isActive {
-				readyCount++
-			}
+func SendWriteData(entity *Entity) error {
+	var reply  string
+	var attempts = 0
+	for attempts < 5 {
+		err = nil
+		request := RPCRequest{nil}
+		err = entity.connector.Call("Entity.Write", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
 		}
-		if readyCount == len(master.slaves) {
+		if reply == "success" {
+			attempts = 5
 		}
 	}
+	return err
+}
+
+func SendDropDatabase(entity *Entity) error {
+	var reply string
+	var attempts = 0
+	for attempts < 5 {
+		err = nil
+		request := RPCRequest{[]byte(entity.identifier)}
+		err = entity.connector.Call("Entity.DropDatabase", &request, &reply)
+		if err != nil {
+			log.Fatal("Problems in requestSlaveStatus ", err)
+			err = errors.New("problems in requestSlaveStatus")
+			attempts++
+			continue
+		}
+		if reply == "success" {
+			attempts = 5
+		}
+	}
+	return err
 }

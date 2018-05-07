@@ -118,7 +118,7 @@ func ByteArrayToFloat64(bs []byte) (float64, error) {
 
 // If string parameter length is less than requiredLength then '#' character is added to the end of string
 func AddStopCharacter(str string, requiredLength int) string {
-	if len(str) < requiredLength {
+	for len(str) < requiredLength {
 		str += "#"
 	}
 
