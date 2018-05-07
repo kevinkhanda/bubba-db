@@ -1,24 +1,25 @@
-package core
+package api
 
 import (
 	"graph-db/internal/app/core/structs"
 	"graph-db/internal/pkg/utils"
+	"graph-db/internal/app/core"
 )
 
 type Storage interface {}
 
 func CreateDatabase(dbTitle string, storageMode string) {
-	err := InitDb(dbTitle, storageMode)
+	err := core.InitDb(dbTitle, storageMode)
 	utils.CheckError(err)
 }
 
 func SwitchDatabase(dbTitle string) {
-	err := SwitchDb(dbTitle)
+	err := core.SwitchDb(dbTitle)
 	utils.CheckError(err)
 }
 
 func DropDatabase(dbTitle string) {
-	err := DropDb(dbTitle)
+	err := core.DropDb(dbTitle)
 	utils.CheckError(err)
 }
 

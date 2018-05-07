@@ -431,6 +431,7 @@ func DecreaseLabelTitleCounter(title string)  {
 	globals.LabelTitleMap[title] = value
 	WriteLabelTitle(globals.LabelTitleMap[title].Id, title, globals.LabelTitleMap[title].Counter)
 	if globals.LabelTitleMap[title].Counter == 0 {
+		globals.FileHandler.FreeId(globals.LabelsTitlesId, globals.LabelTitleMap[title].Id)
 		delete(globals.LabelTitleMap, title)
 	}
 }
