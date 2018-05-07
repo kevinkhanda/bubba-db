@@ -330,7 +330,7 @@ func (l *Label) AddLabelName(title string) (err error) {
 
 func (l *Label) RemoveLabelName(title string) (err error)  {
 	if l.numberOfLabels == 0 {
-		err = errors.New("There is no such label")
+		err = errors.New("there is no such label")
 		return err
 	}
 	_ = l.GetLabelNames()
@@ -348,7 +348,7 @@ func (l *Label) RemoveLabelName(title string) (err error)  {
 			return nil
 		}
 	}
-	err = errors.New("There is no such label")
+	err = errors.New("there is no such label")
 	return err
 }
 
