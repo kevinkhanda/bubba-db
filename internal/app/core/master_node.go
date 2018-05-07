@@ -85,7 +85,7 @@ func RequestSlaveStatus(entity *Entity) error {
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
-		request := RPCRequest{nil}
+		request := RPCRequest{ *new(RequestedData) }
 		err = entity.connector.Call("Entity.SendStatus", &request, &reply)
 		if err != nil {
 			log.Fatal("Problems in requestSlaveStatus ", err)
@@ -106,7 +106,7 @@ func SendDeploy(entity *Entity) error {
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
-		request := RPCRequest{nil}
+		request := RPCRequest{*new(RequestedData) }
 		err = entity.connector.Call("Entity.Deploy", &request, &reply)
 		if err != nil {
 			log.Fatal("Problems in requestSlaveStatus ", err)
