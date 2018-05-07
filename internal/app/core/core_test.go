@@ -226,10 +226,9 @@ func TestFreeId(test *testing.T)  {
 func TestNodeCreate(test *testing.T) {
 	fh.InitDatabaseStructure("test_db")
 	var (
-		n structs.Node
 		bsExpected []byte
 	)
-	n.Create()
+	structs.CreateNode()
 	bs := make([]byte, globals.NodesSize)
 	bsId := utils.Int32ToByteArray(-1)
 	bsExpected = append(utils.BoolToByteArray(true), bsId...)
@@ -252,7 +251,7 @@ func TestNodeCreate(test *testing.T) {
 func TestNodeDelete(test *testing.T) {
 	fh.InitDatabaseStructure("test_db")
 	var n structs.Node
-	n.Create()
+	n = *structs.CreateNode()
 	n.Delete(n.GetId())
 	bs := make([]byte, globals.NodesSize)
 	bsExpected := make([]byte, globals.NodesSize)
@@ -306,11 +305,10 @@ func TestNodeGet(test *testing.T) {
 
 func TestLabelCreate(test *testing.T) {
 	var (
-		l structs.Label
 		bsExpected []byte
 	)
 	InitDb("test_db", "local")
-	l.Create()
+	structs.CreateLabel()
 	bs := make([]byte, globals.LabelsSize)
 	bsNumber := utils.Int32ToByteArray(0)
 	bsExpected = append(utils.BoolToByteArray(true), bsNumber...)
@@ -333,7 +331,7 @@ func TestLabelCreate(test *testing.T) {
 func TestLabelDelete(test *testing.T) {
 	InitDb("test_db", "local")
 	var l structs.Label
-	l.Create()
+	l = *structs.CreateLabel()
 	l.Delete(l.GetId())
 	bs := make([]byte, globals.LabelsSize)
 	bsExpected := make([]byte, globals.LabelsSize)
@@ -392,8 +390,8 @@ func TestLabelGet(test *testing.T)  {
 
 func TestLabelNameMethods(test *testing.T)  {
 	var l1, l2 structs.Label
-	l1.Create()
-	l2.Create()
+	l1 = *structs.CreateLabel()
+	l2 = *structs.CreateLabel()
 	l1.AddLabelName("test")
 	l2.AddLabelName("test")
 	if l1.GetNumberOfLabels() != 1 {
@@ -454,11 +452,10 @@ func TestRemoveLabelName(test *testing.T) {
 
 func TestCreateRelationship(test *testing.T) {
 	var (
-		relationship structs.Relationship
 		bsExpected []byte
 	)
 	fh.InitDatabaseStructure("test_db")
-	relationship.Create()
+	structs.Create(true)
 	bs := make([]byte, globals.RelationshipsSize)
 	bsId := utils.Int32ToByteArray(-1)
 	bsExpected = append(utils.BoolToByteArray(true), bsId...)
@@ -486,7 +483,7 @@ func TestCreateRelationship(test *testing.T) {
 func TestDeleteRelationship(test *testing.T) {
 	fh.InitDatabaseStructure("test_db")
 	var relationship structs.Relationship
-	relationship.Create()
+	relationship = *structs.Create(true)
 	relationship.Delete(relationship.GetId())
 	bs := make([]byte, globals.RelationshipsSize)
 	bsExpected := make([]byte, globals.RelationshipsSize)

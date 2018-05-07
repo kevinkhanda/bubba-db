@@ -240,7 +240,7 @@ func (p *Property) fromBytes(bs []byte) {
 func (p *Property) read() {
 	bs := make([]byte, globals.PropertiesSize)
 	offset := globals.PropertiesSize * p.id
-	err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs)
+	err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs, p.id)
 	utils.CheckError(err)
 	p.fromBytes(bs)
 }
@@ -248,7 +248,7 @@ func (p *Property) read() {
 func (p *Property) write() {
 	offset := globals.PropertiesSize * p.id
 	bs := p.toBytes()
-	err = globals.FileHandler.Write(globals.PropertiesStore, offset, bs)
+	err = globals.FileHandler.Write(globals.PropertiesStore, offset, bs, p.id)
 	utils.CheckError(err)
 	p.isWritten = true
 }

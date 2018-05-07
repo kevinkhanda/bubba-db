@@ -23,7 +23,7 @@ func DropDatabase(dbTitle string) {
 }
 
 func CreateNode() (node structs.Node) {
-	node.Create()
+	node = CreateNode()
 	return node
 }
 
