@@ -26,7 +26,7 @@ func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string)  {
 	}
 }
 
-func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte) (err error) {
+func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
 
 	} else {
@@ -36,7 +36,7 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte) (er
 	return nil
 }
 
-func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
+func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
 
 	} else {
@@ -47,21 +47,13 @@ func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte) (e
 }
 
 func (dfh DistributedFileHandler) ReadId(file *os.File) (id int, err error) {
-	if inArray(file.Name()) {
-
-	} else {
-
-	}
-	//TODO: implement
-	return 0, err
+	var fh = new(FileHandler)
+	id, err = fh.ReadId(file)
+	return id, err
 }
 
 func (dfh DistributedFileHandler) FreeId(file *os.File, id int) (err error) {
-	if inArray(file.Name()) {
-
-	} else {
-
-	}
-	//TODO: implement
-	return nil
+	var fh = new(FileHandler)
+	err = fh.FreeId(file, id)
+	return err
 }
