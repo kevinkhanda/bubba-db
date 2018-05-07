@@ -33,15 +33,41 @@ type StringValue struct {
 }
 
 func (s StringValue) get() interface{} {
-	return s.value
+	str := s.value
+	if s.nextChunk != nil {
+		str += s.nextChunk.get().(string)
+	}
+	return str
 }
 
 func (s *StringValue) set(value interface{}) {
-	s.value = value.(string)
+	str := value.(string)
+	if len(str) > 31 {
+		s.value = str[0:31]
+		nextChunk := CreateStringValue()
+		nextChunk.set(str[31:])
+	} else {
+		s.value = str
+	}
+	s.write()
+}
+
+func CreateStringValue() *StringValue {
+	var s StringValue
+	id, err := globals.FileHandler.ReadId(globals.StringId)
+	utils.CheckError(err)
+	s.id = id
+	s.isUsed = true
+	s.write()
+	return &s
 }
 
 func (s *StringValue) GetValue() string {
-	return s.value
+	return s.get().(string)
+}
+
+func (s *StringValue) SetValue(value string) {
+	s.set(value)
 }
 
 func (s *StringValue) GetNextChunk() *StringValue {
