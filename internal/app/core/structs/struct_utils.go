@@ -8,25 +8,25 @@ import (
 )
 
 func IfNilAssignMinusOne(value interface{}) int {
-	if value != nil {
-		if reflect.TypeOf(value) == reflect.TypeOf(Node{}) {
-			value := value.(Node)
+	if !reflect.ValueOf(value).IsNil() {
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Node{}).String() {
+			value := value.(*Node)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Relationship{}) {
-			value := value.(Relationship)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Relationship{}).String() {
+			value := value.(*Relationship)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Property{}) {
-			value := value.(Property)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Property{}).String() {
+			value := value.(*Property)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Label{}) {
-			value := value.(Label)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Label{}).String() {
+			value := value.(*Label)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(RelationshipTitle{}) {
-			value := value.(RelationshipTitle)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&RelationshipTitle{}).String() {
+			value := value.(*RelationshipTitle)
 			return value.id
 		}
 		return -1
