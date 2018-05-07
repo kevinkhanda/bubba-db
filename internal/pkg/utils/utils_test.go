@@ -148,9 +148,9 @@ func TestByteArrayToString(test *testing.T) {
 
 func TestAddStopCharacter(test *testing.T) {
 	requiredLength := 5
-	string1 := "abcd"
+	string1 := "abc"
 	string2 := "abcde"
-	expectedString1 := "abcd#"
+	expectedString1 := "abc##"
 	expectedString2 := "abcde"
 	if AddStopCharacter(string1, requiredLength) != expectedString1 {
 		test.Errorf("String value mismatch")
