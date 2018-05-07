@@ -24,14 +24,15 @@ type PropertyTitle struct {
 	counter int
 }
 
-func CreateProperty() (p *Property) {
+func CreateProperty() *Property {
+	var p Property
 	id, err := globals.FileHandler.ReadId(globals.PropertiesId)
 	utils.CheckError(err)
 	p.id = id
 	p.isUsed = true
 	p.isWritten = false
 	p.write()
-	return p
+	return &p
 }
 
 func (p Property) GetId() int {
