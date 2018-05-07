@@ -96,11 +96,11 @@ func (r *Relationship) Delete(id int) (err error) {
 	return err
 }
 
-func (r *Relationship) Get(id int) Relationship {
+func (r *Relationship) Get(id int) *Relationship {
 	r.id = id
 	r.read()
 	r.isWritten = true
-	return *r
+	return r
 }
 
 func (r *Relationship) GetId() int {

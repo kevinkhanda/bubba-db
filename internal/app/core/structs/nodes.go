@@ -195,11 +195,11 @@ func CreateNode() *Node {
 	return &n
 }
 
-func (n *Node) Get(id int) Node {
+func (n *Node) Get(id int) *Node {
 	n.id = id
 	n.read()
 	n.isWritten = true	//Doesn't work if placed into read (-_-)
-	return *n
+	return n
 }
 
 func (n *Node) Delete(id int) (err error) {
