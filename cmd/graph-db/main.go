@@ -9,6 +9,4 @@ func main() {
 	//err := core.InitDb("asd", "local")
 	err := core.SwitchDb("asd")
 	utils.CheckError(err)
-
-	core.InitEntity(1)
 }

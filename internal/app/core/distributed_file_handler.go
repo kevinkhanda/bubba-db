@@ -5,7 +5,7 @@ import "os"
 type DistributedFileHandler struct {
 }
 
-var exceptionFileNames = [6]string{"","","","","",""} // TODO: fill files names
+var exceptionFileNames = [3]string{"LabelsTitlesStore", "RelationshipsTitlesStore", "PropertiesTitlesStore"}
 
 func inArray(fileName string) bool {
 	res := false
@@ -18,7 +18,7 @@ func inArray(fileName string) bool {
 	return res
 }
 
-func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string)  {
+func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
 	for i := range master.slaves {
 		SendInitDatabaseStructure(&master.slaves[i], &dbIdentifier)
 	}
@@ -31,7 +31,7 @@ func (dfh DistributedFileHandler) SwitchDatabaseStructure(dbTitle string) (err e
 	return nil
 }
 
-func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string)  {
+func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) {
 	for i := range master.slaves {
 		SendDropDatabase(&master.slaves[i], &dbIdentifier)
 	}
@@ -39,9 +39,10 @@ func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string)  {
 
 func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
-		// kek
+		fh := new(FileHandler)
+		fh.Read(file, offset, bs, id)
 	} else {
-		slaveIndex := id % len(master.slaves) + 1
+		slaveIndex := id%len(master.slaves) + 1
 		bs, err = SendReadData(&master.slaves[slaveIndex], file, offset, id)
 	}
 	return nil
@@ -49,12 +50,12 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id 
 
 func (dfh DistributedFileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
 	if inArray(file.Name()) {
-		// kek
+		fh := new(FileHandler)
+		fh.Write(file, offset, bs, id)
 	} else {
-		slaveIndex := id % len(master.slaves) + 1
+		slaveIndex := id%len(master.slaves) + 1
 		SendWriteData(&master.slaves[slaveIndex], file, offset, id, bs)
 	}
-	//TODO: implement
 	return nil
 }
 
