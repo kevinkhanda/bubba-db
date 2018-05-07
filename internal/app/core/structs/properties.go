@@ -4,6 +4,7 @@ import (
 	"graph-db/internal/app/core/globals"
 	"graph-db/internal/pkg/utils"
 	"fmt"
+	"errors"
 )
 
 type Property struct {
@@ -320,16 +321,20 @@ func DecreasePropertyTitleCounter(title string) {
 }
 
 func AddPropertyTitle(title string) *PropertyTitle {
-	value, present := globals.PropertyTitleMap[title]
-	if present {
-		value.Counter++
-		globals.PropertyTitleMap[title] = value
+	if len(title) > globals.PropertiesTitlesSize - 4 {
+		err = errors.New("property title is too big")
 	} else {
-		id, err := globals.FileHandler.ReadId(globals.PropertiesTitlesId)
-		utils.CheckError(err)
-		value = globals.MapValue{Counter: 1, Id: id}
-		globals.PropertyTitleMap[title] = value
+		value, present := globals.PropertyTitleMap[title]
+		if present {
+			value.Counter++
+			globals.PropertyTitleMap[title] = value
+		} else {
+			id, err := globals.FileHandler.ReadId(globals.PropertiesTitlesId)
+			utils.CheckError(err)
+			value = globals.MapValue{Counter: 1, Id: id}
+			globals.PropertyTitleMap[title] = value
+		}
+		WritePropertyTitle(value.Id, title, value.Counter)
+		return &PropertyTitle{id: value.Id, title: title, counter: value.Counter}
 	}
-	WritePropertyTitle(value.Id, title, value.Counter)
-	return &PropertyTitle{id: value.Id, title: title, counter: value.Counter}
 }

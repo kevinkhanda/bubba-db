@@ -321,7 +321,6 @@ func (l *Label) AddLabelName(title string) (err error) {
 		err = errors.New("Label is too big")
 	} else if l.numberOfLabels == 5 {
 		err = errors.New("Already max amount of labels")
-
 	} else {
 		l.labelNames[l.numberOfLabels] = AddLabelTitle(title)
 		l.numberOfLabels++
