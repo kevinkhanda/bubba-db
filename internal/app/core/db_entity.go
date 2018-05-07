@@ -9,6 +9,7 @@ import (
 	"time"
 	"io/ioutil"
 	"encoding/json"
+	"os"
 )
 
 var listeningPort = "7000"
@@ -22,8 +23,21 @@ type Entity struct {
 	slaves			[]Entity
 }
 
+type RequestedData struct {
+	Payload			string
+	File 			*os.File
+	Offset			int
+	Id				int
+	Bs 				[]byte
+}
+
+type Reply struct {
+	Message string
+	Data	[]byte
+}
+
 type RPCRequest struct {
-	Data []byte
+	Data RequestedData
 }
 
 func getSlavesIps() ([]string, error) {
