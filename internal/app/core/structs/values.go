@@ -44,8 +44,8 @@ func (s *StringValue) set(value interface{}) {
 	str := value.(string)
 	if len(str) > 31 {
 		s.value = str[0:31]
-		nextChunk := CreateStringValue()
-		nextChunk.set(str[31:])
+		nextChunk := CreateStringValue(str[31:])
+		s.nextChunk = nextChunk
 	} else {
 		s.value = str
 	}
