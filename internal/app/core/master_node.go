@@ -127,8 +127,10 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
+		log.Printf("Try to SendInitDatabaseStructure (attempts %d) to %s:%s\n", attempts, entity.Ip, entity.Port)
 		err = nil
-		request := RPCRequest{RequestedData{ Payload: *dbName } }
+		var requestedData = RequestedData{ Payload: *dbName}
+		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.InitDatabaseStructure", &request, &reply)
 		if err != nil {
 			log.Fatal("2 ", err)
@@ -136,11 +138,12 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 			attempts++
 			continue
 		}
+		println(reply.Message)
 		if reply.Message == "success" {
 			attempts = 5
 		}
 	}
-	return err
+	return nil
 }
 
 func SendDropDatabase(entity *Entity, dbName *string) error {

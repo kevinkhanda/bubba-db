@@ -159,7 +159,7 @@ func InitEntity(entityType int) {
 			resp := RequestSlaveStatus(&slave)
 			if resp == nil {
 				resp := SendDeploy(&slave)
-				if resp != nil {
+				if resp == nil {
 					master.Slaves[i].IsActive = true
 				}
 			}
