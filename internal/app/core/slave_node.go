@@ -1,6 +1,18 @@
 package core
 
-import "graph-db/internal/app/core/globals"
+import (
+	"graph-db/internal/app/core/globals"
+	"os"
+	"log"
+)
+
+func getFilePointerByName(filePath string) *os.File {
+	file, err := os.Open(filePath) // For read access.
+	if err != nil {
+		log.Fatal(err)
+	}
+	return file
+}
 
 func (entity *Entity) Ping(request *RPCRequest, reply *Reply) error {
 	reply.Message = "Pong"
@@ -23,6 +35,7 @@ func (entity *Entity) Deploy(request *RPCRequest, reply *Reply) error  {
 func (entity *Entity) InitDatabaseStructure(request *RPCRequest, reply *Reply) error {
 	var fileHandler  FileHandler
 	fileHandler.InitDatabaseStructure(string(request.Data.Payload))
+	reply.Message = "success"
 	return nil
 }
 
@@ -44,14 +57,16 @@ func (entity *Entity) DropDatabase(request *RPCRequest, reply *Reply) error  {
 
 func (entity *Entity) Read(request *RPCRequest, reply *Reply) error  {
 	var fh FileHandler
-	fh.Read(request.Data.File, request.Data.Offset, reply.Data, request.Data.Id)
+	file := getFilePointerByName(request.Data.File)
+	fh.Read(file, request.Data.Offset, reply.Data, request.Data.Id)
 	reply.Message = "success"
 	return nil
 }
 
 func (entity *Entity) Write(request *RPCRequest, reply *Reply) error  {
 	var fh FileHandler
-	err = fh.Write(request.Data.File, request.Data.Offset, request.Data.Bs, request.Data.Id)
+	file := getFilePointerByName(request.Data.File)
+	err = fh.Write(file, request.Data.Offset, request.Data.Bs, request.Data.Id)
 	if err == nil {
 		reply.Message = "success"
 	}

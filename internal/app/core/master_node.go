@@ -4,6 +4,7 @@ import (
 	"log"
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 var master Entity
@@ -11,17 +12,18 @@ var master Entity
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
 	var reply Reply
 	var attempts = 0
+	fileAbsPath, err := filepath.Abs("./" + file.Name())
 	requestedData := RequestedData{
-		File: file,
+		File: fileAbsPath,
 		Offset: offset,
 		Id: id,
 	}
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest {requestedData }
-		err = entity.connector.Call("Entity.Read", &request, &reply)
+		err = entity.Connector.Call("Entity.Read", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("7 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -37,7 +39,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 	var reply Reply
 	var attempts = 0
 	requestedData := RequestedData{
-		File: file,
+		//File: *file,
 		Offset: offset,
 		Id: id,
 		Bs: bs,
@@ -45,9 +47,9 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest{ requestedData }
-		err = entity.connector.Call("Entity.Write", &request, &reply)
+		err = entity.Connector.Call("Entity.Write", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("6 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -65,15 +67,15 @@ func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest{ RequestedData{ Payload: *newStructure } }
-		err = entity.connector.Call("Entity.SwitchDatabaseStructure", &request, &reply)
+		err = entity.Connector.Call("Entity.SwitchDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("5 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
 		}
 		if reply.Message == "success" {
-			println("Slave " + entity.ip + ":" + entity.port + " switched status on " + *newStructure)
+			println("Slave " + entity.Ip + ":" + entity.Port + " switched status on " + *newStructure)
 			attempts = 5
 		}
 	}
@@ -85,16 +87,16 @@ func RequestSlaveStatus(entity *Entity) error {
 	var attempts = 0
 	for attempts < 5 {
 		err = nil
-		request := RPCRequest{ *new(RequestedData) }
-		err = entity.connector.Call("Entity.SendStatus", &request, &reply)
+		var request RPCRequest
+		err = entity.Connector.Call("Entity.SendStatus", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Panic("4 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
 		}
 		if reply.Message == "success" {
-			println("Slave " + entity.ip + ":" + entity.port + " is available")
+			println("Slave " + entity.Ip + ":" + entity.Port + " is available")
 			attempts = 5
 		}
 	}
@@ -107,9 +109,9 @@ func SendDeploy(entity *Entity) error {
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest{*new(RequestedData) }
-		err = entity.connector.Call("Entity.Deploy", &request, &reply)
+		err = entity.Connector.Call("Entity.Deploy", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("3 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -125,20 +127,23 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 	var reply Reply
 	var attempts = 0
 	for attempts < 5 {
+		log.Printf("Try to SendInitDatabaseStructure (attempts %d) to %s:%s\n", attempts, entity.Ip, entity.Port)
 		err = nil
-		request := RPCRequest{RequestedData{ Payload: *dbName } }
-		err = entity.connector.Call("Entity.InitDatabaseStructure", &request, &reply)
+		var requestedData = RequestedData{ Payload: *dbName}
+		request := RPCRequest{ requestedData }
+		err = entity.Connector.Call("Entity.InitDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("2 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
 		}
+		println(reply.Message)
 		if reply.Message == "success" {
 			attempts = 5
 		}
 	}
-	return err
+	return nil
 }
 
 func SendDropDatabase(entity *Entity, dbName *string) error {
@@ -147,9 +152,9 @@ func SendDropDatabase(entity *Entity, dbName *string) error {
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest{ RequestedData{ Payload: *dbName } }
-		err = entity.connector.Call("Entity.DropDatabase", &request, &reply)
+		err = entity.Connector.Call("Entity.DropDatabase", &request, &reply)
 		if err != nil {
-			log.Fatal("Problems in requestSlaveStatus ", err)
+			log.Fatal("1 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
