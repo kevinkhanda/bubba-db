@@ -34,7 +34,7 @@ func CreateNode(title string) (node structs.Node) {
 
 func CreateRelationship(firstNode *structs.Node, secondNode *structs.Node, title string) (relationship structs.Relationship) {
 	flag := firstNode.GetRelationship() == nil
-	relationship = *structs.Create(flag)
+	relationship = *structs.CreateRelationship(flag)
 	relationship.SetNode1(firstNode)
 	relationship.SetNode2(secondNode)
 	if flag {
@@ -104,6 +104,7 @@ func DeleteNode(id int) (err error) {
 	var n structs.Node
 	return n.Delete(id)
 }
+
 //
 //func CreateRelationship() (relationship structs.Relationship) {
 //	//relationship.Create()

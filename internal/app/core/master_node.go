@@ -9,7 +9,7 @@ import (
 var master Entity
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
-	var reply  string
+	reply := new(Reply)
 	var attempts = 0
 	requestedData := RequestedData{
 		File: file,
@@ -26,11 +26,11 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 			attempts++
 			continue
 		}
-		if reply == "success" {
+		if reply.Message == "success" {
 			attempts = 5
 		}
 	}
-	return nil, nil // TODO
+	return  reply.Data, nil
 }
 
 func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte) error {

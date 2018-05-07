@@ -5,6 +5,7 @@ import (
 	"graph-db/internal/app/core/globals"
 	"graph-db/internal/pkg/utils"
 	"os"
+	"log"
 )
 
 func InitDb(dbTitle string, storageMode string) (err error) {
@@ -19,6 +20,23 @@ func InitDb(dbTitle string, storageMode string) (err error) {
 		globals.CurrentDb = dbTitle
 		return err
 	} else if storageMode == "distributed" {
+		var slavesAddresses, err = getSlavesIps()
+		if err != nil {
+			log.Fatal("Problem in decoding JSON Ips", err)
+		}
+		var myIp string
+		myIp, err = getEntityIpAddress()
+		if err != nil {
+			log.Fatal("Problem in obtaining Ip", err)
+		}
+		entityType := 1
+		for _, slaveAddress := range slavesAddresses {
+			if slaveAddress == myIp {
+				entityType = 0
+				break
+			}
+		}
+		InitEntity(entityType)
 		return errors.New("not implemented yet")
 	} else {
 		return errors.New("storageMode should be local or distributed")
