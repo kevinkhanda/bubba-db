@@ -57,12 +57,12 @@ func TestSwitchDatabase(test *testing.T) {
 		bs2[globals.LabelsTitlesSize - 4 + j] = counterBs2[j]
 	}
 
-	err := fh.Write(globals.LabelsTitlesStore, 0 * globals.LabelsTitlesSize, bs1)
+	err := fh.Write(globals.LabelsTitlesStore, 0 * globals.LabelsTitlesSize, bs1, 0)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
 
-	err = fh.Write(globals.LabelsTitlesStore, 1 * globals.LabelsTitlesSize, bs2)
+	err = fh.Write(globals.LabelsTitlesStore, 1 * globals.LabelsTitlesSize, bs2, 1)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
@@ -113,13 +113,13 @@ func TestFileReadWrite(test *testing.T) {
 	defer testFile.Close()
 	defer os.Remove(testFile.Name())
 	bs := []byte{53, 57, 50, 54}
-	err = fh.Write(testFile, 0, bs)
+	err = fh.Write(testFile, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
 
 	readBs := make([]byte, 4)
-	fh.Read(testFile, 0, readBs)
+	fh.Read(testFile, 0, readBs, 0)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")
@@ -127,13 +127,13 @@ func TestFileReadWrite(test *testing.T) {
 	}
 
 	bs = []byte{79, 11, 254, 98}
-	err = fh.Write(testFile, 1, bs)
+	err = fh.Write(testFile, 1, bs, 1)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
 
 	readBs = make([]byte, 4)
-	fh.Read(testFile, 1, readBs)
+	fh.Read(testFile, 1, readBs, 1)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")
@@ -235,7 +235,7 @@ func TestNodeCreate(test *testing.T) {
 	bsExpected = append(utils.BoolToByteArray(true), bsId...)
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, bsId...)
-	err := fh.Read(globals.NodesStore, 0, bs)
+	err := fh.Read(globals.NodesStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from NodeStore")
 	}
@@ -257,7 +257,7 @@ func TestNodeDelete(test *testing.T) {
 	bs := make([]byte, globals.NodesSize)
 	bsExpected := make([]byte, globals.NodesSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.NodesStore, 0, bs)
+	err := fh.Read(globals.NodesStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from NodeStore")
 	}
@@ -284,7 +284,7 @@ func TestNodeGet(test *testing.T) {
 	bs = append(utils.BoolToByteArray(true), relId...)
 	bs = append(bs, propId...)
 	bs = append(bs, labelId...)
-	err = fh.Write(globals.NodesStore, 0, bs)
+	err = fh.Write(globals.NodesStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
@@ -314,7 +314,7 @@ func TestLabelCreate(test *testing.T) {
 	bs := make([]byte, globals.LabelsSize)
 	bsNumber := utils.Int32ToByteArray(0)
 	bsExpected = append(utils.BoolToByteArray(true), bsNumber...)
-	err := fh.Read(globals.LabelsStore, 0, bs)
+	err := fh.Read(globals.LabelsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading a file")
 		println(err.Error())
@@ -338,7 +338,7 @@ func TestLabelDelete(test *testing.T) {
 	bs := make([]byte, globals.LabelsSize)
 	bsExpected := make([]byte, globals.LabelsSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.LabelsStore, 0, bs)
+	err := fh.Read(globals.LabelsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from LabelStore")
 	}
@@ -369,7 +369,7 @@ func TestLabelGet(test *testing.T)  {
 	bs = append(bs, emptyBs...)
 	bs = append(bs, emptyBs...)
 	bs = append(bs, emptyBs...)
-	err = fh.Write(globals.LabelsStore, 0, bs)
+	err = fh.Write(globals.LabelsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
@@ -470,7 +470,7 @@ func TestCreateRelationship(test *testing.T) {
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, utils.BoolToByteArray(false)...)
-	err := fh.Read(globals.RelationshipsStore, 0, bs)
+	err := fh.Read(globals.RelationshipsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from RelationshipsStore")
 	}
@@ -491,7 +491,7 @@ func TestDeleteRelationship(test *testing.T) {
 	bs := make([]byte, globals.RelationshipsSize)
 	bsExpected := make([]byte, globals.RelationshipsSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.RelationshipsStore, 0, bs)
+	err := fh.Read(globals.RelationshipsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from RelationshipStore")
 	}
@@ -529,7 +529,7 @@ func TestGetRelationship(test *testing.T) {
 	bs = append(bs, propertyId...)
 	bs = append(bs, utils.BoolToByteArray(false)...)
 
-	err = fh.Write(globals.RelationshipsStore, 0, bs)
+	err = fh.Write(globals.RelationshipsStore, 0, bs, 0)
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}

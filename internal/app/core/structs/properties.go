@@ -41,7 +41,7 @@ func (p Property) GetNextProperty() *Property {
 		)
 		if len(p.byteString) < 0 {
 			offset := p.id * globals.PropertiesSize
-			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs)
+			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs, p.id)
 			utils.CheckError(err)
 			p.byteString = bs
 		}
@@ -71,7 +71,7 @@ func (p *Property) GetTitle() *PropertyTitle {
 		)
 		if len(p.byteString) < 0 {
 			offset := p.id * globals.PropertiesSize
-			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs)
+			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs, p.id)
 			utils.CheckError(err)
 			p.byteString = bs
 		}
@@ -105,7 +105,7 @@ func (p *Property) GetValue() *Value {
 		)
 		if len(p.byteString) < 0 {
 			offset := p.id * globals.PropertiesSize
-			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs)
+			err = globals.FileHandler.Read(globals.PropertiesStore, offset, bs, p.id)
 			utils.CheckError(err)
 			p.byteString = bs
 		}
@@ -121,7 +121,7 @@ func (p *Property) GetValue() *Value {
 				if p.valueType == 1 {
 					bs := make([]byte, globals.DoubleSize)
 					offset := int(val * globals.DoubleSize)
-					err := globals.FileHandler.Read(store, offset, bs)
+					err := globals.FileHandler.Read(store, offset, bs, int(val))
 					utils.CheckError(err)
 					fileValue, err := utils.ByteArrayToFloat64(bs)
 					utils.CheckError(err)
@@ -129,7 +129,7 @@ func (p *Property) GetValue() *Value {
 				} else {
 					bs := make([]byte, globals.StringSize)
 					offset := int(val * globals.StringSize)
-					err := globals.FileHandler.Read(store, offset, bs)
+					err := globals.FileHandler.Read(store, offset, bs, int(val))
 					utils.CheckError(err)
 					fileValue := utils.ByteArrayToString(bs)
 					utils.CheckError(err)
@@ -209,7 +209,7 @@ func (p *Property) fromBytes(bs []byte) {
 	} else if p.valueType == 1 {
 		bs := make([]byte, globals.DoubleSize)
 		offset := int(val * globals.DoubleSize)
-		err := globals.FileHandler.Read(store, offset, bs)
+		err := globals.FileHandler.Read(store, offset, bs, int(val))
 		utils.CheckError(err)
 		fileValue, err := utils.ByteArrayToFloat64(bs)
 		utils.CheckError(err)
@@ -217,7 +217,7 @@ func (p *Property) fromBytes(bs []byte) {
 	} else {
 		bs := make([]byte, globals.StringSize)
 		offset := int(val * globals.StringSize)
-		err := globals.FileHandler.Read(store, offset, bs)
+		err := globals.FileHandler.Read(store, offset, bs, int(val))
 		utils.CheckError(err)
 		fileValue := utils.ByteArrayToString(bs)
 		utils.CheckError(err)
@@ -237,7 +237,7 @@ func WritePropertyTitle(id int, title string, counter int) {
 	for i := 0; i < 4; i++ {
 		bs[globals.PropertiesTitlesSize - 4 + i] = counterBs[i]
 	}
-	err := globals.FileHandler.Write(globals.PropertiesTitlesStore, offset, bs)
+	err := globals.FileHandler.Write(globals.PropertiesTitlesStore, offset, bs, id)
 	utils.CheckError(err)
 }
 

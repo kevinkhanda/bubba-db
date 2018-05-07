@@ -48,7 +48,7 @@ func (r *Relationship) Delete(id int) (err error) {
 	}
 
 	offset := globals.RelationshipsSize * id
-	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs)
+	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs, id)
 	return err
 }
 
@@ -70,7 +70,7 @@ func (r *Relationship) getNode(start int, end int) *Node {
 	)
 	if len(r.byteString) < 0 {
 		offset := r.id * globals.RelationshipsSize
-		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
+		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs, r.id)
 		utils.CheckError(err)
 		r.byteString = bs
 	}
@@ -92,7 +92,7 @@ func (r *Relationship) getRelationship(start int, end int) *Relationship {
 	)
 	if len(r.byteString) < 0 {
 		offset := r.id * globals.RelationshipsSize
-		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
+		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs, r.id)
 		utils.CheckError(err)
 		r.byteString = bs
 	}
@@ -144,7 +144,7 @@ func (r *Relationship) GetTitle() *RelationshipTitle {
 		)
 		if len(r.byteString) < 0 {
 			offset := r.id * globals.RelationshipsSize
-			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, bs)
+			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, bs, r.id)
 			utils.CheckError(err)
 			r.byteString = bs
 		}
@@ -222,7 +222,7 @@ func (r *Relationship) GetProperty() *Property {
 		)
 		if len(r.byteString) < 0 {
 			offset := r.id * globals.RelationshipsSize
-			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, bs)
+			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, bs, r.id)
 			utils.CheckError(err)
 			r.byteString = bs
 		}
@@ -348,7 +348,7 @@ func (r *Relationship) fromBytes(bs []byte) {
 func (r *Relationship) read() {
 	bs := make([]byte, globals.RelationshipsSize)
 	offset := globals.RelationshipsSize * r.id
-	err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs)
+	err = globals.FileHandler.Read(globals.RelationshipsStore, offset, bs, r.id)
 	utils.CheckError(err)
 	r.fromBytes(bs)
 }
@@ -356,7 +356,7 @@ func (r *Relationship) read() {
 func (r *Relationship) write() {
 	offset := globals.RelationshipsSize * r.id
 	bs := r.toBytes()
-	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs)
+	err = globals.FileHandler.Write(globals.RelationshipsStore, offset, bs, r.id)
 	utils.CheckError(err)
 	r.isWritten = true
 }
@@ -377,7 +377,7 @@ func WriteRelationshipsTitle(id int, title string, counter int) {
 	for i := 0; i < 4; i++ {
 		bs[globals.RelationshipsTitlesSize - 4 + i] = counterBs[i]
 	}
-	err := globals.FileHandler.Write(globals.RelationshipsTitlesStore, offset, bs)
+	err := globals.FileHandler.Write(globals.RelationshipsTitlesStore, offset, bs, id)
 	utils.CheckError(err)
 }
 
