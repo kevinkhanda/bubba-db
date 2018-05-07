@@ -77,7 +77,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 			attempts = 5
 		}
 	}
-	return err
+	return nil
 }
 
 func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
@@ -119,7 +119,7 @@ func RequestSlaveStatus(entity *Entity) error {
 			attempts = 5
 		}
 	}
-	return err
+	return nil
 }
 
 func SendDeploy(entity *Entity) error {
