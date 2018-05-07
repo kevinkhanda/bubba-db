@@ -46,7 +46,6 @@ func getSlavesIps() ([]string, error) {
 	if err != nil {
 		log.Fatal("Problem: ", err)
 	}
-	println(string(ipsJson))
 	err = json.Unmarshal([]byte(ipsJson), &ips)
 
 	return ips, err

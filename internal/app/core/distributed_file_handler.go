@@ -18,6 +18,12 @@ func inArray(fileName string) bool {
 	return res
 }
 
+func (dfh DistributedFileHandler) InitFileSystem() {
+	//for i := range master.slaves {
+	//	SendInitFileSystem(&master.slaves[i])
+	//}
+}
+
 func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
 	for i := range master.slaves {
 		SendInitDatabaseStructure(&master.slaves[i], &dbIdentifier)
@@ -31,10 +37,11 @@ func (dfh DistributedFileHandler) SwitchDatabaseStructure(dbTitle string) (err e
 	return nil
 }
 
-func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) {
+func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) (err error) {
 	for i := range master.slaves {
 		SendDropDatabase(&master.slaves[i], &dbIdentifier)
 	}
+	return nil
 }
 
 func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {

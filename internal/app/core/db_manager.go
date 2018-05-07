@@ -37,6 +37,8 @@ func InitDb(dbTitle string, storageMode string) (err error) {
 			}
 		}
 		InitEntity(entityType)
+		var dfh DistributedFileHandler
+		globals.FileHandler = dfh
 		return errors.New("not implemented yet")
 	} else {
 		return errors.New("storageMode should be local or distributed")

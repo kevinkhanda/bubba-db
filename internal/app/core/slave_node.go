@@ -1,5 +1,7 @@
 package core
 
+import "graph-db/internal/app/core/globals"
+
 func (entity *Entity) Ping(request *RPCRequest, reply *Reply) error {
 	reply.Message = "Pong"
 	return err
@@ -13,6 +15,7 @@ func (entity *Entity) SendStatus(request *RPCRequest, reply *Reply) error {
 func (entity *Entity) Deploy(request *RPCRequest, reply *Reply) error  {
 	var fileHandler = new (FileHandler)
 	fileHandler.InitFileSystem()
+	globals.FileHandler = fileHandler
 	reply.Message = "success"
 	return nil
 }

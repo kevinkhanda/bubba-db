@@ -562,5 +562,3 @@ func TestGetRelationship(test *testing.T) {
 
 	fh.DropDatabase("test_db")
 }
-
-//func
