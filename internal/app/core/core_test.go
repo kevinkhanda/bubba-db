@@ -530,6 +530,7 @@ func TestGetRelationship(test *testing.T) {
 	if err != nil {
 		test.Errorf("Error writing to file")
 	}
+
 	relationship = *relationship.Get(0)
 	if relationship.GetId() != 0 {
 		test.Errorf("Id value mismatch")
@@ -547,8 +548,8 @@ func TestGetRelationship(test *testing.T) {
 	if relationship.GetFirstPreviousRelationship().GetId() != 40 {
 		test.Errorf("First previous relationship id value mismatch")
 	}
-	if relationship.GetSecondPreviousRelationship().GetId() != -1 {
-		test.Errorf("Second previous relationship id value mismatch")
+	if relationship.GetSecondPreviousRelationship() != nil {
+		test.Errorf("Second previous relationship value mismatch")
 	}
 	if relationship.GetFirstNextRelationship().GetId() != 10 {
 		test.Errorf("First next relationship id value mismatch")
