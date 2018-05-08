@@ -31,7 +31,6 @@ func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
 	var fh FileHandler
 	fh.InitDatabaseStructure(dbIdentifier)
 	globals.Config.WriteAt([]byte("[\"10.240.22.31:7000\"]"), 0)
-	println(len(master.Slaves))
 	for i := range master.Slaves {
 		SendInitDatabaseStructure(&master.Slaves[i], &dbIdentifier)
 	}
@@ -51,14 +50,13 @@ func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) (err error) 
 	return nil
 }
 
-func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
+func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs *[]byte, id int) (err error) {
 	if inArray(file.Name()) {
 		var fh FileHandler
 		fh.Read(file, offset, bs, id)
 	} else {
 		slaveIndex := id % len(master.Slaves)
-		println(len(bs))
-		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id, bs)
+		SendReadData(&master.Slaves[slaveIndex], file, offset, id, bs)
 	}
 	return nil
 }

@@ -76,7 +76,7 @@ func fillMap(m map[string]globals.MapValue, file *os.File, recordSize int) {
 	bs = make([]byte, recordSize)
 	i = 0
 	for true {
-		err = globals.FileHandler.Read(file, i * recordSize, bs, i)
+		err = globals.FileHandler.Read(file, i * recordSize, &bs, i)
 		if err != nil {
 			break
 		}

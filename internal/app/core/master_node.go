@@ -25,15 +25,14 @@ func getFilePath(fileName string) string {
 	return "/" + strings.Join(pathElems[res:],"/")
 }
 
-func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) ([]byte, error)  {
-	println(len(bs))
+func SendReadData(entity *Entity, file *os.File, offset int, id int, bs *[]byte) {
 	var reply Reply
 	var attempts = 0
 	fileAbsPath := getFilePath(file.Name())
 	requestedData := RequestedData{
 		File: fileAbsPath,
 		Offset: offset,
-		Bs: bs,
+		Bs: *bs,
 		Id: id,
 	}
 	for attempts < 5 {
@@ -48,10 +47,9 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) 
 		}
 		if reply.Message == "success" {
 			attempts = 5
+			*bs = reply.Data
 		}
 	}
-	print(reply.Data)
-	return  reply.Data, nil
 }
 
 func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte) error {
@@ -77,7 +75,6 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 		}
 		if reply.Message == "success" {
 			attempts = 5
-			println(reply.Data)
 		}
 	}
 	return nil
