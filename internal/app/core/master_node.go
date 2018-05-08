@@ -39,7 +39,6 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) 
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest {requestedData }
-		println(len(reply.Data))
 		err = entity.Connector.Call("Entity.Read", &request, &reply)
 		if err != nil {
 			log.Fatal("Error in master_node SendReadData ", err)
@@ -77,6 +76,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 		}
 		if reply.Message == "success" {
 			attempts = 5
+			println(reply.Data)
 		}
 	}
 	return nil
