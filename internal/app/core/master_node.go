@@ -40,7 +40,7 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int, bs *[]byte)
 		request := RPCRequest {requestedData }
 		err = entity.Connector.Call("Entity.Read", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendReadData ", err)
+			log.Panic("Error in master_node SendReadData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -68,7 +68,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.Write", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendWriteData ", err)
+			log.Panic("Error in master_node SendWriteData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -88,7 +88,7 @@ func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *newStructure } }
 		err = entity.Connector.Call("Entity.SwitchDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendSwitchDatabaseStructure ", err)
+			log.Panic("Error in master_node SendSwitchDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -130,7 +130,7 @@ func SendDeploy(entity *Entity) error {
 		request := RPCRequest{*new(RequestedData) }
 		err = entity.Connector.Call("Entity.Deploy", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendDeploy ", err)
+			log.Panic("Error in master_node SendDeploy ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -152,7 +152,7 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.InitDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendInitDatabaseStructure ", err)
+			log.Panic("Error in master_node SendInitDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -172,7 +172,7 @@ func SendDropDatabase(entity *Entity, dbName *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *dbName } }
 		err = entity.Connector.Call("Entity.DropDatabase", &request, &reply)
 		if err != nil {
-			log.Fatal("Error in master_node SendDropDatabase ", err)
+			log.Panic("Error in master_node SendDropDatabase ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue

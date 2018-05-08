@@ -30,7 +30,7 @@ func (dfh DistributedFileHandler) InitFileSystem() {
 func (dfh DistributedFileHandler) InitDatabaseStructure(dbIdentifier string) {
 	var fh FileHandler
 	fh.InitDatabaseStructure(dbIdentifier)
-	globals.Config.WriteAt([]byte("[\"10.240.22.31:7000\"]"), 0)
+	globals.Config.WriteAt([]byte("[\"10.91.40.48:7000\"]"), 0)
 	for i := range master.Slaves {
 		SendInitDatabaseStructure(&master.Slaves[i], &dbIdentifier)
 	}
