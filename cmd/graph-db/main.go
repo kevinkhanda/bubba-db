@@ -1,19 +1,19 @@
 package main
 
 import (
+	"graph-db/api"
+	"graph-db/internal/app/core/structs"
 	"graph-db/internal/app/core"
 	"graph-db/internal/pkg/utils"
 	"graph-db/internal/app/core/globals"
 	"log"
-	"graph-db/api"
-	"graph-db/internal/app/core/structs"
 )
 
 func printNode(node structs.Node) {
 	var str string
 	str += "Node labels: "
 	for _, label := range node.GetLabel().GetLabelNames() {
-		if label.GetTitle() != "" {
+		if label != nil && label.GetTitle() != "" {
 			str += label.GetTitle()
 			str += ", "
 		}
@@ -21,21 +21,16 @@ func printNode(node structs.Node) {
 	str += "\n"
 	str += "Relationships: \n"
 	relationship := node.GetRelationship()
-	i := 1
-	for true {
-		if relationship != nil {
-			str += "\n\t"
-			str += string(i)
-			str += "\t Title: "
-			str += relationship.GetTitle().GetTitle()
-			i++
-		}
+	if relationship != nil {
+		str += "\t Title: "
+		str += relationship.GetTitle().GetTitle()
 	}
+	println(str)
 }
 
 func main() {
 	//err := core.InitDb("asd", "local")
-	//err = core.SwitchDb("asd")
+	////err = core.SwitchDb("asd")
 	//utils.CheckError(err)
 
 	dbTitle := "asd"
@@ -52,11 +47,11 @@ func main() {
 	newBs := make([]byte, 4)
 	dfh.Read(globals.NodesStore, 20, &newBs, 0)
 
-	//if string(newBs) != string(bs) {
-	//	log.Fatal("Byte arrays are not the same!")
-	//} else {
-	//	println("Congratulations!")
-	//}
+	if string(newBs) != string(bs) {
+		log.Fatal("Byte arrays are not the same!")
+	} else {
+		println("Congratulations!")
+	}
 
 	node1 := api.CreateNode("Kevin")
 	node2 := api.CreateNode("Sergey")
