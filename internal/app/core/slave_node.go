@@ -9,7 +9,7 @@ import (
 func getFilePointerByName(filePath string) *os.File {
 	pwd, _ := os.Getwd()
 	filePath = pwd + filePath
-	file, err := os.Open(filePath)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
