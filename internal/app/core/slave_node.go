@@ -33,9 +33,9 @@ func (entity *Entity) Deploy(request *RPCRequest, reply *Reply) error  {
 }
 
 func (entity *Entity) InitDatabaseStructure(request *RPCRequest, reply *Reply) error {
-	println("Bubba")
 	var fileHandler  FileHandler
 	fileHandler.InitDatabaseStructure(request.Data.Payload)
+	globals.Config.WriteAt([]byte("[\"10.240.22.31:7000\"]"), 0)
 	reply.Message = "success"
 	return nil
 }

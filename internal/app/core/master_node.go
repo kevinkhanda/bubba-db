@@ -18,11 +18,11 @@ func getFilePath(fileName string) string {
 	pathElems := strings.Split(path, "/")
 	res := 0
 	for i := range pathElems {
-		if pathElems[i] == "go" && pathElems[i + 1] == "src" {
+		if pathElems[i] == "databases" {
 			res = i
 		}
 	}
-	return "~/" + strings.Join(pathElems[res:],"/")
+	return "~/go/src/graph-db/internal/app/core/" + strings.Join(pathElems[res:],"/")
 }
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
@@ -144,6 +144,7 @@ func SendDeploy(entity *Entity) error {
 
 func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 	var reply Reply
+	println("Bubba")
 	var attempts = 0
 	for attempts < 5 {
 		log.Printf("Try to SendInitDatabaseStructure (attempts %d) to %s:%s\n", attempts, entity.Ip, entity.Port)
