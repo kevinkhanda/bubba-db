@@ -57,7 +57,8 @@ func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id 
 		fh.Read(file, offset, bs, id)
 	} else {
 		slaveIndex := id % len(master.Slaves)
-		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id)
+		println(len(bs))
+		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id, bs)
 	}
 	return nil
 }

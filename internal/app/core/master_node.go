@@ -25,21 +25,24 @@ func getFilePath(fileName string) string {
 	return "/" + strings.Join(pathElems[res:],"/")
 }
 
-func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
+func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) ([]byte, error)  {
+	println(len(bs))
 	var reply Reply
 	var attempts = 0
-	fileAbsPath, err := filepath.Abs("./" + file.Name())
+	fileAbsPath := getFilePath(file.Name())
 	requestedData := RequestedData{
 		File: fileAbsPath,
 		Offset: offset,
+		Bs: bs,
 		Id: id,
 	}
 	for attempts < 5 {
 		err = nil
 		request := RPCRequest {requestedData }
+		println(len(reply.Data))
 		err = entity.Connector.Call("Entity.Read", &request, &reply)
 		if err != nil {
-			log.Fatal("7 ", err)
+			log.Fatal("Error in master_node SendReadData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -67,7 +70,7 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.Write", &request, &reply)
 		if err != nil {
-			log.Fatal("6 ", err)
+			log.Fatal("Error in master_node SendWriteData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -87,7 +90,7 @@ func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *newStructure } }
 		err = entity.Connector.Call("Entity.SwitchDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("5 ", err)
+			log.Fatal("Error in master_node SendSwitchDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -108,7 +111,7 @@ func RequestSlaveStatus(entity *Entity) error {
 		var request RPCRequest
 		err = entity.Connector.Call("Entity.SendStatus", &request, &reply)
 		if err != nil {
-			log.Panic("123 ", err)
+			log.Panic("Error in master_node RequestSlaveStatus ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -129,7 +132,7 @@ func SendDeploy(entity *Entity) error {
 		request := RPCRequest{*new(RequestedData) }
 		err = entity.Connector.Call("Entity.Deploy", &request, &reply)
 		if err != nil {
-			log.Fatal("3 ", err)
+			log.Fatal("Error in master_node SendDeploy ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -151,7 +154,7 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.InitDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("2 ", err)
+			log.Fatal("Error in master_node SendInitDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -171,7 +174,7 @@ func SendDropDatabase(entity *Entity, dbName *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *dbName } }
 		err = entity.Connector.Call("Entity.DropDatabase", &request, &reply)
 		if err != nil {
-			log.Fatal("1 ", err)
+			log.Fatal("Error in master_node SendDropDatabase ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
