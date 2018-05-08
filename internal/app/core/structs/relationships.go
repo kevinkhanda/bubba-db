@@ -134,7 +134,7 @@ func (r *Relationship) getRelationship(start int, end int) *Relationship {
 		relationshipId int32
 		bs = make([]byte, globals.RelationshipsSize)
 	)
-	if len(r.byteString) < 0 {
+	if len(r.byteString) <= 0 {
 		offset := r.id * globals.RelationshipsSize
 		err = globals.FileHandler.Read(globals.RelationshipsStore, offset, &bs, r.id)
 		utils.CheckError(err)
@@ -186,7 +186,7 @@ func (r *Relationship) GetTitle() *RelationshipTitle {
 			err error
 			bs = make([]byte, globals.RelationshipsSize)
 		)
-		if len(r.byteString) < 0 {
+		if len(r.byteString) <= 0 {
 			offset := r.id * globals.RelationshipsSize
 			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, &bs, r.id)
 			utils.CheckError(err)
@@ -264,7 +264,7 @@ func (r *Relationship) GetProperty() *Property {
 			err error
 			bs = make([]byte, globals.RelationshipsSize)
 		)
-		if len(r.byteString) < 0 {
+		if len(r.byteString) <= 0 {
 			offset := r.id * globals.RelationshipsSize
 			err = globals.FileHandler.Read(globals.RelationshipsTitlesStore, offset, &bs, r.id)
 			utils.CheckError(err)
@@ -350,40 +350,72 @@ func (r *Relationship) fromBytes(bs []byte) {
 
 	id, err = utils.ByteArrayToInt32(bs[1:5])
 	utils.CheckError(err)
-	node1.id = int(id)
-	r.node1 = &node1
+	if id == -1 {
+		r.node1 = nil
+ 	} else {
+		node1.id = int(id)
+		r.node1 = &node1
+	}
 	id, err = utils.ByteArrayToInt32(bs[5:9])
 	utils.CheckError(err)
-	node2.id = int(id)
-	r.node2 = &node2
+	if id == -1 {
+		r.node2 = nil
+	} else {
+		node2.id = int(id)
+		r.node2 = &node2
+	}
 
 	id, err = utils.ByteArrayToInt32(bs[9:13])
 	utils.CheckError(err)
-	title.id = int(id)
-	r.title = &title
+	if id == -1 {
+		r.title = nil
+	} else {
+		title.id = int(id)
+		r.title = &title
+	}
 
 	id, err = utils.ByteArrayToInt32(bs[13:17])
 	utils.CheckError(err)
-	previousRelationship1.id = int(id)
-	r.previousRelationship1 = &previousRelationship1
+	if id == -1 {
+		r.previousRelationship1 = nil
+	} else {
+		previousRelationship1.id = int(id)
+		r.previousRelationship1 = &previousRelationship1
+	}
 	id, err = utils.ByteArrayToInt32(bs[17:21])
 	utils.CheckError(err)
-	previousRelationship2.id = int(id)
-	r.previousRelationship2 = &previousRelationship2
+	if id == -1 {
+		r.previousRelationship2 = nil
+	} else {
+		previousRelationship2.id = int(id)
+		r.previousRelationship2 = &previousRelationship2
+	}
 
 	id, err = utils.ByteArrayToInt32(bs[21:25])
 	utils.CheckError(err)
-	nextRelationship1.id = int(id)
-	r.nextRelationship1 = &nextRelationship1
+	if id == -1 {
+		r.nextRelationship1 = nil
+	} else {
+		nextRelationship1.id = int(id)
+		r.nextRelationship1 = &nextRelationship1
+	}
 	id, err = utils.ByteArrayToInt32(bs[25:29])
 	utils.CheckError(err)
-	nextRelationship2.id = int(id)
-	r.nextRelationship2 = &nextRelationship2
+	if id == -1 {
+		r.nextRelationship2 = nil
+	} else {
+		nextRelationship2.id = int(id)
+		r.nextRelationship2 = &nextRelationship2
+	}
 
 	id, err = utils.ByteArrayToInt32(bs[29:33])
 	utils.CheckError(err)
-	property.id = int(id)
-	r.property = &property
+	if id == -1 {
+		r.property = nil
+	} else {
+		property.id = int(id)
+		r.property = &property
+	}
 
 	r.isFirst, err = utils.ByteArrayToBool(bs[33:34])
 	utils.CheckError(err)

@@ -30,6 +30,7 @@ func CreateProperty() *Property {
 	id, err := globals.FileHandler.ReadId(globals.PropertiesId)
 	utils.CheckError(err)
 	p.id = id
+	p.valueType = -1
 	p.isUsed = true
 	p.isWritten = false
 	p.write()
@@ -70,7 +71,7 @@ func (p Property) GetNextProperty() *Property {
 			err error
 			bs = make([]byte, globals.PropertiesSize)
 		)
-		if len(p.byteString) < 0 {
+		if len(p.byteString) <= 0 {
 			offset := p.id * globals.PropertiesSize
 			err = globals.FileHandler.Read(globals.PropertiesStore, offset, &bs, p.id)
 			utils.CheckError(err)
@@ -105,7 +106,7 @@ func (p *Property) GetTitle() *PropertyTitle {
 			err error
 			bs = make([]byte, globals.PropertiesSize)
 		)
-		if len(p.byteString) < 0 {
+		if len(p.byteString) <= 0 {
 			offset := p.id * globals.PropertiesSize
 			err = globals.FileHandler.Read(globals.PropertiesStore, offset, &bs, p.id)
 			utils.CheckError(err)
@@ -135,7 +136,7 @@ func (p *Property) GetValueType() int8 {
 
 func (p *Property) SetValueType(valueType int8) {
 	p.valueType = valueType
-	p.write()
+	//p.write()
 }
 
 func (p *Property) GetValue() *Value {
@@ -149,7 +150,7 @@ func (p *Property) GetValue() *Value {
 			bs = make([]byte, globals.PropertiesSize)
 			value Value
 		)
-		if len(p.byteString) < 0 {
+		if len(p.byteString) <= 0 {
 			offset := p.id * globals.PropertiesSize
 			err = globals.FileHandler.Read(globals.PropertiesStore, offset, &bs, p.id)
 			utils.CheckError(err)
@@ -188,13 +189,20 @@ func (p *Property) GetValue() *Value {
 	}
 }
 
-func (p *Property) SetValue(value *Value) {
-	p.value = value
+func (p *Property) SetValue(valueType int8, value interface{}) {
+	var val Value
+	if valueType == 0 {
+		val = CreateIntegerValue(value.(int))
+	} else if valueType == 1 {
+		val = CreateDoubleValue(value.(float64))
+	} else {
+		val = CreateStringValue(value.(string))
+	}
+	p.value = &val
 	p.write()
 }
 
 func (p *Property) toBytes() (bs []byte) {
-
 	var (
 		isUsed []byte
 		nextProperty *Property
@@ -212,7 +220,12 @@ func (p *Property) toBytes() (bs []byte) {
 	nextPropertyBs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(nextProperty)))
 	titleBs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(title)))
 	valueTypeBs := utils.Int8ToByteArray(valueType)
-	valueBs := utils.Int32ToByteArray(int32(IfNilAssignMinusOne(value)))
+	var valueBs []byte
+	if valueType == 0 {
+		valueBs = utils.Int32ToByteArray(int32((*value).(*IntegerValue).GetValue()))
+	} else {
+		valueBs = utils.Int32ToByteArray(int32(IfNilAssignMinusOne(value)))
+	}
 
 	bs = append(isUsed, nextPropertyBs...)
 	bs = append(bs, titleBs...)
@@ -241,13 +254,21 @@ func (p *Property) fromBytes(bs []byte) {
 
 	id, err = utils.ByteArrayToInt32(bs[1:5])
 	utils.CheckError(err)
-	nextProperty.id = int(id)
-	p.nextProperty = &nextProperty
+	if id == -1 {
+		p.nextProperty = nil
+	} else {
+		nextProperty.id = int(id)
+		p.nextProperty = &nextProperty
+	}
 
 	id, err = utils.ByteArrayToInt32(bs[5:9])
 	utils.CheckError(err)
-	title.id = int(id)
-	p.title = &title
+	if id == -1 {
+		p.title = nil
+	} else {
+		title.id = int(id)
+		p.title = &title
+	}
 
 	vType := utils.ByteArrayToInt8(bs[9:10])
 	valueType = int8(vType)

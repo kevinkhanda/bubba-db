@@ -24,8 +24,27 @@ func (i *IntegerValue) set(value interface{}) {
 	i.value = value.(int)
 }
 
+func (i IntegerValue) GetValue() int {
+	return i.get().(int)
+}
+
+func (i *IntegerValue) SetValue(value int) {
+	i.set(value)
+}
+
+func CreateIntegerValue(value int) *IntegerValue {
+	result := &IntegerValue{value: value}
+	return result
+}
+
+
+func GetIntegerValue(value Value) int {
+	return value.(*IntegerValue).GetValue()
+}
+
 // String value
 type StringValue struct {
+	Value
 	id int
 	isUsed bool
 	value string
@@ -63,7 +82,7 @@ func CreateStringValue(value string) *StringValue {
 	return &s
 }
 
-func (s *StringValue) GetValue() string {
+func (s StringValue) GetValue() string {
 	return s.get().(string)
 }
 
@@ -71,7 +90,7 @@ func (s *StringValue) SetValue(value string) {
 	s.set(value)
 }
 
-func (s *StringValue) GetNextChunk() *StringValue {
+func (s StringValue) GetNextChunk() *StringValue {
 	if s.nextChunk != nil {
 		return s.nextChunk
 	} else {
@@ -92,7 +111,7 @@ func (s *StringValue) GetNextChunk() *StringValue {
 }
 
 func (s *StringValue) toBytes() (bs []byte) {
-	bs = append(utils.BoolToByteArray(s.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(s.value)))...)
+	bs = append(utils.BoolToByteArray(s.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(s)))...)
 	bs = append(bs, utils.Int32ToByteArray(int32(IfNilAssignMinusOne(s.nextChunk)))...)
 	return bs
 }
@@ -133,6 +152,11 @@ func (s *StringValue) write() {
 	utils.CheckError(err)
 }
 
+func GetStringValue(value Value) string {
+	val := value.(*StringValue)
+	return val.GetValue()
+}
+
 // Double value
 type DoubleValue struct {
 	id int
@@ -159,7 +183,7 @@ func CreateDoubleValue(value float64) *DoubleValue {
 	return &d
 }
 
-func (d *DoubleValue) GetValue() float64 {
+func (d DoubleValue) GetValue() float64 {
 	return d.get().(float64)
 }
 
@@ -168,7 +192,7 @@ func (d *DoubleValue) SetValue(value float64) {
 }
 
 func (d *DoubleValue) toBytes() (bs []byte) {
-	bs = append(utils.BoolToByteArray(d.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(d.value)))...)
+	bs = append(utils.BoolToByteArray(d.isUsed), utils.Int32ToByteArray(int32(IfNilAssignMinusOne(d)))...)
 	return bs
 }
 
@@ -198,4 +222,8 @@ func (d *DoubleValue) write() {
 	bs := d.toBytes()
 	err := globals.FileHandler.Write(globals.DoubleStore, offset, bs, d.id)
 	utils.CheckError(err)
+}
+
+func GetDoubleValue(value Value) float64 {
+	return value.(*DoubleValue).GetValue()
 }
