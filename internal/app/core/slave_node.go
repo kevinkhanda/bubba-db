@@ -62,10 +62,8 @@ func (entity *Entity) Read(request *RPCRequest, reply *Reply) error  {
 	var fh FileHandler
 	file := getFilePointerByName(request.Data.File)
 	fh.Read(file, request.Data.Offset, request.Data.Bs, request.Data.Id)
-	reply.Message = string(request.Data.Bs)//"success"
-	var temp = request.Data.Bs
-	println(string(temp))
-	reply.Data = temp
+	reply.Message = "success"
+	reply.Data = string(request.Data.Bs)
 	return nil
 }
 
