@@ -63,9 +63,9 @@ func main() {
 	node3 := api.CreateNode("Oleg")
 	node4 := api.CreateNode("Car")
 
-	_ := api.CreateRelationship(node1, node2, "is friends with")
-	_ := api.CreateRelationship(node2, node3, "is friends with")
-	_ := api.CreateRelationship(node1, node3, "is friends with")
+	_ = api.CreateRelationship(node1, node2, "is friends with")
+	_ = api.CreateRelationship(node2, node3, "is friends with")
+	_ = api.CreateRelationship(node1, node3, "is friends with")
 	relationship4 := api.CreateRelationship(node1, node4, "owning a")
 
 	_ = api.CreatePropertyForNode(node1, "age", 0, 21)
