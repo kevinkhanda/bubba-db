@@ -278,24 +278,24 @@ func (fh FileHandler) Write(file *os.File, offset int, bs []byte, id int) (err e
 }
 
 func (fh FileHandler) Read(file *os.File, offset int, bs *[]byte, id int) (err error) {
-	if strings.HasSuffix(file.Name(), "nodes.store") {
-		file = globals.NodesStore
-	}
-	if strings.HasSuffix(file.Name(), "labels.store") {
-		file = globals.LabelsStore
-	}
-	if strings.HasSuffix(file.Name(), "relationships.store") {
-		file = globals.RelationshipsStore
-	}
-	if strings.HasSuffix(file.Name(), "properties.store") {
-		file = globals.PropertiesStore
-	}
-	if strings.HasSuffix(file.Name(), "string.store") {
-		file = globals.StringStore
-	}
-	if strings.HasSuffix(file.Name(), "double.store") {
-		file = globals.DoubleStore
-	}
+	//if strings.HasSuffix(file.Name(), "nodes.store") {
+	//	file = globals.NodesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "labels.store") {
+	//	file = globals.LabelsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "relationships.store") {
+	//	file = globals.RelationshipsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "properties.store") {
+	//	file = globals.PropertiesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "string.store") {
+	//	file = globals.StringStore
+	//}
+	//if strings.HasSuffix(file.Name(), "double.store") {
+	//	file = globals.DoubleStore
+	//}
 	bytesRead, err := file.ReadAt(*bs, int64(offset))
 	if bytesRead != len(*bs) {
 		err = errors.New("read: read less bytes than expected")
