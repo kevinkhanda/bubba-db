@@ -8,7 +8,7 @@ type FileHandlerInterface interface {
 	SwitchDatabaseStructure(dbTitle string) (err error)
 	DropDatabase(dbTitle string) (err error)
 	Write(file *os.File, offset int, bs []byte, id int) (err error)
-	Read(file *os.File, offset int, bs []byte, id int) (err error)
+	Read(file *os.File, offset int, bs *[]byte, id int) (err error)
 	ReadId(file *os.File) (id int, err error)
 	FreeId(file *os.File, id int) (err error)
 }

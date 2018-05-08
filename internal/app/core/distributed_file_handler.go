@@ -51,13 +51,13 @@ func (dfh DistributedFileHandler) DropDatabase(dbIdentifier string) (err error) 
 	return nil
 }
 
-func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
+func (dfh DistributedFileHandler) Read(file *os.File, offset int, bs *[]byte, id int) (err error) {
 	if inArray(file.Name()) {
 		var fh FileHandler
 		fh.Read(file, offset, bs, id)
 	} else {
 		slaveIndex := id % len(master.Slaves)
-		println(len(bs))
+		println(len(*bs))
 		bs, err = SendReadData(&master.Slaves[slaveIndex], file, offset, id, bs)
 	}
 	return nil

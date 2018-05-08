@@ -77,7 +77,7 @@ func (s *StringValue) GetNextChunk() *StringValue {
 	} else {
 		offset := s.id * globals.NodesSize
 		bs := make([]byte, globals.NodesSize)
-		globals.FileHandler.Read(globals.NodesStore, offset, bs, s.id)
+		globals.FileHandler.Read(globals.NodesStore, offset, &bs, s.id)
 		nextChunkId, err := utils.ByteArrayToInt32(bs[1:5])
 		utils.CheckError(err)
 		if nextChunkId == -1 {
@@ -121,7 +121,7 @@ func (s *StringValue) fromBytes(bs []byte) {
 func (s *StringValue) read() {
 	bs :=  make([]byte, globals.StringSize)
 	offset := globals.StringSize * s.id
-	err = globals.FileHandler.Read(globals.StringStore, offset, bs, s.id)
+	err = globals.FileHandler.Read(globals.StringStore, offset, &bs, s.id)
 	utils.CheckError(err)
 	s.fromBytes(bs)
 }
@@ -188,7 +188,7 @@ func (d *DoubleValue) fromBytes(bs []byte) {
 func (d *DoubleValue) read() {
 	bs :=  make([]byte, globals.DoubleSize)
 	offset := globals.DoubleSize * d.id
-	err = globals.FileHandler.Read(globals.DoubleStore, offset, bs, d.id)
+	err = globals.FileHandler.Read(globals.DoubleStore, offset, &bs, d.id)
 	utils.CheckError(err)
 	d.fromBytes(bs)
 }

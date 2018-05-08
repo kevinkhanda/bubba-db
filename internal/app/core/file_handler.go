@@ -260,10 +260,10 @@ func (fh FileHandler) Write(file *os.File, offset int, bs []byte, id int) (err e
 	return err
 }
 
-func (fh FileHandler) Read(file *os.File, offset int, bs []byte, id int) (err error) {
-	offset = offset * len(bs)
-	bytesRead, err := file.ReadAt(bs, int64(offset))
-	if bytesRead != len(bs) {
+func (fh FileHandler) Read(file *os.File, offset int, bs *[]byte, id int) (err error) {
+	offset = offset * len(*bs)
+	bytesRead, err := file.ReadAt(*bs, int64(offset))
+	if bytesRead != len(*bs) {
 		err = errors.New("read: read less bytes than expected")
 	}
 	return err

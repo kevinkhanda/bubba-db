@@ -119,7 +119,7 @@ func TestFileReadWrite(test *testing.T) {
 	}
 
 	readBs := make([]byte, 4)
-	fh.Read(testFile, 0, readBs, 0)
+	fh.Read(testFile, 0, &readBs, 0)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")
@@ -133,7 +133,7 @@ func TestFileReadWrite(test *testing.T) {
 	}
 
 	readBs = make([]byte, 4)
-	fh.Read(testFile, 1, readBs, 1)
+	fh.Read(testFile, 1, &readBs, 1)
 	for i := 0; i < len(bs); i++ {
 		if bs[i] != readBs[i] {
 			test.Errorf("Read values mismatch")
@@ -234,7 +234,7 @@ func TestNodeCreate(test *testing.T) {
 	bsExpected = append(utils.BoolToByteArray(true), bsId...)
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, bsId...)
-	err := fh.Read(globals.NodesStore, 0, bs, 0)
+	err := fh.Read(globals.NodesStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from NodeStore")
 	}
@@ -256,7 +256,7 @@ func TestNodeDelete(test *testing.T) {
 	bs := make([]byte, globals.NodesSize)
 	bsExpected := make([]byte, globals.NodesSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.NodesStore, 0, bs, 0)
+	err := fh.Read(globals.NodesStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from NodeStore")
 	}
@@ -312,7 +312,7 @@ func TestLabelCreate(test *testing.T) {
 	bs := make([]byte, globals.LabelsSize)
 	bsNumber := utils.Int32ToByteArray(0)
 	bsExpected = append(utils.BoolToByteArray(true), bsNumber...)
-	err := fh.Read(globals.LabelsStore, 0, bs, 0)
+	err := fh.Read(globals.LabelsStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading a file")
 		println(err.Error())
@@ -336,7 +336,7 @@ func TestLabelDelete(test *testing.T) {
 	bs := make([]byte, globals.LabelsSize)
 	bsExpected := make([]byte, globals.LabelsSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.LabelsStore, 0, bs, 0)
+	err := fh.Read(globals.LabelsStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from LabelStore")
 	}
@@ -467,7 +467,7 @@ func TestCreateRelationship(test *testing.T) {
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, bsId...)
 	bsExpected = append(bsExpected, utils.BoolToByteArray(false)...)
-	err := fh.Read(globals.RelationshipsStore, 0, bs, 0)
+	err := fh.Read(globals.RelationshipsStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from RelationshipsStore")
 	}
@@ -488,7 +488,7 @@ func TestDeleteRelationship(test *testing.T) {
 	bs := make([]byte, globals.RelationshipsSize)
 	bsExpected := make([]byte, globals.RelationshipsSize)
 	bsExpected[0] = utils.BoolToByteArray(false)[0]
-	err := fh.Read(globals.RelationshipsStore, 0, bs, 0)
+	err := fh.Read(globals.RelationshipsStore, 0, &bs, 0)
 	if err != nil {
 		test.Errorf("Error reading from RelationshipStore")
 	}
