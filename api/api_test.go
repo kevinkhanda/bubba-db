@@ -4,6 +4,7 @@ import (
 	"graph-db/internal/app/core"
 	"graph-db/internal/app/core/globals"
 	"testing"
+	"graph-db/internal/app/core/structs"
 )
 
 var fh core.FileHandler
@@ -73,6 +74,51 @@ func TestCreateRelationship(t *testing.T) {
 	}
 	if relationship2.GetFirstPreviousRelationship().GetId() != relationship1.GetId() {
 		t.Errorf("First node previous relationship mismatch")
+	}
+	DropDatabase("test_db")
+}
+
+func TestCreatePropertyForNode(t *testing.T) {
+	core.InitDb("test_db", "local")
+	node1 := CreateNode("node1")
+	property1 := CreatePropertyForNode(&node1, "color", 2, "red")
+	if property1.GetId() != 0 {
+		t.Errorf("Property id mismatch")
+	}
+	if property1.GetNextProperty() != nil {
+		t.Errorf("Next property is not null")
+	}
+	if property1.GetValueType() != 2 {
+		t.Errorf("Value type mismatch")
+	}
+	if structs.GetStringValue(*property1.GetValue()) != "red" {
+		t.Errorf("String value mismatch")
+	}
+	property2 := CreatePropertyForNode(&node1, "amount", 0, 780)
+	if property2.GetId() != 1 {
+		t.Errorf("Property id mismatch")
+	}
+	if property1.GetNextProperty() != property2 {
+		t.Errorf("Next property is not first")
+	}
+	if property2.GetValueType() != 0 {
+		t.Errorf("Value type mismatch")
+	}
+	if structs.GetIntegerValue(*property2.GetValue()) != 780 {
+		t.Errorf("Integer value mismatch")
+	}
+	property3 := CreatePropertyForNode(&node1, "price", 1, 70.5)
+	if property3.GetId() != 2 {
+		t.Errorf("Property id mismatch")
+	}
+	if property2.GetNextProperty() != property3 {
+		t.Errorf("Next property is not first")
+	}
+	if property3.GetValueType() != 1 {
+		t.Errorf("Value type mismatch")
+	}
+	if structs.GetDoubleValue(*property3.GetValue()) != 70.5 {
+		t.Errorf("Double value mismatch")
 	}
 	DropDatabase("test_db")
 }

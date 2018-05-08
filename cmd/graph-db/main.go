@@ -2,14 +2,14 @@ package main
 
 import (
 	"graph-db/internal/app/core"
-	"log"
 	"graph-db/internal/pkg/utils"
 	"graph-db/internal/app/core/globals"
+	"log"
 )
 
 func main() {
 	//err := core.InitDb("asd", "local")
-	//err := core.SwitchDb("asd")
+	//err = core.SwitchDb("asd")
 	//utils.CheckError(err)
 	dbTitle := "asd"
 	err := core.InitDb(dbTitle, "distributed")
