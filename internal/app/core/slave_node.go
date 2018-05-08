@@ -7,7 +7,9 @@ import (
 )
 
 func getFilePointerByName(filePath string) *os.File {
-	file, err := os.Open(filePath) // For read access.
+	pwd, _ := os.Getwd()
+	filePath = pwd + filePath
+	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -22,7 +22,7 @@ func getFilePath(fileName string) string {
 			res = i
 		}
 	}
-	return "~/go/src/graph-db/internal/app/core/" + strings.Join(pathElems[res:],"/")
+	return "/cmd/graph-db/" + strings.Join(pathElems[res:],"/")
 }
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
