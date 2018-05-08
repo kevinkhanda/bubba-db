@@ -23,8 +23,8 @@ func DropDatabase(dbTitle string) {
 	utils.CheckError(err)
 }
 
-func CreateNode(title string) (node structs.Node) {
-	node = *structs.CreateNode()
+func CreateNode(title string) (node *structs.Node) {
+	node = structs.CreateNode()
 	label := *structs.CreateLabel()
 	label.AddLabelName(title)
 	node.SetLabel(&label)
@@ -108,6 +108,31 @@ func CreatePropertyForNode(node *structs.Node, title string, valueType int, valu
 		node.SetProperty(property)
 	} else {
 		lastProperty := node.GetProperty()
+		for true {
+			if lastProperty.GetNextProperty() == nil {
+				lastProperty.SetNextProperty(property)
+				break
+			} else {
+				lastProperty = lastProperty.GetNextProperty()
+			}
+		}
+	}
+
+	return property
+}
+
+func CreatePropertyForRelationship(relationship *structs.Relationship, title string, valueType int, value interface{}) (property *structs.Property){
+	property = structs.CreateProperty()
+	property.SetValueType(int8(valueType))
+	property.SetValue(int8(valueType), value)
+	propertyTitle, err := structs.AddPropertyTitle(title)
+	utils.CheckError(err)
+	property.SetTitle(propertyTitle)
+
+	if relationship.GetProperty() == nil {
+		relationship.SetProperty(property)
+	} else {
+		lastProperty := relationship.GetProperty()
 		for true {
 			if lastProperty.GetNextProperty() == nil {
 				lastProperty.SetNextProperty(property)
