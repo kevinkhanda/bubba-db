@@ -91,4 +91,3 @@ func fillMap(m map[string]globals.MapValue, file *os.File, recordSize int) {
 	}
 
 }
-
