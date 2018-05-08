@@ -63,7 +63,7 @@ func (entity *Entity) Read(request *RPCRequest, reply *Reply) error  {
 	file := getFilePointerByName(request.Data.File)
 	fh.Read(file, request.Data.Offset, request.Data.Bs, request.Data.Id)
 	reply.Message = "success"
-	reply.Data = string(request.Data.Bs)
+	reply.Data = request.Data.Bs
 	return nil
 }
 

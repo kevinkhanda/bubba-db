@@ -50,6 +50,7 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) 
 			attempts = 5
 		}
 	}
+	print(reply.Data)
 	return  reply.Data, nil
 }
 

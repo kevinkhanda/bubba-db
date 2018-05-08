@@ -32,7 +32,7 @@ type RequestedData struct {
 
 type Reply struct {
 	Message string
-	Data	string
+	Data	[]byte
 }
 
 type RPCRequest struct {
