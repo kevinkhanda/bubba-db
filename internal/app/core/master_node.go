@@ -22,7 +22,7 @@ func getFilePath(fileName string) string {
 			res = i
 		}
 	}
-	return "/cmd/graph-db/" + strings.Join(pathElems[res:],"/")
+	return "/" + strings.Join(pathElems[res:],"/")
 }
 
 func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
@@ -56,7 +56,6 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 	var attempts = 0
 
 	fileAbsPath := getFilePath(file.Name())
-	println(fileAbsPath)
 	requestedData := RequestedData{
 		File: fileAbsPath,
 		Offset: offset,
@@ -109,7 +108,7 @@ func RequestSlaveStatus(entity *Entity) error {
 		var request RPCRequest
 		err = entity.Connector.Call("Entity.SendStatus", &request, &reply)
 		if err != nil {
-			log.Panic("4 ", err)
+			log.Panic("123 ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -144,7 +143,6 @@ func SendDeploy(entity *Entity) error {
 
 func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 	var reply Reply
-	println("Bubba")
 	var attempts = 0
 	for attempts < 5 {
 		log.Printf("Try to SendInitDatabaseStructure (attempts %d) to %s:%s\n", attempts, entity.Ip, entity.Port)
