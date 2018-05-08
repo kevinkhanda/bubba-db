@@ -27,6 +27,7 @@ func (fh FileHandler) InitFileSystem() {
 }
 
 func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
+	var dbPath = filepath.Join(rootPath, dbTitle)
 	var storagePath = filepath.Join(rootPath, dbTitle, "storage")
 	var nodesPath = filepath.Join(storagePath, "nodes")
 	var nodesIdPath = filepath.Join(nodesPath, "id")
@@ -63,12 +64,12 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	// relationships/id
 	globals.RelationshipsId, err = os.Create(filepath.Join(relationshipsIdPath, "relationships.id"))
 	utils.CheckError(err)
-	globals.RelationshipsTypesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+	globals.RelationshipsTitlesId, err = os.Create(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"))
 	utils.CheckError(err)
 	// relationships/store
 	globals.RelationshipsStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationships.store"))
 	utils.CheckError(err)
-	globals.RelationshipsTypesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+	globals.RelationshipsTitlesStore, err = os.Create(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"))
 	utils.CheckError(err)
 
 	// properties/id
@@ -90,12 +91,16 @@ func (fh FileHandler) InitDatabaseStructure(dbTitle string) {
 	globals.DoubleStore, err = os.Create(filepath.Join(propertiesStorePath, "double.store"))
 	utils.CheckError(err)
 
+	//config
+	globals.Config, err = os.Create(filepath.Join(dbPath, "connections.config"))
+	utils.CheckError(err)
+
 	globals.NodesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.LabelsId.WriteString(fmt.Sprintf("%d", 0))
 	globals.LabelsTitlesId.WriteString(fmt.Sprintf("%d", 0))
 
 	globals.RelationshipsId.WriteString(fmt.Sprintf("%d", 0))
-	globals.RelationshipsTypesId.WriteString(fmt.Sprintf("%d", 0))
+	globals.RelationshipsTitlesId.WriteString(fmt.Sprintf("%d", 0))
 
 	globals.PropertiesId.WriteString(fmt.Sprintf("%d", 0))
 	globals.PropertiesTitlesId.WriteString(fmt.Sprintf("%d", 0))
@@ -117,49 +122,51 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 		var propertiesStorePath = filepath.Join(propertiesPath, "store")
 
 		// nodes/id
-		globals.NodesId, err = os.Open(filepath.Join(nodesIdPath, "nodes.id"))
+		globals.NodesId, err = os.OpenFile(filepath.Join(nodesIdPath, "nodes.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.LabelsId, err = os.Open(filepath.Join(nodesIdPath, "labels.id"))
+		globals.LabelsId, err = os.OpenFile(filepath.Join(nodesIdPath, "labels.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.LabelsTitlesId, err = os.Open(filepath.Join(nodesIdPath, "labelsTitles.id"))
+		globals.LabelsTitlesId, err = os.OpenFile(filepath.Join(nodesIdPath, "labelsTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
 		// nodes/store
-		globals.NodesStore, err = os.Open(filepath.Join(nodesStorePath, "nodes.store"))
+		globals.NodesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "nodes.store") , os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.LabelsStore, err = os.Open(filepath.Join(nodesStorePath, "labels.store"))
+		globals.LabelsStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labels.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.LabelsTitlesStore, err = os.Open(filepath.Join(nodesStorePath, "labelsTitles.store"))
+		globals.LabelsTitlesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labelsTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
 
 		// relationships/id
-		globals.RelationshipsId, err = os.Open(filepath.Join(relationshipsIdPath, "relationships.id"))
+		globals.RelationshipsId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationships.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.RelationshipsTypesId, err = os.Open(filepath.Join(relationshipsIdPath, "relationshipsTypes.id"))
+		globals.RelationshipsTitlesId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
 		// relationships/store
-		globals.RelationshipsStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationships.store"))
+		globals.RelationshipsStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationships.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.RelationshipsTypesStore, err = os.Open(filepath.Join(relationshipsStorePath, "relationshipsTypes.store"))
+		globals.RelationshipsTitlesStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
 
 		// properties/id
-		globals.PropertiesId, err = os.Open(filepath.Join(propertiesIdPath, "properties.id"))
+		globals.PropertiesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "properties.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.PropertiesTitlesId, err = os.Open(filepath.Join(propertiesIdPath, "propertiesTitles.id"))
+		globals.PropertiesTitlesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "propertiesTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.StringId, err = os.Open(filepath.Join(propertiesIdPath, "string.id"))
+		globals.StringId, err = os.OpenFile(filepath.Join(propertiesIdPath, "string.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.DoubleId, err = os.Open(filepath.Join(propertiesIdPath, "double.id"))
+		globals.DoubleId, err = os.OpenFile(filepath.Join(propertiesIdPath, "double.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
 		// properties/store
-		globals.PropertiesStore, err = os.Open(filepath.Join(propertiesStorePath, "properties.store"))
+		globals.PropertiesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "properties.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.PropertiesTitlesStore, err = os.Open(filepath.Join(propertiesStorePath, "propertiesTitles.store"))
+		globals.PropertiesTitlesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "propertiesTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.StringStore, err = os.Open(filepath.Join(propertiesStorePath, "string.store"))
+		globals.StringStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "string.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
-		globals.DoubleStore, err = os.Open(filepath.Join(propertiesStorePath, "double.store"))
+		globals.DoubleStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "double.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		utils.CheckError(err)
+
+		globals.Config, err = os.OpenFile(filepath.Join(rootPath, dbTitle, "connections.config"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 
 		return err
 	} else {
@@ -195,15 +202,15 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			err = globals.RelationshipsId.Close()
 			globals.RelationshipsId = nil
 			utils.CheckError(err)
-			err = globals.RelationshipsTypesId.Close()
+			err = globals.RelationshipsTitlesId.Close()
 			globals.RelationshipsId = nil
 			utils.CheckError(err)
 			// relationships/store
 			err = globals.RelationshipsStore.Close()
 			globals.RelationshipsStore = nil
 			utils.CheckError(err)
-			err = globals.RelationshipsTypesStore.Close()
-			globals.RelationshipsTypesStore = nil
+			err = globals.RelationshipsTitlesStore.Close()
+			globals.RelationshipsTitlesStore = nil
 			utils.CheckError(err)
 
 			// properties/id
@@ -232,6 +239,10 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 			err = globals.DoubleStore.Close()
 			globals.DoubleStore = nil
 			utils.CheckError(err)
+			// config
+			err = globals.Config.Close()
+			globals.Config = nil
+			utils.CheckError(err)
 		}
 		err = os.RemoveAll(filepath.Join(rootPath, dbTitle))
 		return err
@@ -240,20 +251,53 @@ func (fh FileHandler) DropDatabase(dbTitle string) (err error) {
 	}
 }
 
-func (fh FileHandler) Write(file *os.File, offset int, bs []byte) (err error) {
-	offset = offset * len(bs)
-	bytesWritten, err := file.WriteAt(bs, int64(offset))
-	if bytesWritten != len(bs) {
-		err = errors.New("write: wrote less bytes than expected")
+func (fh FileHandler) Read(file *os.File, offset int, bs *[]byte, id int) (err error) {
+	//if strings.HasSuffix(file.Name(), "nodes.store") {
+	//	file = globals.NodesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "labels.store") {
+	//	file = globals.LabelsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "relationships.store") {
+	//	file = globals.RelationshipsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "properties.store") {
+	//	file = globals.PropertiesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "string.store") {
+	//	file = globals.StringStore
+	//}
+	//if strings.HasSuffix(file.Name(), "double.store") {
+	//	file = globals.DoubleStore
+	//}
+	bytesRead, err := file.ReadAt(*bs, int64(offset))
+	if bytesRead != len(*bs) {
+		err = errors.New("read: read less bytes than expected")
 	}
 	return err
 }
-
-func (fh FileHandler) Read(file *os.File, offset int, bs []byte) (err error) {
-	offset = offset * len(bs)
-	bytesRead, err := file.ReadAt(bs, int64(offset))
-	if bytesRead != len(bs) {
-		err = errors.New("read: read less bytes than expected")
+func (fh FileHandler) Write(file *os.File, offset int, bs []byte, id int) (err error) {
+	//if strings.HasSuffix(file.Name(), "nodes.store") {
+	//	file = globals.NodesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "labels.store") {
+	//	file = globals.LabelsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "relationships.store") {
+	//	file = globals.RelationshipsStore
+	//}
+	//if strings.HasSuffix(file.Name(), "properties.store") {
+	//	file = globals.PropertiesStore
+	//}
+	//if strings.HasSuffix(file.Name(), "string.store") {
+	//	file = globals.StringStore
+	//}
+	//if strings.HasSuffix(file.Name(), "double.store") {
+	//	file = globals.DoubleStore
+	//}
+	bytesWritten, err := file.WriteAt(bs, int64(offset))
+	if bytesWritten != len(bs) {
+		err = errors.New("write: wrote less bytes than expected")
 	}
 	return err
 }

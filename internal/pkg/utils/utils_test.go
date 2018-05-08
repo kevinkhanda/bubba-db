@@ -34,6 +34,33 @@ func TestByteToInt32(test *testing.T) {
 	}
 }
 
+func TestInt8ToByteArray(test *testing.T) {
+	number := 12
+	array := Int8ToByteArray(int8(number))
+	if len(array) != 1  {
+		test.Errorf("Array length mismatch")
+	}
+
+	initialNumber := ByteArrayToInt8(array)
+	if int8(number) != initialNumber {
+		test.Errorf("Initial number mismatch")
+	}
+}
+
+func TestByteArrayToInt8(test *testing.T) {
+	bs := []byte {0x53}
+	number := ByteArrayToInt8(bs)
+
+	initialBs := Int8ToByteArray(number)
+	if len(initialBs) != len(bs) {
+		test.Errorf("Arrays length mismatch")
+	}
+
+	if initialBs[0] != bs[0] {
+		test.Errorf("Arrays values mismatch")
+	}
+}
+
 func TestFloat64ToByteArray(test *testing.T) {
 	float  := float64(10)
 	array := Float64ToByteArray(float)
@@ -115,6 +142,35 @@ func TestByteArrayToString(test *testing.T) {
 	}
 
 	if str != expectedStr {
+		test.Errorf("String value mismatch")
+	}
+}
+
+func TestAddStopCharacter(test *testing.T) {
+	requiredLength := 5
+	string1 := "abc"
+	string2 := "abcde"
+	expectedString1 := "abc##"
+	expectedString2 := "abcde"
+	if AddStopCharacter(string1, requiredLength) != expectedString1 {
+		test.Errorf("String value mismatch")
+	}
+
+	if AddStopCharacter(string2, requiredLength) != expectedString2 {
+		test.Errorf("String value mismatch")
+	}
+}
+
+func TestRemoveStopCharacter(test *testing.T) {
+	string1 := "abcd#sfsdf"
+	string2 := "abcde"
+	expectedString1 := "abcd"
+	expectedString2 := "abcde"
+	if RemoveStopCharacter(string1) != expectedString1 {
+		test.Errorf("String value mismatch")
+	}
+
+	if RemoveStopCharacter(string2) != expectedString2 {
 		test.Errorf("String value mismatch")
 	}
 }

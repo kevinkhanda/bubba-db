@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strings"
 )
 
 func CheckError(err error)  {
@@ -36,6 +37,18 @@ func ByteArrayToInt32(bs []byte) (int32, error) {
 	unsigned := binary.LittleEndian.Uint32(bs)
 	number := int32(unsigned)
 	return number, nil
+}
+
+func Int8ToByteArray(number int8) []byte {
+	bs := make([]byte, 1)
+	bs[0] = byte(number)
+	return bs
+}
+
+func ByteArrayToInt8(bs []byte) int8 {
+	var number int8
+	number = int8(bs[0])
+	return number
 }
 
 // BoolToByteArray transforms bool value to byte array
@@ -101,4 +114,23 @@ func ByteArrayToFloat64(bs []byte) (float64, error) {
 	bits := binary.LittleEndian.Uint64(bs)
 	float := math.Float64frombits(bits)
 	return float, nil
+}
+
+// If string parameter length is less than requiredLength then '#' character is added to the end of string
+func AddStopCharacter(str string, requiredLength int) string {
+	for len(str) < requiredLength {
+		str += "#"
+	}
+
+	return str
+}
+
+// Returns string slice until the '#' character
+func RemoveStopCharacter(str string) string {
+	i := strings.Index(str, "#")
+	if i > -1 {
+		return str[:i]
+	} else {
+		return str
+	}
 }

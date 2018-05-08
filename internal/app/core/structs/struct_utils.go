@@ -1,28 +1,50 @@
 package structs
 
-import "reflect"
+import (
+	"reflect"
+	"os"
+	"graph-db/internal/app/core/globals"
+	"fmt"
+)
 
 func IfNilAssignMinusOne(value interface{}) int {
-	if value != nil {
-		if reflect.TypeOf(value) == reflect.TypeOf(Node{}) {
-			value := value.(Node)
+	if !reflect.ValueOf(value).IsNil() {
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Node{}).String() {
+			value := value.(*Node)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Relationship{}) {
-			value := value.(Relationship)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Relationship{}).String() {
+			value := value.(*Relationship)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Property{}) {
-			value := value.(Property)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Property{}).String() {
+			value := value.(*Property)
 			return value.id
 		}
-		if reflect.TypeOf(value) == reflect.TypeOf(Label{}) {
-			value := value.(Label)
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&Label{}).String() {
+			value := value.(*Label)
 			return value.id
-		} else {
-			return -1
 		}
+		if reflect.TypeOf(value).String() == reflect.TypeOf(&RelationshipTitle{}).String() {
+			value := value.(*RelationshipTitle)
+			return value.id
+		}
+		return -1
 	} else {
 		return -1
+	}
+}
+
+func GetValueFile(valueType int8) *os.File {
+	switch valueType {
+		case globals.INTEGER:
+			return nil
+		case globals.DOUBLE:
+			return globals.DoubleStore
+		case globals.STRING:
+			return globals.StringStore
+		default:
+			errorMessage := fmt.Sprintf("Such type does not exist. This should never happen.")
+			panic(errorMessage)
 	}
 }
