@@ -18,20 +18,22 @@ func getFilePath(fileName string) string {
 	pathElems := strings.Split(path, "/")
 	res := 0
 	for i := range pathElems {
-		if pathElems[i] == "go" && pathElems[i + 1] == "src" {
+		if pathElems[i] == "databases" {
 			res = i
 		}
 	}
-	return "~/" + strings.Join(pathElems[res:],"/")
+	return "/" + strings.Join(pathElems[res:],"/")
 }
 
-func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, error)  {
+func SendReadData(entity *Entity, file *os.File, offset int, id int, bs []byte) ([]byte, error)  {
+	println(len(bs))
 	var reply Reply
 	var attempts = 0
-	fileAbsPath, err := filepath.Abs("./" + file.Name())
+	fileAbsPath := getFilePath(file.Name())
 	requestedData := RequestedData{
 		File: fileAbsPath,
 		Offset: offset,
+		Bs: bs,
 		Id: id,
 	}
 	for attempts < 5 {
@@ -39,7 +41,7 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 		request := RPCRequest {requestedData }
 		err = entity.Connector.Call("Entity.Read", &request, &reply)
 		if err != nil {
-			log.Fatal("7 ", err)
+			log.Fatal("Error in master_node SendReadData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -48,6 +50,7 @@ func SendReadData(entity *Entity, file *os.File, offset int, id int) ([]byte, er
 			attempts = 5
 		}
 	}
+	print(reply.Data)
 	return  reply.Data, nil
 }
 
@@ -56,7 +59,6 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 	var attempts = 0
 
 	fileAbsPath := getFilePath(file.Name())
-	println(fileAbsPath)
 	requestedData := RequestedData{
 		File: fileAbsPath,
 		Offset: offset,
@@ -68,16 +70,17 @@ func SendWriteData(entity *Entity, file *os.File, offset int, id int, bs []byte)
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.Write", &request, &reply)
 		if err != nil {
-			log.Fatal("6 ", err)
+			log.Fatal("Error in master_node SendWriteData ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
 		}
 		if reply.Message == "success" {
 			attempts = 5
+			println(reply.Data)
 		}
 	}
-	return err
+	return nil
 }
 
 func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
@@ -88,7 +91,7 @@ func SendSwitchDatabaseStructure(entity *Entity, newStructure *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *newStructure } }
 		err = entity.Connector.Call("Entity.SwitchDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("5 ", err)
+			log.Fatal("Error in master_node SendSwitchDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -109,7 +112,7 @@ func RequestSlaveStatus(entity *Entity) error {
 		var request RPCRequest
 		err = entity.Connector.Call("Entity.SendStatus", &request, &reply)
 		if err != nil {
-			log.Panic("4 ", err)
+			log.Panic("Error in master_node RequestSlaveStatus ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -119,7 +122,7 @@ func RequestSlaveStatus(entity *Entity) error {
 			attempts = 5
 		}
 	}
-	return err
+	return nil
 }
 
 func SendDeploy(entity *Entity) error {
@@ -130,7 +133,7 @@ func SendDeploy(entity *Entity) error {
 		request := RPCRequest{*new(RequestedData) }
 		err = entity.Connector.Call("Entity.Deploy", &request, &reply)
 		if err != nil {
-			log.Fatal("3 ", err)
+			log.Fatal("Error in master_node SendDeploy ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -152,7 +155,7 @@ func SendInitDatabaseStructure(entity *Entity, dbName *string) error {
 		request := RPCRequest{ requestedData }
 		err = entity.Connector.Call("Entity.InitDatabaseStructure", &request, &reply)
 		if err != nil {
-			log.Fatal("2 ", err)
+			log.Fatal("Error in master_node SendInitDatabaseStructure ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
@@ -172,7 +175,7 @@ func SendDropDatabase(entity *Entity, dbName *string) error {
 		request := RPCRequest{ RequestedData{ Payload: *dbName } }
 		err = entity.Connector.Call("Entity.DropDatabase", &request, &reply)
 		if err != nil {
-			log.Fatal("1 ", err)
+			log.Fatal("Error in master_node SendDropDatabase ", err)
 			err = errors.New("problems in requestSlaveStatus")
 			attempts++
 			continue
