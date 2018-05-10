@@ -8,7 +8,7 @@ Node storage:
 
 Relationship storage:
 
-<img src="docs/relationship.png" height="250" width="500">
+<img src="docs/relationship.png" height="250" width="750">
 
 Property storage:
 
