@@ -4,11 +4,13 @@ import (
 	"graph-db/internal/app/core/globals"
 	"graph-db/internal/pkg/utils"
 	"fmt"
+	"strconv"
 )
 
 type Value interface {
 	get() interface{}
 	set(value interface{})
+	String() string
 }
 
 // Integer value
@@ -30,6 +32,10 @@ func (i IntegerValue) GetValue() int {
 
 func (i *IntegerValue) SetValue(value int) {
 	i.set(value)
+}
+
+func (i *IntegerValue) String() string {
+	return strconv.Itoa(i.value)
 }
 
 func CreateIntegerValue(value int) *IntegerValue {
@@ -88,6 +94,10 @@ func (s StringValue) GetValue() string {
 
 func (s *StringValue) SetValue(value string) {
 	s.set(value)
+}
+
+func (s *StringValue) String() string {
+	return s.value
 }
 
 func (s StringValue) GetNextChunk() *StringValue {
@@ -222,6 +232,10 @@ func (d *DoubleValue) write() {
 	bs := d.toBytes()
 	err := globals.FileHandler.Write(globals.DoubleStore, offset, bs, d.id)
 	utils.CheckError(err)
+}
+
+func (d *DoubleValue) String() string {
+	return strconv.FormatFloat(d.value, 'f', 2, 32)
 }
 
 func GetDoubleValue(value Value) float64 {

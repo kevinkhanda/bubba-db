@@ -3,55 +3,73 @@ package main
 import (
 	"graph-db/api"
 	"graph-db/internal/app/core/structs"
-	"graph-db/internal/app/core"
-	"graph-db/internal/pkg/utils"
-	"graph-db/internal/app/core/globals"
-	"log"
+	"strings"
+	"strconv"
 )
 
 func printNode(node structs.Node) {
 	var str string
-	str += "Node labels: "
-	for _, label := range node.GetLabel().GetLabelNames() {
+	str += strings.Join([]string{"Node id: ", strconv.Itoa(node.GetId()), ", labels: "}, "")
+	for index, label := range node.GetLabel().GetLabelNames() {
 		if label != nil && label.GetTitle() != "" {
 			str += label.GetTitle()
-			str += ", "
+			if index != len(node.GetLabel().GetLabelNames()) - 1 {
+				if node.GetLabel().GetLabelNames()[index+1] != nil {
+					str += ", "
+				} else {
+					str += "."
+				}
+			}
 		}
 	}
-	str += "\n"
-	str += "Relationships: \n"
-	relationship := node.GetRelationship()
-	if relationship != nil {
-		str += "\t Title: "
-		str += relationship.GetTitle().GetTitle()
+	if node.GetProperty() != nil {
+		str += "\nNode properties: \n"
+		property := node.GetProperty()
+		var prop string
+		index := 1
+		for property != nil {
+			prop += strings.Join([]string{strconv.Itoa(index), ". Property title: \"", property.GetTitle().String(),
+				"\"; value: ", (*property.GetValue()).String(), "\n"}, "")
+			property = property.GetNextProperty()
+			index++
+		}
+		str += prop[:len(prop) - 2]
+	}
+	if node.GetRelationship() != nil {
+		str += "\nRelationships: \n"
+		relationship := node.GetRelationship()
+		var rel string
+		index := 0
+		for relationship != nil {
+			rel += strings.Join([]string{"\t", strconv.Itoa(index + 1), ". Node with id ",
+				strconv.Itoa(relationship.GetFirstNode().GetId()), " ",
+				relationship.GetTitle().GetTitle(), " node with id ",
+				strconv.Itoa(relationship.GetSecondNode().GetId()), "\n"}, "")
+			property := relationship.GetProperty()
+			index2 := 0
+			if property != nil {
+				rel += "\t\tRelationship properties:\n"
+			}
+			for property != nil {
+				rel += strings.Join([]string{"\t\t\t", strconv.Itoa(index2 + 1), ". Property title: \"", property.GetTitle().String(),
+					"\"; value: ", (*property.GetValue()).String(), "\n"}, "")
+				property = property.GetNextProperty()
+				index2++
+			}
+			if relationship.GetFirstNode().GetId() == node.GetId() {
+				relationship = relationship.GetFirstNextRelationship()
+			} else {
+				relationship = relationship.GetSecondNextRelationship()
+			}
+			index++
+		}
+		str += rel
 	}
 	println(str)
 }
 
 func main() {
-	//err := core.InitDb("asd", "local")
-	////err = core.SwitchDb("asd")
-	//utils.CheckError(err)
-
-	dbTitle := "asd"
-	var dfh core.DistributedFileHandler
-	dfh.InitFileSystem()
-	err := core.InitDb(dbTitle, "distributed")
-	dfh.InitDatabaseStructure(dbTitle)
-	if err != nil {
-		log.Fatal("Error in initialization of database")
-	}
-
-	bs := utils.StringToByteArray("Test")
-	dfh.Write(globals.NodesStore, 20, bs, 0)
-	newBs := make([]byte, 4)
-	dfh.Read(globals.NodesStore, 20, &newBs, 0)
-
-	if string(newBs) != string(bs) {
-		log.Fatal("Byte arrays are not the same!")
-	} else {
-		println("Congratulations!")
-	}
+	api.CreateDatabase("asd", "local") // flag "distributed" for distributed
 
 	node1 := api.CreateNode("Kevin")
 	node2 := api.CreateNode("Sergey")
