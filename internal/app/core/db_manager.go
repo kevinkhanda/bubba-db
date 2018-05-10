@@ -9,13 +9,13 @@ import (
 )
 
 func InitDb(dbTitle string, storageMode string) (err error) {
+	globals.LabelTitleMap = make(map[string]globals.MapValue)
+	globals.RelationshipTitleMap = make(map[string]globals.MapValue)
+	globals.PropertyTitleMap = make(map[string]globals.MapValue)
 	if storageMode == "local" {
 		var fh FileHandler
 		fh.InitFileSystem()
 		fh.InitDatabaseStructure(dbTitle)
-		globals.LabelTitleMap = make(map[string]globals.MapValue)
-		globals.RelationshipTitleMap = make(map[string]globals.MapValue)
-		globals.PropertyTitleMap = make(map[string]globals.MapValue)
 		globals.FileHandler = fh
 		globals.CurrentDb = dbTitle
 		return err
