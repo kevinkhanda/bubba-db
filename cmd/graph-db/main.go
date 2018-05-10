@@ -95,7 +95,7 @@ func main() {
 
 	_ = api.CreatePropertyForRelationship(relationship4, "how many years", 0, 2)
 
-	printNode(*node1)
+	printNode(*node1)  // use print node method to retrieve information
 	printNode(*node2)
 	printNode(*node3)
 	printNode(*node4)
