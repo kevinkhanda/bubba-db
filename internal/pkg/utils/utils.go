@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strings"
 )
 
 func CheckError(err error)  {
@@ -36,6 +37,18 @@ func ByteArrayToInt32(bs []byte) (int32, error) {
 	unsigned := binary.LittleEndian.Uint32(bs)
 	number := int32(unsigned)
 	return number, nil
+}
+
+func Int8ToByteArray(number int8) []byte {
+	bs := make([]byte, 1)
+	bs[0] = byte(number)
+	return bs
+}
+
+func ByteArrayToInt8(bs []byte) int8 {
+	var number int8
+	number = int8(bs[0])
+	return number
 }
 
 // BoolToByteArray transforms bool value to byte array
@@ -81,6 +94,8 @@ func ByteArrayToString(bs []byte) string {
 	return string(bs)
 }
 
+// Float64ToByteArray transforms float64 to byte array
+// Returns byte array of size 8
 func Float64ToByteArray(number float64) []byte {
 	bits := math.Float64bits(number)
 	bytes := make([]byte, 8)
@@ -88,13 +103,34 @@ func Float64ToByteArray(number float64) []byte {
 	return bytes
 }
 
+// ByteArrayToFloat64 transforms byte array of size 8 to float64
+// Returns float64 value and error if byte array size is not 8
 func ByteArrayToFloat64(bs []byte) (float64, error) {
 	if len(bs) != 8 {
-		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 4, " +
+		errorMessage := fmt.Sprintf("converter: wrong bs array length. Expected array length of 8, " +
 			"actual length is %d", len(bs))
 		return -1, errors.New(errorMessage)
 	}
 	bits := binary.LittleEndian.Uint64(bs)
 	float := math.Float64frombits(bits)
 	return float, nil
+}
+
+// If string parameter length is less than requiredLength then '#' character is added to the end of string
+func AddStopCharacter(str string, requiredLength int) string {
+	for len(str) < requiredLength {
+		str += "#"
+	}
+
+	return str
+}
+
+// Returns string slice until the '#' character
+func RemoveStopCharacter(str string) string {
+	i := strings.Index(str, "#")
+	if i > -1 {
+		return str[:i]
+	} else {
+		return str
+	}
 }
