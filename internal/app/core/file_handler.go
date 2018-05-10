@@ -122,51 +122,51 @@ func (fh FileHandler) SwitchDatabaseStructure(dbTitle string) (err error) {
 		var propertiesStorePath = filepath.Join(propertiesPath, "store")
 
 		// nodes/id
-		globals.NodesId, err = os.OpenFile(filepath.Join(nodesIdPath, "nodes.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.NodesId, err = os.OpenFile(filepath.Join(nodesIdPath, "nodes.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.LabelsId, err = os.OpenFile(filepath.Join(nodesIdPath, "labels.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.LabelsId, err = os.OpenFile(filepath.Join(nodesIdPath, "labels.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.LabelsTitlesId, err = os.OpenFile(filepath.Join(nodesIdPath, "labelsTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.LabelsTitlesId, err = os.OpenFile(filepath.Join(nodesIdPath, "labelsTitles.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 		// nodes/store
-		globals.NodesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "nodes.store") , os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.NodesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "nodes.store") , os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.LabelsStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labels.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.LabelsStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labels.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.LabelsTitlesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labelsTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.LabelsTitlesStore, err = os.OpenFile(filepath.Join(nodesStorePath, "labelsTitles.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 
 		// relationships/id
-		globals.RelationshipsId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationships.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.RelationshipsId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationships.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.RelationshipsTitlesId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.RelationshipsTitlesId, err = os.OpenFile(filepath.Join(relationshipsIdPath, "relationshipsTitles.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 		// relationships/store
-		globals.RelationshipsStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationships.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.RelationshipsStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationships.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.RelationshipsTitlesStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.RelationshipsTitlesStore, err = os.OpenFile(filepath.Join(relationshipsStorePath, "relationshipsTitles.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 
 		// properties/id
-		globals.PropertiesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "properties.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.PropertiesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "properties.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.PropertiesTitlesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "propertiesTitles.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.PropertiesTitlesId, err = os.OpenFile(filepath.Join(propertiesIdPath, "propertiesTitles.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.StringId, err = os.OpenFile(filepath.Join(propertiesIdPath, "string.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.StringId, err = os.OpenFile(filepath.Join(propertiesIdPath, "string.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.DoubleId, err = os.OpenFile(filepath.Join(propertiesIdPath, "double.id"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.DoubleId, err = os.OpenFile(filepath.Join(propertiesIdPath, "double.id"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 		// properties/store
-		globals.PropertiesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "properties.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.PropertiesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "properties.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.PropertiesTitlesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "propertiesTitles.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.PropertiesTitlesStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "propertiesTitles.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.StringStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "string.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.StringStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "string.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
-		globals.DoubleStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "double.store"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.DoubleStore, err = os.OpenFile(filepath.Join(propertiesStorePath, "double.store"), os.O_RDWR, 0666)
 		utils.CheckError(err)
 
-		globals.Config, err = os.OpenFile(filepath.Join(rootPath, dbTitle, "connections.config"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		globals.Config, err = os.OpenFile(filepath.Join(rootPath, dbTitle, "connections.config"), os.O_RDWR, 0666)
 
 		return err
 	} else {
