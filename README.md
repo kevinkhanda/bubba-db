@@ -27,3 +27,13 @@ $ ./graph-db
 $ go test ./... -cover
 ```
 
+## API description
+Example of API usage is attached in "main.go" file.
+
+API calls are described in package "/api" in "storage-controller.go" file:
+
+* `api.CreateDatabase` - takes two parameters: database title and db mode ("local", "distributed")
+* `api.SwitchDatabase` - parameter is database title. Switches only if database exist.
+* `api.DropDatabase` - parameter is database title. Drops database if it exists. 
+
+

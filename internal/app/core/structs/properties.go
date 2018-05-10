@@ -25,6 +25,10 @@ type PropertyTitle struct {
 	counter int
 }
 
+func (p PropertyTitle) String() string {
+	return p.title
+}
+
 func CreateProperty() *Property {
 	var p Property
 	id, err := globals.FileHandler.ReadId(globals.PropertiesId)
