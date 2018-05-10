@@ -3,10 +3,15 @@ Project is developed as an assignment for Advanced Databases course in Innopolis
 
 ## DB Storage structure
 Node storage:
+
 <img src="docs/node.png" height="250" width="500">
+
 Relationship storage:
+
 <img src="docs/relationship.png" height="250" width="500">
+
 Property storage:
+
 <img src="docs/property.png" height="250" width="500">
 
 ## Requirements
