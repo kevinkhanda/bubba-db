@@ -35,6 +35,8 @@ func TestInitDatabaseStructure(test *testing.T) {
 func TestSwitchDatabase(test *testing.T) {
 	InitDb("test_db", "local")
 	InitDb("test_db2", "local")
+	defer fh.DropDatabase("test_db")
+	defer fh.DropDatabase("test_db2")
 	bs1 := make([]byte, globals.LabelsTitlesSize)
 	bs2 := make([]byte, globals.LabelsTitlesSize)
 	titleBs1 := utils.StringToByteArray("deleted#")
@@ -99,9 +101,6 @@ func TestSwitchDatabase(test *testing.T) {
 			test.Errorf("Counter value mismatch")
 		}
 	}
-
-	fh.DropDatabase("test_db")
-	fh.DropDatabase("test_db2")
 }
 
 func TestFileReadWrite(test *testing.T) {
